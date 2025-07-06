@@ -25,6 +25,7 @@
         <module>infra</module>
         <module>domain</module>
         <module>code-coverage</module>
+        <module>port</module>
     </modules>
 
     <dependencies>
