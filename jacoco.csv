@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+code-coverage/domain,com.backend.shared,Location,3,0,0,0,1,0,1,0,1,0
+code-coverage/domain,com.backend.happening,Incident,3,0,0,0,1,0,1,0,1,0
+code-coverage/domain,com.backend.happening,Event,3,0,0,0,1,0,1,0,1,0
+code-coverage/domain,com.backend.user,Reaction,3,0,0,0,1,0,1,0,1,0
+code-coverage/domain,com.backend.user,Comment,3,0,0,0,1,0,1,0,1,0
+code-coverage/domain,com.backend.user,Client,3,0,0,0,1,0,1,0,1,0
