@@ -12,6 +12,7 @@
         <java.version>21</java.version>
         <lombok.version>1.18.20</lombok.version>
         <spring.version>3.4.5</spring.version>
+        <jacoco.version>0.8.10</jacoco.version>
     </properties>
 
     <parent>
@@ -23,6 +24,7 @@
     <modules>
         <module>infra</module>
         <module>domain</module>
+        <module>code-coverage</module>
     </modules>
 
     <dependencies>
@@ -44,6 +46,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
         </dependency>
     </dependencies>
 
@@ -93,6 +101,27 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
