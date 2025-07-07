@@ -29,7 +29,7 @@ public interface CommentUseCase {
      * @param id the id of existing comment
      * @return The updated comment.
      */
-    Comment edit(long id);
+    Comment edit(long id, Comment newComment);
 
     /**
      * Finds a comment by its unique identifier.
