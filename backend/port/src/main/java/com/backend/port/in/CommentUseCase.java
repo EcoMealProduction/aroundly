@@ -19,6 +19,8 @@ public interface CommentUseCase {
     /**
      * Retrieves comments of a happening.
      *
+     * @param happeningId the id of existing happening
+     *
      * @return A list of comments of a happening.
      */
     List<Comment> findByHappeningId(long happeningId);
@@ -27,6 +29,7 @@ public interface CommentUseCase {
      * Edits an existing comment.
      *
      * @param id the id of existing comment
+     * @param newComment the updated comment
      * @return The updated comment.
      */
     Comment edit(long id, Comment newComment);

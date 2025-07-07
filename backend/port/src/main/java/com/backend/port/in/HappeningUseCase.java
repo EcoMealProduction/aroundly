@@ -45,9 +45,10 @@ public interface HappeningUseCase {
      * Edits an existing happening.
      *
      * @param id The id of existing happening to edit.
+     * @param newHappening updated happening
      * @return The updated happening.
      */
-    Happening edit(long id);
+    Happening edit(long id, Happening newHappening);
 
     /**
      * Adds or updates a reaction to a happening.
