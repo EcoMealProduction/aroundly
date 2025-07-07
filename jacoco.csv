@@ -3,5 +3,5 @@ code-coverage/domain,com.backend.shared,Location,3,0,0,0,1,0,1,0,1,0
 code-coverage/domain,com.backend.happening,Incident,3,0,0,0,1,0,1,0,1,0
 code-coverage/domain,com.backend.happening,Event,3,0,0,0,1,0,1,0,1,0
 code-coverage/domain,com.backend.user,Reaction,3,0,0,0,1,0,1,0,1,0
+code-coverage/domain,com.backend.user,User,3,0,0,0,1,0,1,0,1,0
 code-coverage/domain,com.backend.user,Comment,3,0,0,0,1,0,1,0,1,0
-code-coverage/domain,com.backend.user,Client,3,0,0,0,1,0,1,0,1,0
