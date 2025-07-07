@@ -26,13 +26,13 @@ public interface CommentUseCase {
     List<Comment> findByHappeningId(long happeningId);
 
     /**
-     * Edits an existing comment.
+     * Updates an existing comment.
      *
      * @param id the id of existing comment
      * @param newComment the updated comment
      * @return The updated comment.
      */
-    Comment edit(long id, Comment newComment);
+    Comment updated(long id, Comment newComment);
 
     /**
      * Finds a comment by its unique identifier.

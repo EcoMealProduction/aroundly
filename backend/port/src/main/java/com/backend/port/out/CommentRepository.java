@@ -9,6 +9,14 @@ import java.util.List;
 public interface CommentRepository {
 
     /**
+     * Saves a new comment in the system.
+     *
+     * @param comment the comment to be saved
+     * @return The saved Comment object, potentially with a generated ID.
+     */
+    Comment save(Comment comment);
+
+    /**
      * Retrieves all comments associated with a specific happening.
      *
      * @param happeningId The ID of the happening whose comments are to be fetched.

@@ -42,13 +42,13 @@ public interface HappeningUseCase {
     Happening create(Happening happening);
 
     /**
-     * Edits an existing happening.
+     * Updates an existing happening.
      *
      * @param id The id of existing happening to edit.
      * @param newHappening updated happening
      * @return The updated happening.
      */
-    Happening edit(long id, Happening newHappening);
+    Happening updated(long id, Happening newHappening);
 
     /**
      * Adds or updates a reaction to a happening.
@@ -56,7 +56,7 @@ public interface HappeningUseCase {
      * @param reaction The reaction to apply to the happening.
      * @return The updated happening reflecting the new or updated reaction.
      */
-    Happening react(Reaction reaction);
+    Happening addReaction(Reaction reaction);
 
     /**
      * Sets up the visibility range for a specific incident.

@@ -44,14 +44,6 @@ public interface LocationUseCase {
     Map<Double, Double> sendCoordinates(Location location);
 
     /**
-     * Saves the specified address and returns the corresponding Location object.
-     *
-     * @param address The human-readable address to be saved.
-     * @return The Location object representing the saved address, including coordinates if applicable.
-     */
-    Location saveAddress(String address);
-
-    /**
      * Detects or resolves a human-readable address from the given latitude and longitude.
      *
      * @param latitude  The latitude coordinate.
