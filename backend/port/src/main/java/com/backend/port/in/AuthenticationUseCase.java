@@ -44,7 +44,7 @@ public interface AuthenticationUseCase {
 
     /**
      * Initiates a password reset process for the specified email address.
-     * Typically sends a password reset link or code to the user's email.
+     * Typically, sends a password reset link or code to the user's email.
      *
      * @param email The user's email address.
      */

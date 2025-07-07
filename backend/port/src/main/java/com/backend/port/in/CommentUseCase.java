@@ -1,7 +1,6 @@
 package com.backend.port.in;
 
 import com.backend.user.Comment;
-import com.backend.user.Reaction;
 import java.util.List;
 
 /**
@@ -18,11 +17,11 @@ public interface CommentUseCase {
     Comment create(Comment comment);
 
     /**
-     * Retrieves all comments.
+     * Retrieves comments of a happening.
      *
-     * @return A list of all comments in the system.
+     * @return A list of comments of a happening.
      */
-    List<Comment> findAll();
+    List<Comment> findByHappeningId(long happeningId);
 
     /**
      * Edits an existing comment.
@@ -46,12 +45,4 @@ public interface CommentUseCase {
      * @param id the id of existing comment to delete.
      */
     void delete(long id);
-
-    /**
-     * Adds or updates a reaction (like, dislike, etc.) to a comment.
-     *
-     * @param reaction The reaction to apply to the comment.
-     * @return The updated comment with the new or changed reaction.
-     */
-    Comment react(Reaction reaction);
 }

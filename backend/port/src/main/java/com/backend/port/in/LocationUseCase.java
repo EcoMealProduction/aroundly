@@ -8,6 +8,32 @@ import java.util.Map;
  * such as sending coordinates, saving addresses, and detecting addresses from coordinates.
  */
 public interface LocationUseCase {
+
+    /**
+     * Saves a new location or updates an existing one in the system.
+     *
+     * @param location The Location object containing latitude, longitude, and address details.
+     * @return The saved Location object, potentially with a generated ID.
+     */
+    Location save(Location location);
+
+    /**
+     * Retrieves a Location by its unique identifier.
+     *
+     * @param locationId The ID of the location to retrieve.
+     * @return The Location object if found, or null if not found.
+     */
+    Location findById(long locationId);
+
+    /**
+     * Finds a Location by its latitude and longitude.
+     *
+     * @param latitude  The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @return The Location object matching the provided coordinates, or null if not found.
+     */
+    Location findByCoordinates(double latitude, double longitude);
+
     /**
      * Processes or sends the coordinates contained within a Location object.
      * The returned map may represent latitude and longitude values, or any additional processed data.
