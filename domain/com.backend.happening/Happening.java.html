@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Happening.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">code-coverage</a> &gt; <a href="../index.html" class="el_bundle">domain</a> &gt; <a href="index.source.html" class="el_package">com.backend.happening</a> &gt; <span class="el_source">Happening.java</span></div><h1>Happening.java</h1><pre class="source lang-java linenums">package com.backend.happening;
+
+import com.backend.shared.Location;
+import com.backend.user.Comment;
+import com.backend.user.User;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Reprezintă o entitate generală care descrie o întâmplare (incident sau eveniment) raportată de un utilizator.
+ * Poate fi extinsă de clase precum {@link Incident} sau {@link Event}.
+ */
+public interface Happening {
+
+    /**
+     * @return ID-ul unic al întâmplării.
+     */
+    UUID id();
+
+    /**
+     * @return Titlul întâmplării.
+     */
+    String title();
+
+    /**
+     * @return Descrierea detaliată a întâmplării.
+     */
+    String description();
+
+    /**
+     * @return Utilizatorul care a raportat întâmplarea.
+     */
+    User user();
+
+    /**
+     * @return Locația unde s-a produs întâmplarea.
+     */
+    Location location();
+
+    /**
+     * @return Lista de comentarii asociate întâmplării.
+     */
+    List&lt;Comment&gt; comments();
+
+    /**
+     * @return Numărul de aprecieri pozitive.
+     */
+    int likes();
+
+    /**
+     * @return Numărul de aprecieri negative.
+     */
+    int dislikes();
+
+    /**
+     * Creează o nouă instanță a întâmplării cu un nou număr de like-uri.
+     *
+     * @param likes noua valoare a like-urilor
+     * @return instanța actualizată
+     */
+    Happening withLikes(int likes);
+
+    /**
+     * Creează o nouă instanță a întâmplării cu un nou număr de dislike-uri.
+     *
+     * @param dislikes noua valoare a dislike-urilor
+     * @return instanța actualizată
+     */
+    Happening withDislikes(int dislikes);
+
+    /**
+     * Creează o nouă instanță a întâmplării cu o listă nouă de comentarii.
+     *
+     * @param comments lista actualizată de comentarii
+     * @return instanța actualizată
+     */
+    Happening withComments(List&lt;Comment&gt; comments);
+
+    /**
+     * Adaugă un like la întâmplare.
+     *
+     * @return instanța actualizată cu un like în plus
+     */
+    default Happening addLike() {
+<span class="fc" id="L87">        return withLikes(likes() + 1);</span>
+    }
+
+    /**
+     * Adaugă un dislike la întâmplare.
+     *
+     * @return instanța actualizată cu un dislike în plus
+     */
+    default Happening addDislike() {
+<span class="fc" id="L96">        return withDislikes(dislikes() + 1);</span>
+    }
+
+    /**
+     * Elimină un like de la întâmplare.
+     *
+     * @return instanța actualizată cu un like în minus
+     */
+    default Happening removeLike() {
+<span class="fc" id="L105">        return withLikes(likes() - 1);</span>
+    }
+
+    /**
+     * Elimină un dislike de la întâmplare.
+     *
+     * @return instanța actualizată cu un dislike în minus
+     */
+    default Happening removeDislike() {
+<span class="fc" id="L114">        return withDislikes(dislikes() - 1);</span>
+    }
+
+    /**
+     * Adaugă un comentariu nou la întâmplare.
+     *
+     * @param comment comentariul de adăugat
+     * @return instanța actualizată cu comentariul adăugat
+     */
+    default Happening addComment(Comment comment) {
+<span class="fc" id="L124">        List&lt;Comment&gt; commentsCopy = new ArrayList&lt;&gt;(comments());</span>
+<span class="fc" id="L125">        commentsCopy.add(comment);</span>
+<span class="fc" id="L126">        return withComments(commentsCopy);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

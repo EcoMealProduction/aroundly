@@ -1,5 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Event.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">code-coverage</a> &gt; <a href="../index.html" class="el_bundle">domain</a> &gt; <a href="index.source.html" class="el_package">com.backend.happening</a> &gt; <span class="el_source">Event.java</span></div><h1>Event.java</h1><pre class="source lang-java linenums">package com.backend.happening;
 
-<span class="nc" id="L3">public record Event() implements Happening {</span>
+import com.backend.shared.Location;
+import com.backend.user.Comment;
+import com.backend.user.User;
+import lombok.Builder;
+import lombok.NonNull;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Reprezintă un eveniment publicat de un utilizator.
+ * Conține informații despre locație, autor, timp de început/sfârșit și reacții (like/dislike/comentarii).
+ */
+<span class="pc bpc" id="L18" title="7 of 14 branches missed.">@Builder(toBuilder = true)</span>
+public record Event(
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        @NonNull UUID id,</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        @NonNull String title,</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        @NonNull String description,</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        @NonNull User user,</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        @NonNull Location location,</span>
+        List&lt;Comment&gt; comments,
+        int likes,
+        int dislikes,
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        @NonNull LocalDateTime startTime,</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        @NonNull LocalDateTime endTime</span>
+) implements Happening{
+
+    /**
+     * Constructorul cu validări pentru titlu, descriere, reacții și timp.
+     */
+<span class="fc" id="L35">    public Event {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (title.length() &lt; 10) {</span>
+<span class="fc" id="L37">            throw new IllegalArgumentException(&quot;Title too short.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (description.length() &lt; 10) {</span>
+<span class="fc" id="L41">            throw new IllegalArgumentException(&quot;Description too short.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L44" title="All 4 branches covered.">        if (likes &lt; 0 || dislikes &lt; 0) {</span>
+<span class="fc" id="L45">            throw new IllegalArgumentException(&quot;Likes and dislikes cannot be negative.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L48" title="All 4 branches covered.">        if (startTime.isBefore(LocalDateTime.now()) || endTime.isBefore(LocalDateTime.now())) {</span>
+<span class="fc" id="L49">            throw new IllegalArgumentException(&quot;Start and end time cannot be before now.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (endTime.isBefore(startTime.plusMinutes(30))) {</span>
+<span class="fc" id="L53">            throw new IllegalArgumentException(&quot;Event duration must be at least 30 minutes.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        comments = comments == null ? List.of() : new ArrayList&lt;&gt;(comments);</span>
+
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Creează o instanță nouă a evenimentului cu un număr actualizat de like-uri.
+     *
+     * @param likes noul număr de like-uri
+     * @return o copie a evenimentului actualizat
+     */
+    @Override
+    public Event withLikes(int likes) {
+<span class="fc" id="L68">        return this.toBuilder()</span>
+<span class="fc" id="L69">                .likes(likes)</span>
+<span class="fc" id="L70">                .build();</span>
+    }
+
+    /**
+     * Creează o instanță nouă a evenimentului cu un număr actualizat de dislike-uri.
+     *
+     * @param dislikes noul număr de dislike-uri
+     * @return o copie a evenimentului actualizat
+     */
+    @Override
+    public Event withDislikes(int dislikes) {
+<span class="fc" id="L81">        return this.toBuilder()</span>
+<span class="fc" id="L82">                .dislikes(dislikes)</span>
+<span class="fc" id="L83">                .build();</span>
+    }
+
+    /**
+     * Creează o instanță nouă a evenimentului cu lista actualizată de comentarii.
+     *
+     * @param comments lista comentariilor noi
+     * @return o copie a evenimentului actualizat
+     */
+    @Override
+    public Event withComments(List&lt;Comment&gt; comments) {
+<span class="fc" id="L94">        return this.toBuilder()</span>
+<span class="fc" id="L95">                .comments(comments)</span>
+<span class="fc" id="L96">                .build();</span>
+    }
+
+    /**
+     * Verifică dacă evenimentul este finalizat în raport cu timpul curent.
+     *
+     * @return true dacă endTime este în trecut
+     */
+    public boolean isFinished() {
+<span class="nc" id="L105">        return LocalDateTime.now().isAfter(this.endTime);</span>
+    }
+
+    /**
+     * Verifică dacă evenimentul este finalizat în raport cu un timp extern.
+     *
+     * @param now timpul de referință
+     * @return true dacă `now` este după `endTime`
+     */
+    public boolean isFinished(LocalDateTime now) {
+<span class="fc" id="L115">        return now.isAfter(this.endTime);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

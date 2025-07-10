@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Comment.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">code-coverage</a> &gt; <a href="../index.html" class="el_bundle">domain</a> &gt; <a href="index.source.html" class="el_package">com.backend.user</a> &gt; <span class="el_source">Comment.java</span></div><h1>Comment.java</h1><pre class="source lang-java linenums">package com.backend.user;
 
-<span class="nc" id="L3">public record Comment() {</span>
+import lombok.Builder;
+import lombok.NonNull;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+/**
+ * Reprezintă un comentariu adăugat la un {@code Happening} (Incident sau Event).
+ * Fiecare comentariu este legat de un utilizator, un eveniment/incident și conține textul comentariului
+ * împreună cu data creării.
+ *
+ * &lt;p&gt;Validări:&lt;/p&gt;
+ * &lt;ul&gt;
+ *   &lt;li&gt;Textul trebuie să aibă minim 5 caractere și să nu fie gol.&lt;/li&gt;
+ *   &lt;li&gt;Data creării nu poate fi în viitor.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @param id           ID-ul unic al comentariului.
+ * @param happeningId  ID-ul entității (Incident sau Event) la care aparține comentariul.
+ * @param user         Utilizatorul care a scris comentariul.
+ * @param text         Conținutul comentariului.
+ * @param createdAt    Data și ora la care a fost creat comentariul.
+ */
+<span class="pc bpc" id="L26" title="5 of 10 branches missed.">@Builder(toBuilder = true)</span>
+public record Comment(
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        @NonNull UUID id,</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        @NonNull UUID happeningId,</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        @NonNull User user,</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        @NonNull String text,</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        @NonNull LocalDateTime createdAt</span>
+        ) {
+
+    /**
+     * Constructor de validare. Asigură consistența datelor la crearea unui comentariu.
+     *
+     * @throws IllegalArgumentException dacă:
+     *         - textul este gol sau are mai puțin de 5 caractere,
+     *         - data creării este în viitor.
+     */
+<span class="fc" id="L42">    public Comment {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (text.trim().isEmpty()) {</span>
+<span class="fc" id="L44">            throw new IllegalArgumentException(&quot;Text cannot be empty or only spaces.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (text.length() &lt; 5) {</span>
+<span class="fc" id="L48">            throw new IllegalArgumentException(&quot;Text must have at least 5 characters.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (createdAt.isAfter(LocalDateTime.now())) {</span>
+<span class="fc" id="L52">            throw new IllegalArgumentException(&quot;Comment date cannot be in the future.&quot;);</span>
+        }
+<span class="fc" id="L54">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
