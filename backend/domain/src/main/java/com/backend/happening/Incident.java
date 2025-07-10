@@ -53,12 +53,11 @@ public record Incident(
         if (expirationTime == null)
             expirationTime = createdAt.plusMinutes(30);
 
-        if (expirationTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Expiration time cannot be before now.");
-        }
-
         if (expirationTime.isBefore(createdAt)) {
             throw new IllegalArgumentException("Expiration time cannot be before createdAt.");
+        }
+        if (expirationTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Expiration time cannot be before now.");
         }
 
         comments = comments == null ? List.of() : new ArrayList<>(comments);

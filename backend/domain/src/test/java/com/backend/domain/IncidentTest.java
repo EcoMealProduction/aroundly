@@ -48,7 +48,7 @@ public class IncidentTest {
     @Test
     void testValidIncidentIsCreatedSuccessfully() {
         assertEquals("Test Incident", incident.title());
-        assertEquals("Aceesta este un test pentru incidente.", incident.description());
+        assertEquals("Acesta este un test pentru incidente.", incident.description());
         assertNotNull(incident.id());
         assertNotNull(incident.user());
         assertNotNull(incident.location());
@@ -249,22 +249,27 @@ public class IncidentTest {
 
     @Test
     void testExpirationTimeBeforeNowThrowsException() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> incident.toBuilder()
-                .expirationTime(LocalDateTime.now().minusMinutes(1))
-                .build());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                incident.toBuilder()
+                        .createdAt(LocalDateTime.now().minusMinutes(5))     // înainte de expirationTime
+                        .expirationTime(LocalDateTime.now().minusMinutes(1)) // în trecut
+                        .build());
 
         assertEquals("Expiration time cannot be before now.", exception.getMessage());
     }
 
+
     @Test
     void testExpirationBeforeCreatedAtThrowsException() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> incident.toBuilder()
-                .createdAt(LocalDateTime.now().plusMinutes(5))
-                .expirationTime(LocalDateTime.now())
-                .build());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                incident.toBuilder()
+                        .createdAt(LocalDateTime.now().plusMinutes(5))       // e în viitor
+                        .expirationTime(LocalDateTime.now().plusMinutes(1)) // mai devreme decât createdAt
+                        .build());
 
         assertEquals("Expiration time cannot be before createdAt.", exception.getMessage());
     }
+
 
     @Test
     void testNullCommentsReplacedWithEmptyList() {
