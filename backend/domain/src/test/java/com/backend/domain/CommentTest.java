@@ -1,6 +1,5 @@
 package com.backend.domain;
 
-import com.backend.user.Comment;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -12,9 +11,8 @@ public class CommentTest {
 
     @Test
     void testValidComment() {
-        Comment comment = validComment;
-        assertEquals("testUser", comment.authorUsername());
-        assertEquals("Un comentariu valid pentru test.", comment.text());
+        assertEquals("testUser", validComment.authorUsername());
+        assertEquals("Un comentariu valid pentru test.", validComment.text());
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.backend.domain;
 
-import com.backend.shared.Location;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -12,11 +11,9 @@ public class LocationTest {
 
     @Test
     void testValidLocationCreatedSuccessfully() {
-        Location location = validLocation;
-
-        assertEquals(BigDecimal.valueOf(47.0), location.latitude());
-        assertEquals(BigDecimal.valueOf(28.0), location.longitude());
-        assertEquals("Strada Stefan cel Mare 1, Chisinau", location.address());
+        assertEquals(BigDecimal.valueOf(47.0), validLocation.latitude());
+        assertEquals(BigDecimal.valueOf(28.0), validLocation.longitude());
+        assertEquals("Strada Stefan cel Mare 1, Chisinau", validLocation.address());
     }
 
     @Test

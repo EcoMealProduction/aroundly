@@ -13,40 +13,38 @@ public class EventTest {
 
     @Test
     void testValidEventCreatedSuccessfully() {
-        Event event = validEvent;
-
-        assertEquals("Concert în aer liber", event.title());
-        assertEquals("Eveniment cu muzică live și food trucks.", event.description());
-        assertEquals("testUser", event.authorUsername());
-        assertNotNull(event.location());
-        assertEquals(0, event.likes());
-        assertEquals(0, event.dislikes());
-        assertEquals(1, event.comments().size());
+        assertEquals("Concert în aer liber", validEvent.title());
+        assertEquals("Eveniment cu muzică live și food trucks.", validEvent.description());
+        assertEquals("testUser", validEvent.authorUsername());
+        assertNotNull(validEvent.location());
+        assertEquals(0, validEvent.likes());
+        assertEquals(0, validEvent.dislikes());
+        assertEquals(1, validEvent.comments().size());
     }
 
     @Test
     void testAddLike() {
-        Event eventWithLike =  validEvent.addLike();
+        Event eventWithLike = validEvent.addLike();
         assertEquals(1, eventWithLike.likes());
     }
 
     @Test
     void testRemoveLike() {
-        Event eventWithLike =  validEvent.addLike();
-        Event eventWithoutLike =  eventWithLike.removeLike();
+        Event eventWithLike = validEvent.addLike();
+        Event eventWithoutLike = eventWithLike.removeLike();
         assertEquals(0, eventWithoutLike.likes());
     }
 
     @Test
     void testAddDislike() {
-        Event eventWithDislike =  validEvent.addDislike();
+        Event eventWithDislike = validEvent.addDislike();
         assertEquals(1, eventWithDislike.dislikes());
     }
 
     @Test
     void testRemoveDislike() {
-        Event eventWithDislike =  validEvent.addDislike();
-        Event eventWithoutDislike =  eventWithDislike.removeDislike();
+        Event eventWithDislike = validEvent.addDislike();
+        Event eventWithoutDislike = eventWithDislike.removeDislike();
         assertEquals(0, eventWithoutDislike.dislikes());
     }
 
@@ -56,14 +54,28 @@ public class EventTest {
                 .text("Alt comentariu util.")
                 .build();
 
-        Event eventWithComment =  validEvent.addComment(newComment);
+        Event eventWithComment = validEvent.addComment(newComment);
         assertEquals(2, eventWithComment.comments().size());
+    }
+
+    @Test
+    void testIsFinished() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Event eventIsFinished = validEvent.toBuilder()
+                .startTime(now.plusHours(1))
+                .endTime(now.plusHours(4))
+                .build();
+
+        assertFalse(eventIsFinished.isFinished());
     }
 
     @Test
     void testShortTitleThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validEvent.toBuilder().title("Scurt").build()
+                validEvent.toBuilder()
+                        .title("Scurt")
+                        .build()
         );
 
         assertEquals("Title too short.", exception.getMessage());
@@ -72,7 +84,9 @@ public class EventTest {
     @Test
     void testShortDescriptionThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validEvent.toBuilder().description("Scurt").build()
+                validEvent.toBuilder()
+                        .description("Scurt")
+                        .build()
         );
 
         assertEquals("Description too short.", exception.getMessage());
@@ -81,7 +95,10 @@ public class EventTest {
     @Test
     void testNegativeLikesAndDislikesThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validEvent.toBuilder().likes(-1).dislikes(-1).build()
+                validEvent.toBuilder()
+                        .likes(-1)
+                        .dislikes(-1)
+                        .build()
         );
 
         assertEquals("Likes and dislikes cannot be negative.", exception.getMessage());
@@ -90,7 +107,9 @@ public class EventTest {
     @Test
     void testStartTimeBeforeNowThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validEvent.toBuilder().startTime(LocalDateTime.now().minusMinutes(5)).build()
+                validEvent.toBuilder()
+                        .startTime(LocalDateTime.now().minusMinutes(5))
+                        .build()
         );
 
         assertEquals("Start time cannot be before now.", exception.getMessage());
@@ -99,7 +118,9 @@ public class EventTest {
     @Test
     void testEndTimeBeforeNowThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validEvent.toBuilder().endTime(LocalDateTime.now().minusMinutes(5)).build()
+                validEvent.toBuilder()
+                        .endTime(LocalDateTime.now().minusMinutes(5))
+                        .build()
         );
 
         assertEquals("End time cannot be before now.", exception.getMessage());

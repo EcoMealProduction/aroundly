@@ -50,7 +50,5 @@ public final class Fixtures {
             .expirationTime(LocalDateTime.now().plusMinutes(45))
             .build();
 
-    private Fixtures() {
-
-    }
+    private Fixtures() { }
 }

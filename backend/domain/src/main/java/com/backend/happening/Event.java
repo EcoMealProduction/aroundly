@@ -30,41 +30,32 @@ public record Event(
      * Constructs an {@code Event} with validation logic for input values.
      *
      * @throws IllegalArgumentException if:
-     * <ul>
-     *   <li>{@code title} is shorter than 10 characters</li>
-     *   <li>{@code description} is shorter than 10 characters</li>
-     *   <li>{@code likes} or {@code dislikes} is negative</li>
-     *   <li>{@code startTime} or {@code endTime} is in the past</li>
-     *   <li>{@code endTime} is less than 30 minutes after {@code startTime}</li>
-     * </ul>
+     *   @param title is shorter than 10 characters
+     *   @param description is shorter than 10 characters
+     *   @param likes or {@code dislikes} is negative
+     *   @param startTime or {@code endTime} is in the past
+     *   @param endTime is less than 30 minutes after {@code startTime}
      */
     public Event {
-        if (title.length() < 10) {
+        if (title.length() < 10)
             throw new IllegalArgumentException("Title too short.");
-        }
 
-        if (description.length() < 10) {
+        if (description.length() < 10)
             throw new IllegalArgumentException("Description too short.");
-        }
 
-        if (likes < 0 || dislikes < 0) {
+        if (likes < 0 || dislikes < 0)
             throw new IllegalArgumentException("Likes and dislikes cannot be negative.");
-        }
 
-        if (startTime.isBefore(LocalDateTime.now())) {
+        if (startTime.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("Start time cannot be before now.");
-        }
 
-        if (endTime.isBefore(LocalDateTime.now())) {
+        if (endTime.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("End time cannot be before now.");
-        }
 
-        if (endTime.isBefore(startTime.plusMinutes(30))) {
+        if (endTime.isBefore(startTime.plusMinutes(30)))
             throw new IllegalArgumentException("Event duration must be at least 30 minutes.");
-        }
 
         comments = comments == null ? List.of() : new ArrayList<>(comments);
-
     }
 
     /**
@@ -74,7 +65,7 @@ public record Event(
      */
     @Override
     public Event addLike() {
-        return this.toBuilder()
+        return toBuilder()
                 .likes(likes + 1)
                 .build();
     }
@@ -86,7 +77,7 @@ public record Event(
      */
     @Override
     public Event addDislike() {
-        return this.toBuilder()
+        return toBuilder()
                 .dislikes(dislikes + 1)
                 .build();
     }
@@ -98,7 +89,7 @@ public record Event(
      */
     @Override
     public Event removeLike() {
-        return this.toBuilder()
+        return toBuilder()
                 .likes(likes - 1)
                 .build();
     }
@@ -110,7 +101,7 @@ public record Event(
      */
     @Override
     public Event removeDislike() {
-        return this.toBuilder()
+        return toBuilder()
                 .dislikes(dislikes - 1)
                 .build();
     }

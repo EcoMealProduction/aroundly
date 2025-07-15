@@ -33,12 +33,10 @@ public record Incident(
      * Constructs an {@code Incident} instance with input validation.
      *
      * @throws IllegalArgumentException if:
-     * <ul>
-     *   <li>{@code title} is shorter than 10 characters</li>
-     *   <li>{@code description} is shorter than 20 characters</li>
-     *   <li>Any reaction count is negative</li>
-     *   <li>{@code expirationTime} is before {@code createdAt} or before current time</li>
-     * </ul>
+     *   @param title is shorter than 10 characters
+     *   @param description is shorter than 20 characters
+     *   Any reaction count is negative
+     *   @param expirationTime is before @param createdAt or before current time
      */
     public Incident {
         if (title.length() < 10)
@@ -47,9 +45,8 @@ public record Incident(
         if (description.length() < 20)
             throw new IllegalArgumentException("Description too short.");
 
-        if (likes < 0 || dislikes < 0 || confirms < 0 || denies < 0 || consecutiveDenies < 0) {
+        if (likes < 0 || dislikes < 0 || confirms < 0 || denies < 0 || consecutiveDenies < 0)
             throw new IllegalArgumentException("Negative values not allowed.");
-        }
 
         if (createdAt == null)
             createdAt = LocalDateTime.now();
@@ -57,15 +54,13 @@ public record Incident(
         if (expirationTime == null)
             expirationTime = createdAt.plusMinutes(30);
 
-        if (expirationTime.isBefore(createdAt)) {
+        if (expirationTime.isBefore(createdAt))
             throw new IllegalArgumentException("Expiration time cannot be before createdAt.");
-        }
-        if (expirationTime.isBefore(LocalDateTime.now())) {
+
+        if (expirationTime.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("Expiration time cannot be before now.");
-        }
 
         comments = comments == null ? List.of() : new ArrayList<>(comments);
-
     }
 
     /**
@@ -76,7 +71,7 @@ public record Incident(
      */
     public boolean isDeleted() {
             return consecutiveDenies >=3 || isExpired();
-        }
+    }
 
     /**
      * Adds a confirmation to the incident.
@@ -122,7 +117,7 @@ public record Incident(
      */
     @Override
     public Incident addLike() {
-        return  toBuilder()
+        return toBuilder()
                 .likes(likes + 1)
                 .build();
     }
@@ -134,7 +129,7 @@ public record Incident(
      */
     @Override
     public Incident removeLike() {
-        return  toBuilder()
+        return toBuilder()
                 .likes(likes - 1)
                 .build();
     }
@@ -146,7 +141,7 @@ public record Incident(
      */
     @Override
     public Incident addDislike() {
-        return  toBuilder()
+        return toBuilder()
                 .dislikes(dislikes + 1)
                 .build();
     }
@@ -158,7 +153,7 @@ public record Incident(
      */
     @Override
     public Incident removeDislike() {
-        return   toBuilder()
+        return toBuilder()
                 .dislikes(dislikes - 1)
                 .build();
     }

@@ -2,7 +2,7 @@ package com.backend.port.in;
 
 import com.backend.happening.Happening;
 import com.backend.happening.Incident;
-import com.backend.user.Reaction;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -49,14 +49,6 @@ public interface HappeningUseCase {
      * @return The updated happening.
      */
     Happening updated(long id, Happening newHappening);
-
-    /**
-     * Adds or updates a reaction to a happening.
-     *
-     * @param reaction The reaction to apply to the happening.
-     * @return The updated happening reflecting the new or updated reaction.
-     */
-    Happening addReaction(Reaction reaction);
 
     /**
      * Sets up the visibility range for a specific incident.

@@ -20,11 +20,9 @@ public record Location(
      * Constructs a {@code Location} instance with validation.
      *
      * @throws IllegalArgumentException if:
-     * <ul>
-     *   <li>{@code latitude} is not within the geographic bounds of Moldova (45.467 to 48.491)</li>
-     *   <li>{@code longitude} is not within the geographic bounds of Moldova (26.616 to 30.133)</li>
-     *   <li>{@code address} is non-null and shorter than 10 characters</li>
-     * </ul>
+     *   @param latitude is not within the geographic bounds of Moldova (45.467 to 48.491)
+     *   @param longitude is not within the geographic bounds of Moldova (26.616 to 30.133)
+     *   @param address is non-null and shorter than 10 characters
      */
     public Location {
         if (latitude.compareTo(BigDecimal.valueOf(45.467)) < 0 ||
