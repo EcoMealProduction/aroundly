@@ -5,38 +5,37 @@ import lombok.NonNull;
 
 import java.math.BigDecimal;
 
-import static com.backend.shared.GeoLimits.*;
-
 /**
- * Reprezintă o locație geografică cu coordonate și adresă textuală.
- * Această entitate este folosită pentru a stoca locațiile incidentelor, evenimentelor sau utilizatorilor.
- * Locațiile sunt validate să se încadreze în granițele geografice ale Republicii Moldova.
- *
- * @param latitude  Latitudinea locației. Trebuie să fie între {@link GeoLimits#MIN_LATITUDE} și {@link GeoLimits#MAX_LATITUDE}.
- * @param longitude Longitudinea locației. Trebuie să fie între {@link GeoLimits#MIN_LONGITUDE} și {@link GeoLimits#MAX_LONGITUDE}.
- * @param address   Adresa completă a locației. Trebuie să conțină cel puțin 10 caractere.
+ * Represents a geographical location with latitude, longitude, and an optional textual address.
+ * Used to describe the physical position of events, incidents, or users.
  */
 @Builder(toBuilder = true)
 public record Location(
         @NonNull BigDecimal latitude,
         @NonNull BigDecimal longitude,
-        @NonNull String address
+        String address
 ) {
 
     /**
-     * Constructor de validare a valorilor geografice.
-     * Aruncă excepții dacă datele nu respectă limitele geografice sau formatul minim al adresei.
+     * Constructs a {@code Location} instance with validation.
+     *
+     * @throws IllegalArgumentException if:
+     * <ul>
+     *   <li>{@code latitude} is not within the geographic bounds of Moldova (45.467 to 48.491)</li>
+     *   <li>{@code longitude} is not within the geographic bounds of Moldova (26.616 to 30.133)</li>
+     *   <li>{@code address} is non-null and shorter than 10 characters</li>
+     * </ul>
      */
     public Location {
-        if (latitude.compareTo(MIN_LATITUDE) < 0 ||
-                latitude.compareTo(MAX_LATITUDE) > 0)
+        if (latitude.compareTo(BigDecimal.valueOf(45.467)) < 0 ||
+                latitude.compareTo(BigDecimal.valueOf(48.491)) > 0)
             throw new IllegalArgumentException("Latitude must be within Moldova.");
 
-        if (longitude.compareTo(MIN_LONGITUDE) < 0 ||
-                longitude.compareTo(MAX_LONGITUDE) > 0)
+        if (longitude.compareTo(BigDecimal.valueOf(26.616)) < 0 ||
+                longitude.compareTo(BigDecimal.valueOf(30.133)) > 0)
             throw new IllegalArgumentException("Longitude must be within Moldova.");
 
-        if (address.length() < 10)
+        if (address != null && address.length() < 10)
             throw new IllegalArgumentException("Address must have at least 10 characters.");
     }
 }

@@ -2,25 +2,22 @@ package com.backend.happening;
 
 import com.backend.shared.Location;
 import com.backend.user.Comment;
-import com.backend.user.User;
 import lombok.Builder;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * Reprezintă o întâmplare de tip incident raportată de un utilizator.
- * Fiecare incident are un titlu, o descriere, locație, autor, timp de expirare și statistici de reacții.
+ * Represents a user-reported incident (e.g., traffic, danger, or other local issues).
+ * Contains information about the incident's details, location, timing, and public feedback such as likes, dislikes, and comments.
  */
 @Builder(toBuilder = true)
 public record Incident(
-        @NonNull UUID id,
         @NonNull String title,
         @NonNull String description,
-        @NonNull User user,
+        @NonNull String authorUsername,
         @NonNull Location location,
         LocalDateTime createdAt,
         LocalDateTime expirationTime,
@@ -33,7 +30,15 @@ public record Incident(
 ) implements Happening{
 
     /**
-     * Constructor cu validări interne pentru titlu, descriere, reacții și timp.
+     * Constructs an {@code Incident} instance with input validation.
+     *
+     * @throws IllegalArgumentException if:
+     * <ul>
+     *   <li>{@code title} is shorter than 10 characters</li>
+     *   <li>{@code description} is shorter than 20 characters</li>
+     *   <li>Any reaction count is negative</li>
+     *   <li>{@code expirationTime} is before {@code createdAt} or before current time</li>
+     * </ul>
      */
     public Incident {
         if (title.length() < 10)
@@ -49,7 +54,6 @@ public record Incident(
         if (createdAt == null)
             createdAt = LocalDateTime.now();
 
-        // Setăm timp de expirare implicit dacă nu este specificat
         if (expirationTime == null)
             expirationTime = createdAt.plusMinutes(30);
 
@@ -65,29 +69,21 @@ public record Incident(
     }
 
     /**
-     * Verifică dacă incidentul trebuie șters.
-     * Se consideră valid pentru ștergere dacă a expirat sau are 3 sau mai multe deny-uri consecutive.
+     * Checks whether the incident should be deleted.
+     * An incident is deleted if it is expired or has at least 3 consecutive denies.
      *
-     * @return true dacă trebuie șters, altfel false
+     * @return {@code true} if the incident should be removed.
      */
-    public boolean shouldBeDeleted() {
+    public boolean isDeleted() {
             return consecutiveDenies >=3 || isExpired();
         }
 
     /**
-     * Verifică dacă incidentul ar trebui șters la un moment dat specific.
+     * Adds a confirmation to the incident.
+     * This increases the confirmation count, extends the expiration time by 5 minutes,
+     * and resets the consecutive denies counter.
      *
-     * @param now momentul curent
-     * @return true dacă are 3 sau mai multe deny-uri consecutive sau a expirat până la acel moment
-     */
-    public boolean shouldBeDeleted(LocalDateTime now) {
-        return consecutiveDenies >= 3 || isExpired(now);
-    }
-
-    /**
-     * Adaugă o confirmare și extinde timpul de expirare cu 5 minute. Resetează deny-urile consecutive.
-     *
-     * @return noul obiect Incident actualizat
+     * @return A new {@code Incident} instance with updated state.
      */
     public Incident addConfirm() {
         return this.toBuilder()
@@ -98,9 +94,10 @@ public record Incident(
     }
 
     /**
-     * Adaugă un deny și crește contorul de deny-uri consecutive.
+     * Adds a denial to the incident.
+     * This increases both the total and consecutive denial counters.
      *
-     * @return noul obiect Incident actualizat
+     * @return A new {@code Incident} instance with updated denial counts.
      */
     public Incident addDeny() {
         return this.toBuilder()
@@ -110,60 +107,75 @@ public record Incident(
     }
 
     /**
-     * Verifică dacă incidentul a expirat în raport cu timpul actual.
+     * Checks if the incident has expired based on the current time.
      *
-     * @return true dacă timpul curent este după expirationTime
+     * @return {@code true} if the expiration time is in the past.
      */
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expirationTime);
     }
 
     /**
-     * Verifică dacă incidentul a expirat în raport cu un timp dat.
+     * Increments the like counter.
      *
-     * @param now timpul de comparație
-     * @return true dacă now este după expirationTime
-     */
-    public boolean isExpired(LocalDateTime now) {
-        return now.isAfter(expirationTime);
-    }
-
-    /**
-     * Creează o copie a incidentului cu un număr actualizat de like-uri.
-     *
-     * @param likes noul număr de like-uri
-     * @return noul obiect Incident
+     * @return A new {@code Incident} instance with one additional like.
      */
     @Override
-    public Happening withLikes(int likes) {
-        return this.toBuilder()
-                .likes(likes)
+    public Incident addLike() {
+        return  toBuilder()
+                .likes(likes + 1)
                 .build();
     }
 
     /**
-     * Creează o copie a incidentului cu un număr actualizat de dislike-uri.
+     * Decrements the like counter.
      *
-     * @param dislikes noul număr de dislike-uri
-     * @return noul obiect Incident
+     * @return A new {@code Incident} instance with one less like.
      */
     @Override
-    public Happening withDislikes(int dislikes) {
-        return this.toBuilder()
-                .dislikes(dislikes)
+    public Incident removeLike() {
+        return  toBuilder()
+                .likes(likes - 1)
                 .build();
     }
 
     /**
-     * Creează o copie a incidentului cu lista de comentarii actualizată.
+     * Increments the dislike counter.
      *
-     * @param comments lista nouă de comentarii
-     * @return noul obiect Incident
+     * @return A new {@code Incident} instance with one additional dislike.
      */
     @Override
-    public Happening withComments(List<Comment> comments) {
-        return  this.toBuilder()
-                .comments(comments)
+    public Incident addDislike() {
+        return  toBuilder()
+                .dislikes(dislikes + 1)
+                .build();
+    }
+
+    /**
+     * Decrements the dislike counter.
+     *
+     * @return A new {@code Incident} instance with one less dislike.
+     */
+    @Override
+    public Incident removeDislike() {
+        return   toBuilder()
+                .dislikes(dislikes - 1)
+                .build();
+    }
+
+    /**
+     * Appends a new comment to the incident's comment list.
+     *
+     * @param comment The {@code Comment} to be added.
+     * @return A new {@code Incident} instance with the added comment.
+     */
+    @Override
+    public Incident addComment(Comment comment) {
+        List<Comment> commentsCopy = new  ArrayList<>(comments());
+        commentsCopy.add(comment);
+
+        return toBuilder()
+                .comments(commentsCopy)
                 .build();
     }
 }

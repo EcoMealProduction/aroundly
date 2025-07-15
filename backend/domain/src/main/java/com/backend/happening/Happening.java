@@ -2,127 +2,84 @@ package com.backend.happening;
 
 import com.backend.shared.Location;
 import com.backend.user.Comment;
-import com.backend.user.User;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * Reprezintă o entitate generală care descrie o întâmplare (incident sau eveniment) raportată de un utilizator.
- * Poate fi extinsă de clase precum {@link Incident} sau {@link Event}.
+ * Represents a generic reported occurrence within the application (e.g., an {@link Incident} or an {@link Event}).
+ * This abstraction defines the common structure and behaviors for all reportable happenings in the system.
  */
 public interface Happening {
 
     /**
-     * @return ID-ul unic al întâmplării.
-     */
-    UUID id();
-
-    /**
-     * @return Titlul întâmplării.
+     * @return The title of the happening. Should be concise but descriptive.
      */
     String title();
 
     /**
-     * @return Descrierea detaliată a întâmplării.
+     * @return A detailed textual description of the happening.
      */
     String description();
 
     /**
-     * @return Utilizatorul care a raportat întâmplarea.
+     * @return The authorUsername of the person who reported the happening.
      */
-    User user();
+    String authorUsername();
 
     /**
-     * @return Locația unde s-a produs întâmplarea.
+     * @return The geographical location where the happening occurred.
      */
     Location location();
 
     /**
-     * @return Lista de comentarii asociate întâmplării.
+     * @return A list of user-submitted comments associated with this happening.
      */
     List<Comment> comments();
 
     /**
-     * @return Numărul de aprecieri pozitive.
+     * @return The number of positive reactions (likes) associated with this happening.
      */
     int likes();
 
     /**
-     * @return Numărul de aprecieri negative.
+     * @return The number of negative reactions (dislikes) associated with this happening.
      */
     int dislikes();
 
     /**
-     * Creează o nouă instanță a întâmplării cu un nou număr de like-uri.
+     * Adds a like to the current happening.
      *
-     * @param likes noua valoare a like-urilor
-     * @return instanța actualizată
+     * @return A new instance of the happening with the updated like count.
      */
-    Happening withLikes(int likes);
+    Happening addLike();
 
     /**
-     * Creează o nouă instanță a întâmplării cu un nou număr de dislike-uri.
+     * Removes a like from the current happening.
      *
-     * @param dislikes noua valoare a dislike-urilor
-     * @return instanța actualizată
+     * @return A new instance of the happening with the updated like count.
      */
-    Happening withDislikes(int dislikes);
+    Happening removeLike();
 
     /**
-     * Creează o nouă instanță a întâmplării cu o listă nouă de comentarii.
+     * Adds a dislike to the current happening.
      *
-     * @param comments lista actualizată de comentarii
-     * @return instanța actualizată
+     * @return A new instance of the happening with the updated dislike count.
      */
-    Happening withComments(List<Comment> comments);
+    Happening addDislike();
+
 
     /**
-     * Adaugă un like la întâmplare.
+     * Removes a dislike from the current happening.
      *
-     * @return instanța actualizată cu un like în plus
+     * @return A new instance of the happening with the updated dislike count.
      */
-    default Happening addLike() {
-        return withLikes(likes() + 1);
-    }
+    Happening removeDislike();
 
     /**
-     * Adaugă un dislike la întâmplare.
+     * Adds a user comment to the current happening.
      *
-     * @return instanța actualizată cu un dislike în plus
+     * @param comment The comment to be added.
+     * @return A new instance of the happening with the comment appended.
      */
-    default Happening addDislike() {
-        return withDislikes(dislikes() + 1);
-    }
-
-    /**
-     * Elimină un like de la întâmplare.
-     *
-     * @return instanța actualizată cu un like în minus
-     */
-    default Happening removeLike() {
-        return withLikes(likes() - 1);
-    }
-
-    /**
-     * Elimină un dislike de la întâmplare.
-     *
-     * @return instanța actualizată cu un dislike în minus
-     */
-    default Happening removeDislike() {
-        return withDislikes(dislikes() - 1);
-    }
-
-    /**
-     * Adaugă un comentariu nou la întâmplare.
-     *
-     * @param comment comentariul de adăugat
-     * @return instanța actualizată cu comentariul adăugat
-     */
-    default Happening addComment(Comment comment) {
-        List<Comment> commentsCopy = new ArrayList<>(comments());
-        commentsCopy.add(comment);
-        return withComments(commentsCopy);
-    }
+    Happening addComment(Comment comment);
 }

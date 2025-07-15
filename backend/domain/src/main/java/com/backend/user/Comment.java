@@ -4,40 +4,27 @@ import lombok.Builder;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
- * Reprezintă un comentariu adăugat la un {@code Happening} (Incident sau Event).
- * Fiecare comentariu este legat de un utilizator, un eveniment/incident și conține textul comentariului
- * împreună cu data creării.
- *
- * <p>Validări:</p>
- * <ul>
- *   <li>Textul trebuie să aibă minim 5 caractere și să nu fie gol.</li>
- *   <li>Data creării nu poate fi în viitor.</li>
- * </ul>
- *
- * @param id           ID-ul unic al comentariului.
- * @param happeningId  ID-ul entității (Incident sau Event) la care aparține comentariul.
- * @param user         Utilizatorul care a scris comentariul.
- * @param text         Conținutul comentariului.
- * @param createdAt    Data și ora la care a fost creat comentariul.
+ * Represents a user-generated comment associated with a {@code Happening} (such as an Event or Incident).
+ * Contains the author's username, the comment content, and the timestamp of creation.
  */
 @Builder(toBuilder = true)
 public record Comment(
-        @NonNull UUID id,
-        @NonNull UUID happeningId,
-        @NonNull User user,
+        @NonNull String authorUsername,
         @NonNull String text,
         @NonNull LocalDateTime createdAt
         ) {
 
     /**
-     * Constructor de validare. Asigură consistența datelor la crearea unui comentariu.
+     * Constructs a {@code Comment} instance with input validation.
      *
-     * @throws IllegalArgumentException dacă:
-     *         - textul este gol sau are mai puțin de 5 caractere,
-     *         - data creării este în viitor.
+     * @throws IllegalArgumentException if:
+     * <ul>
+     *   <li>{@code text} is empty or contains only whitespace</li>
+     *   <li>{@code text} is shorter than 5 characters</li>
+     *   <li>{@code createdAt} is in the future</li>
+     * </ul>
      */
     public Comment {
         if (text.trim().isEmpty()) {

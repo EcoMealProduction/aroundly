@@ -2,25 +2,22 @@ package com.backend.happening;
 
 import com.backend.shared.Location;
 import com.backend.user.Comment;
-import com.backend.user.User;
 import lombok.Builder;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * Reprezintă un eveniment publicat de un utilizator.
- * Conține informații despre locație, autor, timp de început/sfârșit și reacții (like/dislike/comentarii).
+ * Represents a public event reported by a user.
+ * Includes core details such as title, description, location, time range, user reactions, and comments.
  */
 @Builder(toBuilder = true)
 public record Event(
-        @NonNull UUID id,
         @NonNull String title,
         @NonNull String description,
-        @NonNull User user,
+        @NonNull String authorUsername,
         @NonNull Location location,
         List<Comment> comments,
         int likes,
@@ -30,7 +27,16 @@ public record Event(
 ) implements Happening{
 
     /**
-     * Constructorul cu validări pentru titlu, descriere, reacții și timp.
+     * Constructs an {@code Event} with validation logic for input values.
+     *
+     * @throws IllegalArgumentException if:
+     * <ul>
+     *   <li>{@code title} is shorter than 10 characters</li>
+     *   <li>{@code description} is shorter than 10 characters</li>
+     *   <li>{@code likes} or {@code dislikes} is negative</li>
+     *   <li>{@code startTime} or {@code endTime} is in the past</li>
+     *   <li>{@code endTime} is less than 30 minutes after {@code startTime}</li>
+     * </ul>
      */
     public Event {
         if (title.length() < 10) {
@@ -45,8 +51,12 @@ public record Event(
             throw new IllegalArgumentException("Likes and dislikes cannot be negative.");
         }
 
-        if (startTime.isBefore(LocalDateTime.now()) || endTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Start and end time cannot be before now.");
+        if (startTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Start time cannot be before now.");
+        }
+
+        if (endTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("End time cannot be before now.");
         }
 
         if (endTime.isBefore(startTime.plusMinutes(30))) {
@@ -58,60 +68,74 @@ public record Event(
     }
 
     /**
-     * Creează o instanță nouă a evenimentului cu un număr actualizat de like-uri.
+     * Increments the like count.
      *
-     * @param likes noul număr de like-uri
-     * @return o copie a evenimentului actualizat
+     * @return a new {@code Event} instance with one more like.
      */
     @Override
-    public Event withLikes(int likes) {
+    public Event addLike() {
         return this.toBuilder()
-                .likes(likes)
+                .likes(likes + 1)
                 .build();
     }
 
     /**
-     * Creează o instanță nouă a evenimentului cu un număr actualizat de dislike-uri.
+     * Increments the dislike count.
      *
-     * @param dislikes noul număr de dislike-uri
-     * @return o copie a evenimentului actualizat
+     * @return a new {@code Event} instance with one more dislike.
      */
     @Override
-    public Event withDislikes(int dislikes) {
+    public Event addDislike() {
         return this.toBuilder()
-                .dislikes(dislikes)
+                .dislikes(dislikes + 1)
                 .build();
     }
 
     /**
-     * Creează o instanță nouă a evenimentului cu lista actualizată de comentarii.
+     * Decrements the like count.
      *
-     * @param comments lista comentariilor noi
-     * @return o copie a evenimentului actualizat
+     * @return a new {@code Event} instance with one less like.
      */
     @Override
-    public Event withComments(List<Comment> comments) {
+    public Event removeLike() {
         return this.toBuilder()
-                .comments(comments)
+                .likes(likes - 1)
                 .build();
     }
 
     /**
-     * Verifică dacă evenimentul este finalizat în raport cu timpul curent.
+     * Decrements the dislike count.
      *
-     * @return true dacă endTime este în trecut
+     * @return a new {@code Event} instance with one less dislike.
+     */
+    @Override
+    public Event removeDislike() {
+        return this.toBuilder()
+                .dislikes(dislikes - 1)
+                .build();
+    }
+
+    /**
+     * Adds a new comment to the event.
+     *
+     * @param comment the {@code Comment} to be added.
+     * @return a new {@code Event} instance with the comment appended.
+     */
+    @Override
+    public Event addComment(Comment comment) {
+        List<Comment> commentsCopy = new ArrayList<>(comments());
+        commentsCopy.add(comment);
+        return toBuilder()
+                .comments(commentsCopy)
+                .build();
+    }
+
+    /**
+     * Checks if the event has ended.
+     *
+     * @return {@code true} if the current time is after the {@code endTime}, {@code false} otherwise.
      */
     public boolean isFinished() {
         return LocalDateTime.now().isAfter(this.endTime);
-    }
-
-    /**
-     * Verifică dacă evenimentul este finalizat în raport cu un timp extern.
-     *
-     * @param now timpul de referință
-     * @return true dacă `now` este după `endTime`
-     */
-    public boolean isFinished(LocalDateTime now) {
-        return now.isAfter(this.endTime);
     }
 }
