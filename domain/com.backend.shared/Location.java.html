@@ -5,39 +5,36 @@ import lombok.NonNull;
 
 import java.math.BigDecimal;
 
-import static com.backend.shared.GeoLimits.*;
-
 /**
- * Reprezintă o locație geografică cu coordonate și adresă textuală.
- * Această entitate este folosită pentru a stoca locațiile incidentelor, evenimentelor sau utilizatorilor.
- * Locațiile sunt validate să se încadreze în granițele geografice ale Republicii Moldova.
- *
- * @param latitude  Latitudinea locației. Trebuie să fie între {@link GeoLimits#MIN_LATITUDE} și {@link GeoLimits#MAX_LATITUDE}.
- * @param longitude Longitudinea locației. Trebuie să fie între {@link GeoLimits#MIN_LONGITUDE} și {@link GeoLimits#MAX_LONGITUDE}.
- * @param address   Adresa completă a locației. Trebuie să conțină cel puțin 10 caractere.
+ * Represents a geographical location with latitude, longitude, and an optional textual address.
+ * Used to describe the physical position of events, incidents, or users.
  */
-<span class="pc bpc" id="L19" title="3 of 6 branches missed.">@Builder(toBuilder = true)</span>
+<span class="pc bpc" id="L12" title="2 of 4 branches missed.">@Builder(toBuilder = true)</span>
 public record Location(
-<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        @NonNull BigDecimal latitude,</span>
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        @NonNull BigDecimal longitude,</span>
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        @NonNull String address</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">        @NonNull BigDecimal latitude,</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        @NonNull BigDecimal longitude,</span>
+        String address
 ) {
 
     /**
-     * Constructor de validare a valorilor geografice.
-     * Aruncă excepții dacă datele nu respectă limitele geografice sau formatul minim al adresei.
+     * Constructs a {@code Location} instance with validation.
+     *
+     * @throws IllegalArgumentException if:
+     *   @param latitude is not within the geographic bounds of Moldova (45.467 to 48.491)
+     *   @param longitude is not within the geographic bounds of Moldova (26.616 to 30.133)
+     *   @param address is non-null and shorter than 10 characters
      */
-<span class="fc" id="L30">    public Location {</span>
-<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (latitude.compareTo(MIN_LATITUDE) &lt; 0 ||</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">                latitude.compareTo(MAX_LATITUDE) &gt; 0)</span>
-<span class="fc" id="L33">            throw new IllegalArgumentException(&quot;Latitude must be within Moldova.&quot;);</span>
+<span class="fc" id="L27">    public Location {</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (latitude.compareTo(BigDecimal.valueOf(45.467)) &lt; 0 ||</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">                latitude.compareTo(BigDecimal.valueOf(48.491)) &gt; 0)</span>
+<span class="fc" id="L30">            throw new IllegalArgumentException(&quot;Latitude must be within Moldova.&quot;);</span>
 
-<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (longitude.compareTo(MIN_LONGITUDE) &lt; 0 ||</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">                longitude.compareTo(MAX_LONGITUDE) &gt; 0)</span>
-<span class="fc" id="L37">            throw new IllegalArgumentException(&quot;Longitude must be within Moldova.&quot;);</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (longitude.compareTo(BigDecimal.valueOf(26.616)) &lt; 0 ||</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                longitude.compareTo(BigDecimal.valueOf(30.133)) &gt; 0)</span>
+<span class="fc" id="L34">            throw new IllegalArgumentException(&quot;Longitude must be within Moldova.&quot;);</span>
 
-<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (address.length() &lt; 10)</span>
-<span class="fc" id="L40">            throw new IllegalArgumentException(&quot;Address must have at least 10 characters.&quot;);</span>
-<span class="fc" id="L41">    }</span>
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        if (address != null &amp;&amp; address.length() &lt; 10)</span>
+<span class="fc" id="L37">            throw new IllegalArgumentException(&quot;Address must have at least 10 characters.&quot;);</span>
+<span class="fc" id="L38">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

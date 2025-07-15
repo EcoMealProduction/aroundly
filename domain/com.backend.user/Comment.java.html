@@ -4,53 +4,34 @@ import lombok.Builder;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
- * Reprezintă un comentariu adăugat la un {@code Happening} (Incident sau Event).
- * Fiecare comentariu este legat de un utilizator, un eveniment/incident și conține textul comentariului
- * împreună cu data creării.
- *
- * &lt;p&gt;Validări:&lt;/p&gt;
- * &lt;ul&gt;
- *   &lt;li&gt;Textul trebuie să aibă minim 5 caractere și să nu fie gol.&lt;/li&gt;
- *   &lt;li&gt;Data creării nu poate fi în viitor.&lt;/li&gt;
- * &lt;/ul&gt;
- *
- * @param id           ID-ul unic al comentariului.
- * @param happeningId  ID-ul entității (Incident sau Event) la care aparține comentariul.
- * @param user         Utilizatorul care a scris comentariul.
- * @param text         Conținutul comentariului.
- * @param createdAt    Data și ora la care a fost creat comentariul.
+ * Represents a user-generated comment associated with a {@code Happening} (such as an Event or Incident).
+ * Contains the author's username, the comment content, and the timestamp of creation.
  */
-<span class="pc bpc" id="L26" title="5 of 10 branches missed.">@Builder(toBuilder = true)</span>
+<span class="pc bpc" id="L12" title="3 of 6 branches missed.">@Builder(toBuilder = true)</span>
 public record Comment(
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        @NonNull UUID id,</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        @NonNull UUID happeningId,</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        @NonNull User user,</span>
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        @NonNull String text,</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        @NonNull LocalDateTime createdAt</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">        @NonNull String authorUsername,</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        @NonNull String text,</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        @NonNull LocalDateTime createdAt</span>
         ) {
 
     /**
-     * Constructor de validare. Asigură consistența datelor la crearea unui comentariu.
+     * Constructs a {@code Comment} instance with input validation.
      *
-     * @throws IllegalArgumentException dacă:
-     *         - textul este gol sau are mai puțin de 5 caractere,
-     *         - data creării este în viitor.
+     *   @throws IllegalArgumentException if:
+     *   @param text is empty or contains only whitespace&lt; ; is shorter than 5 characters
+     *   @param createdAt is in the future
      */
-<span class="fc" id="L42">    public Comment {</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (text.trim().isEmpty()) {</span>
-<span class="fc" id="L44">            throw new IllegalArgumentException(&quot;Text cannot be empty or only spaces.&quot;);</span>
-        }
+<span class="fc" id="L26">    public Comment {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (text.trim().isEmpty())</span>
+<span class="fc" id="L28">            throw new IllegalArgumentException(&quot;Text cannot be empty or only spaces.&quot;);</span>
 
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (text.length() &lt; 5) {</span>
-<span class="fc" id="L48">            throw new IllegalArgumentException(&quot;Text must have at least 5 characters.&quot;);</span>
-        }
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (text.length() &lt; 5)</span>
+<span class="fc" id="L31">            throw new IllegalArgumentException(&quot;Text must have at least 5 characters.&quot;);</span>
 
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (createdAt.isAfter(LocalDateTime.now())) {</span>
-<span class="fc" id="L52">            throw new IllegalArgumentException(&quot;Comment date cannot be in the future.&quot;);</span>
-        }
-<span class="fc" id="L54">    }</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (createdAt.isAfter(LocalDateTime.now()))</span>
+<span class="fc" id="L34">            throw new IllegalArgumentException(&quot;Comment date cannot be in the future.&quot;);</span>
+<span class="fc" id="L35">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
