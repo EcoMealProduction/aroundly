@@ -1,6 +1,8 @@
 package com.backend.happening;
 
-import com.backend.shared.Location;
+import com.backend.happening.metadata.IncidentMetadata;
+import com.backend.happening.metadata.Metadata;
+import com.backend.shared.SentimentEngagement;
 import com.backend.user.Comment;
 import lombok.Builder;
 import lombok.NonNull;
@@ -13,21 +15,13 @@ import java.util.List;
  * Represents a user-reported incident (e.g., traffic, danger, or other local issues).
  * Contains information about the incident's details, location, timing, and public feedback such as likes, dislikes, and comments.
  */
-@Builder(toBuilder = true)
 public record Incident(
         @NonNull String title,
         @NonNull String description,
-        @NonNull String authorUsername,
-        @NonNull Location location,
-        LocalDateTime createdAt,
-        LocalDateTime expirationTime,
         List<Comment> comments,
-        int likes,
-        int dislikes,
-        int confirms,
-        int denies,
-        int consecutiveDenies
-) implements Happening{
+        IncidentMetadata metadata,
+        SentimentEngagement sentimentEngagement,
+        IncidentEngagementStats incidentEngagementStats) implements Happening {
 
     /**
      * Constructs an {@code Incident} instance with input validation.
@@ -35,8 +29,6 @@ public record Incident(
      * @throws IllegalArgumentException if:
      *   @param title is shorter than 10 characters
      *   @param description is shorter than 20 characters
-     *   Any reaction count is negative
-     *   @param expirationTime is before @param createdAt or before current time
      */
     public Incident {
         if (title.length() < 10)
@@ -45,22 +37,72 @@ public record Incident(
         if (description.length() < 20)
             throw new IllegalArgumentException("Description too short.");
 
-        if (likes < 0 || dislikes < 0 || confirms < 0 || denies < 0 || consecutiveDenies < 0)
-            throw new IllegalArgumentException("Negative values not allowed.");
-
-        if (createdAt == null)
-            createdAt = LocalDateTime.now();
-
-        if (expirationTime == null)
-            expirationTime = createdAt.plusMinutes(30);
-
-        if (expirationTime.isBefore(createdAt))
-            throw new IllegalArgumentException("Expiration time cannot be before createdAt.");
-
-        if (expirationTime.isBefore(LocalDateTime.now()))
-            throw new IllegalArgumentException("Expiration time cannot be before now.");
-
         comments = comments == null ? List.of() : new ArrayList<>(comments);
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+                .title(title)
+                .description(description)
+                .comments(comments)
+                .metadata(metadata)
+                .sentimentEngagement(sentimentEngagement)
+                .incidentEngagementStats(incidentEngagementStats);
+    }
+
+    public static class Builder extends Happening.Builder<Builder> {
+        protected IncidentEngagementStats incidentEngagementStats;
+
+        @Override
+        Builder self() {
+            return (Builder) this;
+        }
+
+        @Override
+        public Builder title(String aTitle) {
+            this.title = aTitle;
+            return self();
+        }
+
+        @Override
+        public Builder description(String aDescription) {
+            this.description = aDescription;
+            return self();
+        }
+
+        @Override
+        public Builder comments(List<Comment> aComments) {
+            this.comments = aComments;
+            return self();
+        }
+
+        public Builder metadata(IncidentMetadata aIncidentMetadata) {
+            this.metadata = aIncidentMetadata;
+            return self();
+        }
+
+        @Override
+        public Builder sentimentEngagement(SentimentEngagement aSentimentEngagement) {
+            this.sentimentEngagement = aSentimentEngagement;
+            return self();
+        }
+
+        public Builder incidentEngagementStats(IncidentEngagementStats aIncidentEngagementStats) {
+            this.incidentEngagementStats = aIncidentEngagementStats;
+            return self();
+        }
+
+        @Override
+        public Incident build() {
+            return new Incident(
+                    title,
+                    description,
+                    comments,
+                    (IncidentMetadata) metadata,
+                    sentimentEngagement,
+                    incidentEngagementStats);
+        }
     }
 
     /**
@@ -70,7 +112,7 @@ public record Incident(
      * @return {@code true} if the incident should be removed.
      */
     public boolean isDeleted() {
-            return consecutiveDenies >=3 || isExpired();
+            return this.incidentEngagementStats().consecutiveDenies() >=3 || isExpired();
     }
 
     /**
@@ -80,11 +122,19 @@ public record Incident(
      *
      * @return A new {@code Incident} instance with updated state.
      */
-    public Incident addConfirm() {
-        return this.toBuilder()
-                .confirms(confirms + 1)
-                .expirationTime(expirationTime.plusMinutes(5))
+    public Incident confirmIncident() {
+        final IncidentMetadata increasedExpirationTime = metadata.toBuilder()
+                .expirationTime(metadata.expirationTime().plusMinutes(5))
+                .build();
+
+        final IncidentEngagementStats updatedEngagementStats = incidentEngagementStats.toBuilder()
+                .confirms(incidentEngagementStats().confirms() + 1)
                 .consecutiveDenies(0)
+                .build();
+
+        return this.toBuilder()
+                .incidentEngagementStats(updatedEngagementStats)
+                .metadata(increasedExpirationTime)
                 .build();
     }
 
@@ -94,10 +144,14 @@ public record Incident(
      *
      * @return A new {@code Incident} instance with updated denial counts.
      */
-    public Incident addDeny() {
+    public Incident denyIncident() {
+        final IncidentEngagementStats updatedEngagementStats = incidentEngagementStats.toBuilder()
+                .denies(incidentEngagementStats().denies() + 1)
+                .consecutiveDenies(incidentEngagementStats.consecutiveDenies() + 1)
+                .build();
+
         return this.toBuilder()
-                .denies(denies + 1)
-                .consecutiveDenies(consecutiveDenies + 1)
+                .incidentEngagementStats(updatedEngagementStats)
                 .build();
     }
 
@@ -107,55 +161,7 @@ public record Incident(
      * @return {@code true} if the expiration time is in the past.
      */
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expirationTime);
-    }
-
-    /**
-     * Increments the like counter.
-     *
-     * @return A new {@code Incident} instance with one additional like.
-     */
-    @Override
-    public Incident addLike() {
-        return toBuilder()
-                .likes(likes + 1)
-                .build();
-    }
-
-    /**
-     * Decrements the like counter.
-     *
-     * @return A new {@code Incident} instance with one less like.
-     */
-    @Override
-    public Incident removeLike() {
-        return toBuilder()
-                .likes(likes - 1)
-                .build();
-    }
-
-    /**
-     * Increments the dislike counter.
-     *
-     * @return A new {@code Incident} instance with one additional dislike.
-     */
-    @Override
-    public Incident addDislike() {
-        return toBuilder()
-                .dislikes(dislikes + 1)
-                .build();
-    }
-
-    /**
-     * Decrements the dislike counter.
-     *
-     * @return A new {@code Incident} instance with one less dislike.
-     */
-    @Override
-    public Incident removeDislike() {
-        return toBuilder()
-                .dislikes(dislikes - 1)
-                .build();
+        return LocalDateTime.now().isAfter(metadata.expirationTime());
     }
 
     /**
@@ -173,4 +179,5 @@ public record Incident(
                 .comments(commentsCopy)
                 .build();
     }
+
 }

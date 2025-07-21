@@ -1,6 +1,7 @@
 package com.backend.happening;
 
-import com.backend.shared.Location;
+import com.backend.happening.metadata.Metadata;
+import com.backend.shared.SentimentEngagement;
 import com.backend.user.Comment;
 
 import java.util.List;
@@ -22,58 +23,19 @@ public interface Happening {
     String description();
 
     /**
-     * @return The authorUsername of the person who reported the happening.
-     */
-    String authorUsername();
-
-    /**
-     * @return The geographical location where the happening occurred.
-     */
-    Location location();
-
-    /**
      * @return A list of user-submitted comments associated with this happening.
      */
     List<Comment> comments();
 
     /**
+     * @return An Object of metadata associated with this happening.
+     */
+    Metadata metadata();
+
+    /**
      * @return The number of positive reactions (likes) associated with this happening.
      */
-    int likes();
-
-    /**
-     * @return The number of negative reactions (dislikes) associated with this happening.
-     */
-    int dislikes();
-
-    /**
-     * Adds a like to the current happening.
-     *
-     * @return A new instance of the happening with the updated like count.
-     */
-    Happening addLike();
-
-    /**
-     * Removes a like from the current happening.
-     *
-     * @return A new instance of the happening with the updated like count.
-     */
-    Happening removeLike();
-
-    /**
-     * Adds a dislike to the current happening.
-     *
-     * @return A new instance of the happening with the updated dislike count.
-     */
-    Happening addDislike();
-
-
-    /**
-     * Removes a dislike from the current happening.
-     *
-     * @return A new instance of the happening with the updated dislike count.
-     */
-    Happening removeDislike();
+    SentimentEngagement sentimentEngagement();
 
     /**
      * Adds a user comment to the current happening.
@@ -82,4 +44,47 @@ public interface Happening {
      * @return A new instance of the happening with the comment appended.
      */
     Happening addComment(Comment comment);
+
+    /**
+     * Creates a builder that is pre-populated with the current object's field value.
+     */
+    Builder<?> toBuilder();
+
+    public abstract static class Builder<T extends Builder<T>> {
+
+        protected String title;
+        protected String description;
+        protected List<Comment> comments;
+        protected Metadata metadata;
+        protected SentimentEngagement sentimentEngagement;
+
+        abstract T self();
+
+        public T title(String aTitle) {
+            this.title = aTitle;
+            return self();
+        }
+
+        public T description(String aDescription) {
+            this.description = aDescription;
+            return self();
+        }
+
+        public T comments(List<Comment> aComments) {
+            this.comments = aComments;
+            return self();
+        }
+
+        public T metadata(Metadata aMetadata) {
+            this.metadata = aMetadata;
+            return self();
+        }
+
+        public T sentimentEngagement(SentimentEngagement aSentimentEngagement) {
+            this.sentimentEngagement = aSentimentEngagement;
+            return self();
+        }
+
+        public abstract Happening build();
+    }
 }
