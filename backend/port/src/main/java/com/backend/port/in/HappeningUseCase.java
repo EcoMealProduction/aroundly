@@ -11,12 +11,6 @@ import java.util.Optional;
  * creation, modification, reactions, visibility, extension, and deletion.
  */
 public interface HappeningUseCase {
-    /**
-     * Retrieves all happenings.
-     *
-     * @return A list of all happenings in the system.
-     */
-    List<Happening> findAll();
 
     /**
      * Retrieves all happenings in given range.
@@ -31,7 +25,7 @@ public interface HappeningUseCase {
      * @param happeningId The id of the happening to retrieve.
      * @return The found happening, or null if not found.
      */
-    Optional<Happening> findById(long happeningId);
+    Happening findById(long happeningId);
 
     /**
      * Creates a new happening (event or incident).
