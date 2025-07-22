@@ -10,7 +10,7 @@ import java.util.List;
  * Represents a generic reported occurrence within the application (e.g., an {@link Incident} or an {@link Event}).
  * This abstraction defines the common structure and behaviors for all reportable happenings in the system.
  */
-public sealed interface Happening permits Event, Incident {
+public interface Happening {
 
     /**
      * @return The title of the happening. Should be concise but descriptive.
@@ -50,13 +50,7 @@ public sealed interface Happening permits Event, Incident {
      */
     Builder&lt;?&gt; toBuilder();
 
-    /**
-     * Abstract builder class for constructing immutable {@link Happening} instances.
-     * Utilizes a self-referential generic type to support fluent method chaining in subclasses.
-     *
-     * @param &lt;T&gt; The type of the builder itself.
-     */
-<span class="fc" id="L59">    public abstract static class Builder&lt;T extends Builder&lt;T&gt;&gt; {</span>
+<span class="fc" id="L53">    public abstract static class Builder&lt;T extends Builder&lt;T&gt;&gt; {</span>
 
         protected String title;
         protected String description;
@@ -64,75 +58,33 @@ public sealed interface Happening permits Event, Incident {
         protected Metadata metadata;
         protected SentimentEngagement sentimentEngagement;
 
-        /**
-         * Should be implemented by subclasses to return 'this' correctly typed.
-         * Enables fluent-style method chaining.
-         *
-         * @return The current builder instance.
-         */
         abstract T self();
 
-        /**
-         * Sets the title field.
-         *
-         * @param aTitle The title of the happening.
-         * @return The current builder instance.
-         */
         public T title(String aTitle) {
-<span class="nc" id="L82">            this.title = aTitle;</span>
-<span class="nc" id="L83">            return self();</span>
+<span class="nc" id="L64">            this.title = aTitle;</span>
+<span class="nc" id="L65">            return self();</span>
         }
 
-        /**
-         * Sets the description field.
-         *
-         * @param aDescription The detailed description.
-         * @return The current builder instance.
-         */
         public T description(String aDescription) {
-<span class="nc" id="L93">            this.description = aDescription;</span>
-<span class="nc" id="L94">            return self();</span>
+<span class="nc" id="L69">            this.description = aDescription;</span>
+<span class="nc" id="L70">            return self();</span>
         }
 
-        /**
-         * Sets the comments list.
-         *
-         * @param aComments The list of user comments.
-         * @return The current builder instance.
-         */
         public T comments(List&lt;Comment&gt; aComments) {
-<span class="nc" id="L104">            this.comments = aComments;</span>
-<span class="nc" id="L105">            return self();</span>
+<span class="nc" id="L74">            this.comments = aComments;</span>
+<span class="nc" id="L75">            return self();</span>
         }
 
-        /**
-         * Sets the metadata.
-         *
-         * @param aMetadata Additional information related to the happening.
-         * @return The current builder instance.
-         */
         public T metadata(Metadata aMetadata) {
-<span class="nc" id="L115">            this.metadata = aMetadata;</span>
-<span class="nc" id="L116">            return self();</span>
+<span class="nc" id="L79">            this.metadata = aMetadata;</span>
+<span class="nc" id="L80">            return self();</span>
         }
 
-        /**
-         * Sets the sentiment engagement.
-         *
-         * @param aSentimentEngagement User engagement metrics.
-         * @return The current builder instance.
-         */
         public T sentimentEngagement(SentimentEngagement aSentimentEngagement) {
-<span class="nc" id="L126">            this.sentimentEngagement = aSentimentEngagement;</span>
-<span class="nc" id="L127">            return self();</span>
+<span class="nc" id="L84">            this.sentimentEngagement = aSentimentEngagement;</span>
+<span class="nc" id="L85">            return self();</span>
         }
 
-        /**
-         * Builds the final immutable {@link Happening} object.
-         * Subclasses must implement the build logic.
-         *
-         * @return A fully constructed Happening instance.
-         */
         public abstract Happening build();
     }
 }

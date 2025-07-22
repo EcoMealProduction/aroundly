@@ -36,106 +36,54 @@ public record Event(
 <span class="pc bpc" id="L36" title="1 of 2 branches missed.">        comments = comments == null ? List.of() : new ArrayList&lt;&gt;(comments);</span>
 <span class="fc" id="L37">    }</span>
 
-    /**
-     * Creates a builder initialized with this {@code Event}'s data.
-     * Useful for creating modified copies.
-     *
-     * @return A new {@code Builder} instance with pre-filled values.
-     */
     @Override
     public Builder toBuilder() {
-<span class="fc" id="L47">        return new Builder()</span>
-<span class="fc" id="L48">                .title(title)</span>
-<span class="fc" id="L49">                .description(description)</span>
-<span class="fc" id="L50">                .comments(comments)</span>
-<span class="fc" id="L51">                .metadata(metadata)</span>
-<span class="fc" id="L52">                .sentimentEngagement(sentimentEngagement);</span>
+<span class="fc" id="L41">        return new Builder()</span>
+<span class="fc" id="L42">                .title(title)</span>
+<span class="fc" id="L43">                .description(description)</span>
+<span class="fc" id="L44">                .comments(comments)</span>
+<span class="fc" id="L45">                .metadata(metadata)</span>
+<span class="fc" id="L46">                .sentimentEngagement(sentimentEngagement);</span>
     }
 
-    /**
-     * Builder class for constructing {@link Event} instances.
-     * Inherits common fields and methods from {@link Happening.Builder}.
-     */
-<span class="fc" id="L59">    public static class Builder extends Happening.Builder&lt;Builder&gt; {</span>
-
-        /**
-         * Returns the current builder instance.
-         * Required for fluent API and proper type inference.
-         *
-         * @return this builder.
-         */
+<span class="fc" id="L49">    public static class Builder extends Happening.Builder&lt;Builder&gt; {</span>
         @Override
         Builder self() {
-<span class="fc" id="L69">            return (Builder) this;</span>
+<span class="fc" id="L52">            return (Builder) this;</span>
         }
 
-        /**
-         * Sets the event title.
-         *
-         * @param aTitle the title to set.
-         * @return this builder.
-         */
         @Override
         public Builder title(String aTitle) {
-<span class="fc" id="L80">            this.title = aTitle;</span>
+<span class="fc" id="L57">            this.title = aTitle;</span>
+<span class="fc" id="L58">            return self();</span>
+        }
+
+        @Override
+        public Builder description(String aDescription) {
+<span class="fc" id="L63">            this.description = aDescription;</span>
+<span class="fc" id="L64">            return self();</span>
+        }
+
+        @Override
+        public Builder comments(List&lt;Comment&gt; aComments) {
+<span class="fc" id="L69">            this.comments = aComments;</span>
+<span class="fc" id="L70">            return self();</span>
+        }
+
+        public Builder metadata(EventMetadata aEventMetadata) {
+<span class="fc" id="L74">            this.metadata = aEventMetadata;</span>
+<span class="fc" id="L75">            return self();</span>
+        }
+
+        @Override
+        public Builder sentimentEngagement(SentimentEngagement aSentimentEngagement) {
+<span class="fc" id="L80">            this.sentimentEngagement = aSentimentEngagement;</span>
 <span class="fc" id="L81">            return self();</span>
         }
 
-        /**
-         * Sets the event description.
-         *
-         * @param aDescription the description to set.
-         * @return this builder.
-         */
-        @Override
-        public Builder description(String aDescription) {
-<span class="fc" id="L92">            this.description = aDescription;</span>
-<span class="fc" id="L93">            return self();</span>
-        }
-
-        /**
-         * Sets the event comments.
-         *
-         * @param aComments the list of comments to set.
-         * @return this builder.
-         */
-        @Override
-        public Builder comments(List&lt;Comment&gt; aComments) {
-<span class="fc" id="L104">            this.comments = aComments;</span>
-<span class="fc" id="L105">            return self();</span>
-        }
-
-        /**
-         * Sets the metadata specific to this {@code Event}.
-         *
-         * @param aEventMetadata the metadata to set.
-         * @return this builder.
-         */
-        public Builder metadata(EventMetadata aEventMetadata) {
-<span class="fc" id="L115">            this.metadata = aEventMetadata;</span>
-<span class="fc" id="L116">            return self();</span>
-        }
-
-        /**
-         * Sets sentiment engagement information.
-         *
-         * @param aSentimentEngagement the sentiment engagement to set.
-         * @return this builder.
-         */
-        @Override
-        public Builder sentimentEngagement(SentimentEngagement aSentimentEngagement) {
-<span class="fc" id="L127">            this.sentimentEngagement = aSentimentEngagement;</span>
-<span class="fc" id="L128">            return self();</span>
-        }
-
-        /**
-         * Constructs a new {@link Event} using the current builder state.
-         *
-         * @return a new {@code Event} instance.
-         */
         @Override
         public Event build() {
-<span class="fc" id="L138">            return new Event(</span>
+<span class="fc" id="L86">            return new Event(</span>
                     title,
                     description,
                     comments,
@@ -152,11 +100,11 @@ public record Event(
      */
     @Override
     public Event addComment(Comment comment) {
-<span class="fc" id="L155">        List&lt;Comment&gt; commentsCopy = new ArrayList&lt;&gt;(comments());</span>
-<span class="fc" id="L156">        commentsCopy.add(comment);</span>
-<span class="fc" id="L157">        return toBuilder()</span>
-<span class="fc" id="L158">                .comments(commentsCopy)</span>
-<span class="fc" id="L159">                .build();</span>
+<span class="fc" id="L103">        List&lt;Comment&gt; commentsCopy = new ArrayList&lt;&gt;(comments());</span>
+<span class="fc" id="L104">        commentsCopy.add(comment);</span>
+<span class="fc" id="L105">        return toBuilder()</span>
+<span class="fc" id="L106">                .comments(commentsCopy)</span>
+<span class="fc" id="L107">                .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
