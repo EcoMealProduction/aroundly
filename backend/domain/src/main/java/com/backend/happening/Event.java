@@ -1,11 +1,10 @@
 package com.backend.happening;
 
-import com.backend.shared.Location;
+import com.backend.happening.metadata.EventMetadata;
+import com.backend.shared.SentimentEngagement;
 import com.backend.user.Comment;
-import lombok.Builder;
 import lombok.NonNull;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,18 +12,12 @@ import java.util.List;
  * Represents a public event reported by a user.
  * Includes core details such as title, description, location, time range, user reactions, and comments.
  */
-@Builder(toBuilder = true)
 public record Event(
         @NonNull String title,
         @NonNull String description,
-        @NonNull String authorUsername,
-        @NonNull Location location,
         List<Comment> comments,
-        int likes,
-        int dislikes,
-        @NonNull LocalDateTime startTime,
-        @NonNull LocalDateTime endTime
-) implements Happening{
+        SentimentEngagement sentimentEngagement,
+        EventMetadata metadata) implements Happening {
 
     /**
      * Constructs an {@code Event} with validation logic for input values.
@@ -32,9 +25,6 @@ public record Event(
      * @throws IllegalArgumentException if:
      *   @param title is shorter than 10 characters
      *   @param description is shorter than 10 characters
-     *   @param likes or {@code dislikes} is negative
-     *   @param startTime or {@code endTime} is in the past
-     *   @param endTime is less than 30 minutes after {@code startTime}
      */
     public Event {
         if (title.length() < 10)
@@ -43,67 +33,63 @@ public record Event(
         if (description.length() < 10)
             throw new IllegalArgumentException("Description too short.");
 
-        if (likes < 0 || dislikes < 0)
-            throw new IllegalArgumentException("Likes and dislikes cannot be negative.");
-
-        if (startTime.isBefore(LocalDateTime.now()))
-            throw new IllegalArgumentException("Start time cannot be before now.");
-
-        if (endTime.isBefore(LocalDateTime.now()))
-            throw new IllegalArgumentException("End time cannot be before now.");
-
-        if (endTime.isBefore(startTime.plusMinutes(30)))
-            throw new IllegalArgumentException("Event duration must be at least 30 minutes.");
-
         comments = comments == null ? List.of() : new ArrayList<>(comments);
     }
 
-    /**
-     * Increments the like count.
-     *
-     * @return a new {@code Event} instance with one more like.
-     */
     @Override
-    public Event addLike() {
-        return toBuilder()
-                .likes(likes + 1)
-                .build();
+    public Builder toBuilder() {
+        return new Builder()
+                .title(title)
+                .description(description)
+                .comments(comments)
+                .metadata(metadata)
+                .sentimentEngagement(sentimentEngagement);
     }
 
-    /**
-     * Increments the dislike count.
-     *
-     * @return a new {@code Event} instance with one more dislike.
-     */
-    @Override
-    public Event addDislike() {
-        return toBuilder()
-                .dislikes(dislikes + 1)
-                .build();
-    }
+    public static class Builder extends Happening.Builder<Builder> {
+        @Override
+        Builder self() {
+            return (Builder) this;
+        }
 
-    /**
-     * Decrements the like count.
-     *
-     * @return a new {@code Event} instance with one less like.
-     */
-    @Override
-    public Event removeLike() {
-        return toBuilder()
-                .likes(likes - 1)
-                .build();
-    }
+        @Override
+        public Builder title(String aTitle) {
+            this.title = aTitle;
+            return self();
+        }
 
-    /**
-     * Decrements the dislike count.
-     *
-     * @return a new {@code Event} instance with one less dislike.
-     */
-    @Override
-    public Event removeDislike() {
-        return toBuilder()
-                .dislikes(dislikes - 1)
-                .build();
+        @Override
+        public Builder description(String aDescription) {
+            this.description = aDescription;
+            return self();
+        }
+
+        @Override
+        public Builder comments(List<Comment> aComments) {
+            this.comments = aComments;
+            return self();
+        }
+
+        public Builder metadata(EventMetadata aEventMetadata) {
+            this.metadata = aEventMetadata;
+            return self();
+        }
+
+        @Override
+        public Builder sentimentEngagement(SentimentEngagement aSentimentEngagement) {
+            this.sentimentEngagement = aSentimentEngagement;
+            return self();
+        }
+
+        @Override
+        public Event build() {
+            return new Event(
+                    title,
+                    description,
+                    comments,
+                    sentimentEngagement,
+                    (EventMetadata) metadata);
+        }
     }
 
     /**
@@ -119,14 +105,5 @@ public record Event(
         return toBuilder()
                 .comments(commentsCopy)
                 .build();
-    }
-
-    /**
-     * Checks if the event has ended.
-     *
-     * @return {@code true} if the current time is after the {@code endTime}, {@code false} otherwise.
-     */
-    public boolean isFinished() {
-        return LocalDateTime.now().isAfter(this.endTime);
     }
 }

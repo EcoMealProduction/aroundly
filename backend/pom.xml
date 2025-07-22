@@ -26,6 +26,8 @@
         <module>domain</module>
         <module>code-coverage</module>
         <module>port</module>
+        <module>application</module>
+        <module>adapter</module>
     </modules>
 
     <dependencies>
