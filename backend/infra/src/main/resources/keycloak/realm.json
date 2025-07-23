@@ -1,28 +1,36 @@
 {
   "realm": "ecomeal",
   "enabled": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "verifyEmail": true,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+
   "passwordPolicy": "length(8) and digits(1) and upperCase(1) and specialChars(1) and notUsername()",
   "displayName": "ecomeal realm",
   "clients": [
     {
-      "clientId": "city-safe",
+      "clientId": "looma",
       "protocol": "openid-connect",
       "publicClient": false,
-      "secret": "city-safe-secret",
+      "secret": "looma-secret",
       "redirectUris": [
         "http://localhost:8100/api/maps/**",
         "http://localhost:8100/api/feed/**"],
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
-      "standardFlowEnabled": true
+      "standardFlowEnabled": true,
+      "roles": [
+        {
+          "name": "user",
+          "description": "default user of the application"
+        },
+        {
+          "admin": "admin",
+          "description": "the messiah, the Jesus Christ of looma. God itself!"
+        }
+      ]
     }
-  ],
-
-  "roles": {
-    "realm": [
-      {
-        "name": "USER"
-      }
-    ]
-  }
+  ]
 }
