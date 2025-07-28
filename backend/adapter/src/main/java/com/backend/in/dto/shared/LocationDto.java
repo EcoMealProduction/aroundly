@@ -9,5 +9,5 @@ import java.math.BigDecimal;
 public record LocationDto(
         @NonNull BigDecimal latitude,
         @NonNull BigDecimal longitude,
-        @NonNull String address
+        String address
         ) {}

@@ -6,8 +6,9 @@ import lombok.NonNull;
 import java.time.LocalDateTime;
 
 @Builder(toBuilder = true)
-public record CommentDto(
+public record IncidentMetadataDto(
         @NonNull String authorUsername,
-        @NonNull String text,
-        @NonNull LocalDateTime createdAt
+        @NonNull LocationDto location,
+        @NonNull LocalDateTime createdAt,
+        @NonNull LocalDateTime expirationTime
 ) {}
