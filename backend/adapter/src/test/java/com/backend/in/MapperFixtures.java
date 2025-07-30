@@ -1,4 +1,4 @@
-package com.backend;
+package com.backend.in;
 
 import com.backend.happening.Event;
 import com.backend.happening.Incident;
@@ -85,14 +85,14 @@ public class MapperFixtures {
             .build();
 
     // FIX: Adaugă sentimentEngagement la event
-    public static final Event event = new Event.Builder()
+    public static final Event domainEvent = new Event.Builder()
             .title(eventRequestDto.title())
             .description(eventRequestDto.description())
             .metadata(eventMetadata)
             .build();
 
     // FIX: Adaugă sentimentEngagement la incident
-    public static final Incident incident = new Incident.Builder()
+    public static final Incident domainIncident = new Incident.Builder()
             .title(incidentRequestDto.title())
             .description(incidentRequestDto.description())
             .metadata(incidentMetadata)
@@ -100,15 +100,15 @@ public class MapperFixtures {
             .build();
 
     public static final EventResponseDto eventResponseDto = EventResponseDto.builder()
-            .title(event.title())
-            .description(event.description())
+            .title(domainEvent.title())
+            .description(domainEvent.description())
             .eventMetadata(eventMetadataDto)
             .comments(List.of())
             .build();
 
     public static final IncidentResponseDto incidentResponseDto = IncidentResponseDto.builder()
-            .title(incident.title())
-            .description(incident.description())
+            .title(domainIncident.title())
+            .description(domainIncident.description())
             .incidentMetadata(incidentMetadataDto)
             .comments(List.of())
             .engagementStats(statsDto)

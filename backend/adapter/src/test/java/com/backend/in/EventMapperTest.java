@@ -1,9 +1,8 @@
 package com.backend.in;
 
-
-import com.backend.MapperFixtures;
 import com.backend.happening.Event;
 import com.backend.in.dto.request.EventRequestDto;
+import com.backend.in.dto.response.EventResponseDto;
 import com.backend.in.mapper.EventMapper;
 import com.backend.in.mapper.EventMapperImpl;
 import com.backend.in.mapper.EventMetadataMapperImpl;
@@ -15,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
+import static com.backend.in.MapperFixtures.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -29,9 +29,9 @@ public class EventMapperTest {
     private EventMapper eventMapper;
 
     @Test
-    void testEventRequestDtoToEvent_BasicMapping() {
-        EventRequestDto dto = MapperFixtures.eventRequestDto;
-        Event event = eventMapper.eventRequestDtoToEvent(dto);
+    void testEventRequestDtoToEvent() {
+        EventRequestDto dto = eventRequestDto;
+        Event event = eventMapper.toEvent(dto);
 
         assertEquals(dto.title(), event.title());
         assertEquals(dto.description(), event.description());
@@ -49,27 +49,24 @@ public class EventMapperTest {
         assertTrue(event.comments().isEmpty());
     }
 
+    @Test
+    void testEventToEventResponseDto() {
+        Event event = domainEvent;
+        EventResponseDto dto = eventMapper.toResponseDto(event);
 
-    //Testul esueaza si de 2 zile incerc sa rezolv nimic nu o iesit eu deja nu mia am idei.
-    //Daca faci debuging acolo el hz de ce transmite nulll la metadata hatea
-//    @Test
-//    void testEventToEventResponseDto_BasicMapping() {
-//        Event event = MapperFixtures.event;
-//        EventResponseDto dto = eventMapper.eventToEventResponseDto(event);
-//
-//        assertEquals(event.title(), dto.title());
-//        assertEquals(event.description(), dto.description());
-//
-//        assertNotNull(dto.eventMetadata());
-//        assertEquals(event.metadata().authorUsername(), dto.eventMetadata().authorUsername());
-//        assertEquals(event.metadata().startTime(), dto.eventMetadata().startTime());
-//        assertEquals(event.metadata().endTime(), dto.eventMetadata().endTime());
-//
-//        assertEquals(event.metadata().location().latitude(), dto.eventMetadata().location().latitude());
-//        assertEquals(event.metadata().location().longitude(), dto.eventMetadata().location().longitude());
-//        assertEquals(event.metadata().location().address(), dto.eventMetadata().location().address());
-//
-//        assertNull(dto.sentiment());
-//        assertNull(dto.comments());
-//    }
+        assertEquals(event.title(), dto.title());
+        assertEquals(event.description(), dto.description());
+
+        assertNotNull(dto.eventMetadata());
+        assertEquals(event.metadata().authorUsername(), dto.eventMetadata().authorUsername());
+        assertEquals(event.metadata().startTime(), dto.eventMetadata().startTime());
+        assertEquals(event.metadata().endTime(), dto.eventMetadata().endTime());
+
+        assertEquals(event.metadata().location().latitude(), dto.eventMetadata().location().latitude());
+        assertEquals(event.metadata().location().longitude(), dto.eventMetadata().location().longitude());
+        assertEquals(event.metadata().location().address(), dto.eventMetadata().location().address());
+
+        assertNull(dto.sentiment());
+        assertNull(dto.comments());
+    }
 }
