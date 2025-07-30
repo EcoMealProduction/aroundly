@@ -39,7 +39,7 @@ public interface HappeningRepository {
      *
      * @return A list of Happening objects within the given range.
      */
-    List<Happening> findByAllInGivenRange();
+    List<Happening> findByAllInGivenRange(int range);
 
     /**
      * Deletes a happening by its unique identifier.

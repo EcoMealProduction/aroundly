@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static com.backend.domain.Fixtures.*;
+import static com.backend.domain.Fixtures.validComment;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CommentTest {

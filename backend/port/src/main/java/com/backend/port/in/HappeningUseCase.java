@@ -4,19 +4,12 @@ import com.backend.happening.Happening;
 import com.backend.happening.Incident;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Defines use cases for managing "happenings" (events/incidents), including
  * creation, modification, reactions, visibility, extension, and deletion.
  */
 public interface HappeningUseCase {
-    /**
-     * Retrieves all happenings.
-     *
-     * @return A list of all happenings in the system.
-     */
-    List<Happening> findAll();
 
     /**
      * Retrieves all happenings in given range.
@@ -31,7 +24,7 @@ public interface HappeningUseCase {
      * @param happeningId The id of the happening to retrieve.
      * @return The found happening, or null if not found.
      */
-    Optional<Happening> findById(long happeningId);
+    Happening findById(long happeningId);
 
     /**
      * Creates a new happening (event or incident).
@@ -48,7 +41,7 @@ public interface HappeningUseCase {
      * @param newHappening updated happening
      * @return The updated happening.
      */
-    Happening updated(long id, Happening newHappening);
+    Happening update(long id, Happening newHappening);
 
     /**
      * Sets up the visibility range for a specific incident.

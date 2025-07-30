@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 public record Comment(
         @NonNull String authorUsername,
         @NonNull String text,
-        @NonNull LocalDateTime createdAt
-        ) {
+        @NonNull LocalDateTime createdAt) {
 
     /**
      * Constructs a {@code Comment} instance with input validation.

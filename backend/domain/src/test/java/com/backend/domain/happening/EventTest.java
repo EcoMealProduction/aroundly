@@ -2,7 +2,6 @@ package com.backend.domain.happening;
 
 import com.backend.happening.Event;
 import com.backend.happening.metadata.EventMetadata;
-import com.backend.shared.SentimentEngagement;
 import com.backend.user.Comment;
 import org.junit.jupiter.api.Test;
 
