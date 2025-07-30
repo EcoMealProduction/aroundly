@@ -45,7 +45,7 @@ public class HappeningService implements HappeningUseCase {
      */
     @Override
     public List<Happening> findAllInGivenRange(int range) {
-        return happeningRepository.findByAllInGivenRange();
+        return happeningRepository.findByAllInGivenRange(range);
     }
 
     /**
@@ -82,7 +82,7 @@ public class HappeningService implements HappeningUseCase {
      * @throws IllegalArgumentException if types mismatch or ID not found.
      */
     @Override
-    public Happening updated(long id, Happening newHappening) {
+    public Happening update(long id, Happening newHappening) {
         Happening existingHappening = findById(id);
 
         if (!existingHappening.getClass().equals(newHappening.getClass()))

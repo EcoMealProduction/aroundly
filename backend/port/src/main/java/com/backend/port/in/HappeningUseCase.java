@@ -4,7 +4,6 @@ import com.backend.happening.Happening;
 import com.backend.happening.Incident;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Defines use cases for managing "happenings" (events/incidents), including
@@ -42,7 +41,7 @@ public interface HappeningUseCase {
      * @param newHappening updated happening
      * @return The updated happening.
      */
-    Happening updated(long id, Happening newHappening);
+    Happening update(long id, Happening newHappening);
 
     /**
      * Sets up the visibility range for a specific incident.
