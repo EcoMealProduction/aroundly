@@ -2,16 +2,25 @@
 
 import lombok.Builder;
 
-<span class="pc" id="L5">@Builder(toBuilder = true)</span>
+/**
+ * Represents engagement statistics for an {@link Incident}, including
+ * confirmation and denial counts from users.
+ */
+<span class="pc" id="L9">@Builder(toBuilder = true)</span>
 public record IncidentEngagementStats(
         int confirms,
         int denies,
         int consecutiveDenies) {
 
-<span class="fc" id="L11">    public IncidentEngagementStats {</span>
-
-<span class="pc bpc" id="L13" title="3 of 6 branches missed.">        if (confirms &lt; 0 || denies &lt; 0 || consecutiveDenies &lt; 0)</span>
-<span class="nc" id="L14">            throw new IllegalArgumentException(&quot;Negative values not allowed.&quot;);</span>
-<span class="fc" id="L15">    }</span>
+    /**
+     * Constructs an {@code IncidentEngagementStats} record with validation.
+     * Ensures that no engagement metric is negative.
+     *
+     * @throws IllegalArgumentException if any of the fields are negative.
+     */
+<span class="fc" id="L21">    public IncidentEngagementStats {</span>
+<span class="pc bpc" id="L22" title="3 of 6 branches missed.">        if (confirms &lt; 0 || denies &lt; 0 || consecutiveDenies &lt; 0)</span>
+<span class="nc" id="L23">            throw new IllegalArgumentException(&quot;Negative values not allowed.&quot;);</span>
+<span class="fc" id="L24">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
