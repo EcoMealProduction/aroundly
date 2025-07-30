@@ -21,9 +21,9 @@ public class EventStrategy implements HappeningStrategy<Event> {
      * All fields are replaced with values from {@code updated}, preserving immutability
      * by returning a new object.
      *
-     * @param existing the current {@code Event} instance to update.
-     * @param updated the {@code Event} containing new values.
-     * @return a new {@code Event} instance with merged state.
+     * @param existing the current {@code Event} instance to update
+     * @param updated the {@code Event} containing new values
+     * @return a new {@code Event} instance with merged state
      */
     @Override
     public Event update(Event existing, Event updated) {
@@ -39,7 +39,7 @@ public class EventStrategy implements HappeningStrategy<Event> {
     /**
      * Returns the supported {@link Happening} type handled by this strategy.
      *
-     * @return the {@code Event.class} type token.
+     * @return the {@code Event.class} type token
      */
     @Override
     public Class<Event> getSupportedType() {
