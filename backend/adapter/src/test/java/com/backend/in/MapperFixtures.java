@@ -1,16 +1,19 @@
 package com.backend.in;
 
-import com.backend.happening.Event;
-import com.backend.happening.Incident;
-import com.backend.happening.IncidentEngagementStats;
-import com.backend.happening.metadata.EventMetadata;
-import com.backend.happening.metadata.IncidentMetadata;
-import com.backend.in.dto.request.EventRequestDto;
-import com.backend.in.dto.request.IncidentRequestDto;
-import com.backend.in.dto.response.EventResponseDto;
-import com.backend.in.dto.response.IncidentResponseDto;
-import com.backend.in.dto.shared.*;
-import com.backend.shared.Location;
+import com.backend.adapter.in.dto.shared.EventMetadataDto;
+import com.backend.adapter.in.dto.shared.IncidentEngagementStatsDto;
+import com.backend.adapter.in.dto.shared.IncidentMetadataDto;
+import com.backend.adapter.in.dto.shared.LocationDto;
+import com.backend.domain.happening.Event;
+import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.IncidentEngagementStats;
+import com.backend.domain.happening.metadata.EventMetadata;
+import com.backend.domain.happening.metadata.IncidentMetadata;
+import com.backend.adapter.in.dto.request.EventRequestDto;
+import com.backend.adapter.in.dto.request.IncidentRequestDto;
+import com.backend.adapter.in.dto.response.EventResponseDto;
+import com.backend.adapter.in.dto.response.IncidentResponseDto;
+import com.backend.domain.shared.Location;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

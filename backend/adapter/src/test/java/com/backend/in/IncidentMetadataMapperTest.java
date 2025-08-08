@@ -1,10 +1,10 @@
 package com.backend.in;
 
-import com.backend.happening.metadata.IncidentMetadata;
-import com.backend.in.dto.shared.IncidentMetadataDto;
-import com.backend.in.mapper.IncidentMetadataMapper;
-import com.backend.in.mapper.IncidentMetadataMapperImpl;
-import com.backend.in.mapper.LocationMapperImpl;
+import com.backend.adapter.in.mapper.IncidentMetadataMapperImpl;
+import com.backend.adapter.in.mapper.LocationMapperImpl;
+import com.backend.domain.happening.metadata.IncidentMetadata;
+import com.backend.adapter.in.dto.shared.IncidentMetadataDto;
+import com.backend.adapter.in.mapper.IncidentMetadataMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

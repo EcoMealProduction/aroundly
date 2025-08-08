@@ -1,7 +1,7 @@
 package com.backend.services;
 
 import com.backend.port.in.CommentUseCase;
-import com.backend.user.Comment;
+import com.backend.domain.user.Comment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.backend.services;
 
-import com.backend.happening.Happening;
-import com.backend.happening.Incident;
+import com.backend.domain.happening.Happening;
+import com.backend.domain.happening.Incident;
 import com.backend.port.out.HappeningRepository;
 import com.backend.services.happening.HappeningService;
 import com.backend.services.happening.HappeningStrategyResolver;

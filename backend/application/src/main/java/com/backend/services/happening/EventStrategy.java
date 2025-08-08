@@ -1,7 +1,7 @@
 package com.backend.services.happening;
 
-import com.backend.happening.Event;
-import com.backend.happening.Happening;
+import com.backend.domain.happening.Event;
+import com.backend.domain.happening.Happening;
 import org.springframework.stereotype.Component;
 
 /**

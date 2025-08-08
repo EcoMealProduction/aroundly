@@ -1,6 +1,6 @@
 package com.backend.port.in;
 
-import com.backend.shared.Location;
+import com.backend.domain.shared.Location;
 import java.util.Map;
 
 /**

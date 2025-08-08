@@ -1,6 +1,6 @@
 package com.backend.domain;
 
-import com.backend.shared.SentimentEngagement;
+import com.backend.domain.shared.SentimentEngagement;
 import org.junit.jupiter.api.Test;
 
 import static com.backend.domain.Fixtures.validSentimentEngagement;

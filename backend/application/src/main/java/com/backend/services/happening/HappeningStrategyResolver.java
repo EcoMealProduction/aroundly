@@ -1,8 +1,8 @@
 package com.backend.services.happening;
 
-import com.backend.happening.Event;
-import com.backend.happening.Happening;
-import com.backend.happening.Incident;
+import com.backend.domain.happening.Event;
+import com.backend.domain.happening.Happening;
+import com.backend.domain.happening.Incident;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -1,11 +1,10 @@
 package com.backend.services.happening;
 
-import com.backend.happening.Event;
-import com.backend.happening.Happening;
-import com.backend.happening.Incident;
+import com.backend.domain.happening.Event;
+import com.backend.domain.happening.Happening;
+import com.backend.domain.happening.Incident;
 import com.backend.port.in.HappeningUseCase;
 import com.backend.port.out.HappeningRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +30,6 @@ public class HappeningService implements HappeningUseCase {
      * @param happeningRepository repository for persistence operations.
      * @param happeningStrategyResolver strategy resolver for polymorphic update handling.
      */
-    @Autowired
     public HappeningService(HappeningRepository happeningRepository, HappeningStrategyResolver happeningStrategyResolver) {
         this.happeningRepository = happeningRepository;
         this.happeningStrategyResolver = happeningStrategyResolver;

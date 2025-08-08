@@ -1,9 +1,9 @@
 package com.backend.in;
 
-import com.backend.happening.Incident;
-import com.backend.in.dto.request.IncidentRequestDto;
-import com.backend.in.dto.response.IncidentResponseDto;
-import com.backend.in.mapper.*;
+import com.backend.adapter.in.mapper.*;
+import com.backend.domain.happening.Incident;
+import com.backend.adapter.in.dto.request.IncidentRequestDto;
+import com.backend.adapter.in.dto.response.IncidentResponseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class IncidentMapperTest {
     @Test
     void testIncidentToIncidentResponseDto() {
         Incident incident = domainIncident;
-        IncidentResponseDto dto = incidentMapper.toResponseDto(incident);
+        IncidentResponseDto dto = incidentMapper.toIncidentDto(incident);
 
         assertEquals(incident.title(), dto.title());
         assertEquals(incident.description(), dto.description());

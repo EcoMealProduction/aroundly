@@ -1,12 +1,12 @@
 package com.backend.in;
 
-import com.backend.happening.Event;
-import com.backend.in.dto.request.EventRequestDto;
-import com.backend.in.dto.response.EventResponseDto;
-import com.backend.in.mapper.EventMapper;
-import com.backend.in.mapper.EventMapperImpl;
-import com.backend.in.mapper.EventMetadataMapperImpl;
-import com.backend.in.mapper.LocationMapperImpl;
+import com.backend.adapter.in.mapper.EventMapperImpl;
+import com.backend.adapter.in.mapper.EventMetadataMapperImpl;
+import com.backend.adapter.in.mapper.LocationMapperImpl;
+import com.backend.domain.happening.Event;
+import com.backend.adapter.in.dto.request.EventRequestDto;
+import com.backend.adapter.in.dto.response.EventResponseDto;
+import com.backend.adapter.in.mapper.EventMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
