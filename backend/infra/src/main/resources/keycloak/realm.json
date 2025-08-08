@@ -1,86 +1,43 @@
 {
-  "realm": "ecomeal",
+  "realm": "glimpse",
   "enabled": true,
   "registrationAllowed": true,
   "loginWithEmailAllowed": true,
-  "verifyEmail": true,
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
 
   "passwordPolicy": "length(8) and digits(1) and upperCase(1) and specialChars(1) and notUsername()",
-  "displayName": "ecomeal realm",
-
-  "identityProviders": [
-    {
-      "alias": "google",
-      "providerId": "google",
-      "enabled": true,
-      "updateProfileFirstLoginMode": "on",
-      "trustEmail": true,
-      "storeToken": true,
-      "addReadTokenRoleOnCreate": false,
-      "authenticateByDefault": false,
-      "linkOnly": false,
-      "config": {
-        "clientId": "GOOGLE_CLIENT_ID",
-        "clientSecret": "GOOGLE_CLIENT_SECRET",
-        "defaultScope": "openid email profile"
-      }
-    },
-    {
-      "alias": "facebook",
-      "providerId": "facebook",
-      "enabled": true,
-      "updateProfileFirstLoginMode": "on",
-      "trustEmail": true,
-      "storeToken": true,
-      "config": {
-        "clientId": "FACEBOOK_APP_ID",
-        "clientSecret": "FACEBOOK_APP_SECRET",
-        "defaultScope": "email public_profile"
-      }
-    },
-    {
-      "alias": "apple",
-      "providerId": "apple",
-      "enabled": true,
-      "updateProfileFirstLoginMode": "on",
-      "trustEmail": true,
-      "storeToken": true,
-      "config": {
-        "clientId": "com.app.service",
-        "clientSecret": "APPLE_CLIENT_SECRET",
-        "teamId": "APPLE_TEAM_ID",
-        "keyId": "APPLE_KEY_ID",
-        "privateKey": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----",
-        "useJwksUrl": "false",
-        "defaultScope": "name email"
-      }
-    }
-  ],
+  "displayName": "glimpse realm",
 
   "clients": [
     {
-      "clientId": "looma",
+      "clientId": "aroundly",
       "protocol": "openid-connect",
       "publicClient": false,
-      "secret": "looma-secret",
+      "secret": "aroundly-secret",
       "redirectUris": [
-        "http://localhost:8100/api/maps/**",
-        "http://localhost:8100/api/feed/**"],
+        "http://localhost:8100/login/oauth2/code/keycloak"],
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
-      "standardFlowEnabled": true,
-      "roles": [
+      "standardFlowEnabled": true
+    }
+  ],
+  "roles": {
+    "client": {
+      "aroundly": [
         {
-          "name": "user",
+          "name": "USER",
           "description": "default user of the application"
         },
         {
-          "name": "admin",
-          "description": "the messiah, the Jesus Christ of looma. God itself!"
+          "name": "BUSINESS",
+          "description": "the event creator"
+        },
+        {
+          "name": "ADMIN",
+          "description": "the messiah, the Jesus Christ of aroundly. God itself!"
         }
       ]
     }
-  ]
+  }
 }
