@@ -1,6 +1,8 @@
 package com.backend.port.out;
 
-import com.backend.happening.Happening;
+import com.backend.domain.happening.Happening;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;

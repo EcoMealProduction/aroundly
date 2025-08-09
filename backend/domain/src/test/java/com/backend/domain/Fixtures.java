@@ -1,13 +1,13 @@
 package com.backend.domain;
 
-import com.backend.happening.Event;
-import com.backend.happening.Incident;
-import com.backend.happening.IncidentEngagementStats;
-import com.backend.happening.metadata.EventMetadata;
-import com.backend.happening.metadata.IncidentMetadata;
-import com.backend.shared.Location;
-import com.backend.shared.SentimentEngagement;
-import com.backend.user.Comment;
+import com.backend.domain.happening.Event;
+import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.IncidentEngagementStats;
+import com.backend.domain.happening.metadata.EventMetadata;
+import com.backend.domain.happening.metadata.IncidentMetadata;
+import com.backend.domain.shared.Location;
+import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.user.Comment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

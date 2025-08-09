@@ -1,6 +1,6 @@
 package com.backend.port.out;
 
-import com.backend.user.Comment;
+import com.backend.domain.user.Comment;
 import java.util.List;
 
 /**

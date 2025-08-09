@@ -1,8 +1,7 @@
 package com.backend.domain.happening;
 
-import com.backend.happening.Event;
-import com.backend.happening.metadata.EventMetadata;
-import com.backend.user.Comment;
+import com.backend.domain.happening.metadata.EventMetadata;
+import com.backend.domain.user.Comment;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

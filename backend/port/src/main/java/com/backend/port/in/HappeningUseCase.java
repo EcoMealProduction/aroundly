@@ -1,7 +1,7 @@
 package com.backend.port.in;
 
-import com.backend.happening.Happening;
-import com.backend.happening.Incident;
+import com.backend.domain.happening.Happening;
+import com.backend.domain.happening.Incident;
 
 import java.util.List;
 
