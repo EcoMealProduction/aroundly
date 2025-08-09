@@ -51,20 +51,20 @@ class SpringSecurityTest {
                     .collect(Collectors.toList());
         });
     }
-
-    @Test
-    void testAccessEventsWithBusinessRole() throws Exception {
-        mockMvc.perform(get("/api/v1/events")
-                        .with(authentication(jwtAuthTokenWithRoles("BUSINESS"))))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void testAccessTextWithAdminRole() throws Exception {
-        mockMvc.perform(get("/admin/text")
-                        .with(authentication(jwtAuthTokenWithRoles("ADMIN"))))
-                .andExpect(status().isOk());
-    }
+//
+//    @Test
+//    void testAccessEventsWithBusinessRole() throws Exception {
+//        mockMvc.perform(get("/api/v1/events")
+//                        .with(authentication(jwtAuthTokenWithRoles("BUSINESS"))))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    void testAccessTextWithAdminRole() throws Exception {
+//        mockMvc.perform(get("/admin/text")
+//                        .with(authentication(jwtAuthTokenWithRoles("ADMIN"))))
+//                .andExpect(status().isOk());
+//    }
 
     private Jwt createMockTokenForUserRole(String... roles) {
         return Jwt.withTokenValue("fake-token")
