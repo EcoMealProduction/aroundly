@@ -187,4 +187,4 @@ buildNumber.properties
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,maven,visualstudiocode
 
 .idea/
-application.properties
+infra/src/main/resources/application.properties
