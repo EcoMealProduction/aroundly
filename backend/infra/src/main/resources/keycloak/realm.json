@@ -9,6 +9,15 @@
   "passwordPolicy": "length(8) and digits(1) and upperCase(1) and specialChars(1) and notUsername()",
   "displayName": "glimpse realm",
 
+  "clientScopeMappings": {
+    "realm-management": [
+      {
+        "client": "aroundly",
+        "roles": [ "manage-users" ]
+      }
+    ]
+  },
+
   "clients": [
     {
       "clientId": "aroundly",

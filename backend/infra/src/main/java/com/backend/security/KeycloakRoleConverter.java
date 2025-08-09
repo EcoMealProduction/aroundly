@@ -1,16 +1,14 @@
 package com.backend.security;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Custom converter that extracts client-specific roles from a Keycloak JWT
@@ -41,27 +39,38 @@ import java.util.stream.Collectors;
 public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     private static final String CLIENT_ID = "aroundly";
-    private final static Logger LOGGER = Logger.getLogger(KeycloakRoleConverter.class.getName());
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
+        Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
+        return new UsernamePasswordAuthenticationToken(jwt.getSubject(), "n/a", authorities).getAuthorities();
+    }
 
-        if (resourceAccess == null || !resourceAccess.containsKey(CLIENT_ID)) {
-            LOGGER.config("Resource Access is null or it doesn't contain the client 'aroundly'...");
-            return Collections.emptyList();
-        }
+    private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+        List<String> clientRoles = Optional.ofNullable(getMap(jwt.getClaim("resource_access")))
+                .map(m -> getMap(m.get(CLIENT_ID)))
+                .map(m -> getList(m.get("roles")))
+                .orElse(Collections.emptyList());
 
-        Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get(CLIENT_ID);
-        List<String> roles = (List<String>) clientAccess.get("roles");
+        List<String> realmRoles = Optional.ofNullable(getMap(jwt.getClaim("realm_access")))
+                .map(m -> getList(m.get("roles")))
+                .orElse(Collections.emptyList());
 
-        if (roles == null) {
-            LOGGER.config("No roles found...");
-            return Collections.emptyList();
-        }
+        return Stream.concat(clientRoles.stream(), realmRoles.stream())
+                .filter(Objects::nonNull)
+                .distinct()
+                .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toUnmodifiableList());
+    }
 
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-                .collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getMap(Object obj) {
+        return (obj instanceof Map) ? (Map<String, Object>) obj : null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> getList(Object obj) {
+        return (obj instanceof List) ? (List<String>) obj : null;
     }
 }

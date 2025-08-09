@@ -4,12 +4,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Spring Security configuration class that defines security rules and JWT-based authentication.
  */
 @Configuration
+@EnableWebSecurity
 public class SpringSecurity {
 
     /**
@@ -28,14 +32,18 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthConverterConfig jwtAuthConverterConfig) throws Exception {
         httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/events/**", "/api/v1/events").hasRole("BUSINESS")
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/v1/**").authenticated())
+                .logout(logout -> logout.logoutSuccessUrl("/public/login"))
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter())));
-
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter()))
+                );
         return httpSecurity.build();
     }
 }
