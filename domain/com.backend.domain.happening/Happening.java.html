@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Happening.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">code-coverage</a> &gt; <a href="../index.html" class="el_bundle">domain</a> &gt; <a href="index.source.html" class="el_package">com.backend.domain.happening</a> &gt; <span class="el_source">Happening.java</span></div><h1>Happening.java</h1><pre class="source lang-java linenums">package com.backend.domain.happening;
+
+import com.backend.domain.happening.metadata.Metadata;
+import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.user.Comment;
+
+import java.util.List;
+
+/**
+ * Represents a generic reported occurrence within the application (e.g., an {@link Incident} or an {@link Event}).
+ * This abstraction defines the common structure and behaviors for all reportable happenings in the system.
+ */
+public sealed interface Happening permits Event, Incident {
+
+    /**
+     * @return The title of the happening. Should be concise but descriptive.
+     */
+    String title();
+
+    /**
+     * @return A detailed textual description of the happening.
+     */
+    String description();
+
+    /**
+     * @return A list of user-submitted comments associated with this happening.
+     */
+    List&lt;Comment&gt; comments();
+
+    /**
+     * @return An Object of metadata associated with this happening.
+     */
+    Metadata metadata();
+
+    /**
+     * @return The number of positive reactions (likes) associated with this happening.
+     */
+    SentimentEngagement sentimentEngagement();
+
+    /**
+     * Adds a user comment to the current happening.
+     *
+     * @param comment The comment to be added.
+     * @return A new instance of the happening with the comment appended.
+     */
+    Happening addComment(Comment comment);
+
+    /**
+     * Creates a builder that is pre-populated with the current object's field value.
+     */
+    Builder&lt;?&gt; toBuilder();
+
+    /**
+     * Abstract builder class for constructing immutable {@link Happening} instances.
+     * Utilizes a self-referential generic type to support fluent method chaining in subclasses.
+     *
+     * @param &lt;T&gt; The type of the builder itself.
+     */
+<span class="fc" id="L59">    public abstract static class Builder&lt;T extends Builder&lt;T&gt;&gt; {</span>
+
+        protected String title;
+        protected String description;
+        protected List&lt;Comment&gt; comments;
+        protected Metadata metadata;
+        protected SentimentEngagement sentimentEngagement;
+
+        /**
+         * Should be implemented by subclasses to return 'this' correctly typed.
+         * Enables fluent-style method chaining.
+         *
+         * @return The current builder instance.
+         */
+        abstract T self();
+
+        /**
+         * Sets the title field.
+         *
+         * @param aTitle The title of the happening.
+         * @return The current builder instance.
+         */
+        public T title(String aTitle) {
+<span class="nc" id="L82">            this.title = aTitle;</span>
+<span class="nc" id="L83">            return self();</span>
+        }
+
+        /**
+         * Sets the description field.
+         *
+         * @param aDescription The detailed description.
+         * @return The current builder instance.
+         */
+        public T description(String aDescription) {
+<span class="nc" id="L93">            this.description = aDescription;</span>
+<span class="nc" id="L94">            return self();</span>
+        }
+
+        /**
+         * Sets the comments list.
+         *
+         * @param aComments The list of user comments.
+         * @return The current builder instance.
+         */
+        public T comments(List&lt;Comment&gt; aComments) {
+<span class="nc" id="L104">            this.comments = aComments;</span>
+<span class="nc" id="L105">            return self();</span>
+        }
+
+        /**
+         * Sets the metadata.
+         *
+         * @param aMetadata Additional information related to the happening.
+         * @return The current builder instance.
+         */
+        public T metadata(Metadata aMetadata) {
+<span class="nc" id="L115">            this.metadata = aMetadata;</span>
+<span class="nc" id="L116">            return self();</span>
+        }
+
+        /**
+         * Sets the sentiment engagement.
+         *
+         * @param aSentimentEngagement User engagement metrics.
+         * @return The current builder instance.
+         */
+        public T sentimentEngagement(SentimentEngagement aSentimentEngagement) {
+<span class="nc" id="L126">            this.sentimentEngagement = aSentimentEngagement;</span>
+<span class="nc" id="L127">            return self();</span>
+        }
+
+        /**
+         * Builds the final immutable {@link Happening} object.
+         * Subclasses must implement the build logic.
+         *
+         * @return A fully constructed Happening instance.
+         */
+        public abstract Happening build();
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

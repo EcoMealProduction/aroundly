@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>IncidentMetadata.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">code-coverage</a> &gt; <a href="../index.html" class="el_bundle">domain</a> &gt; <a href="index.source.html" class="el_package">com.backend.domain.happening.metadata</a> &gt; <span class="el_source">IncidentMetadata.java</span></div><h1>IncidentMetadata.java</h1><pre class="source lang-java linenums">package com.backend.domain.happening.metadata;
+
+import com.backend.domain.happening.Happening;
+import com.backend.domain.happening.Incident;
+import com.backend.domain.shared.Location;
+import lombok.Builder;
+import lombok.NonNull;
+
+import java.time.LocalDateTime;
+
+/**
+ * Metadata specific to an {@link Incident}, including author, location,
+ * creation timestamp, and expiration deadline.
+ *
+ * Implements the {@link Metadata} mixin interface used across different {@link Happening} types.
+ */
+<span class="pc bpc" id="L17" title="2 of 4 branches missed.">@Builder(toBuilder = true)</span>
+public record IncidentMetadata(
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        @NonNull String authorUsername,</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        @NonNull Location location,</span>
+        LocalDateTime createdAt,
+        LocalDateTime expirationTime) implements Metadata {
+
+    /**
+     * Constructs an {@code IncidentMetadata} instance with defaulting and validation.
+     * - Sets {@code createdAt} to {@code now()} if null.
+     * - Sets {@code expirationTime} to 30 minutes after {@code createdAt} if null.
+     * - Validates that {@code expirationTime} is not before {@code createdAt} or the current time.
+     *
+     * @throws IllegalArgumentException if:
+     *   {@code expirationTime} is before {@code createdAt}
+     *   {@code expirationTime} is in the past
+     */
+<span class="fc" id="L34">    public IncidentMetadata {</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (createdAt == null)</span>
+<span class="nc" id="L36">            createdAt = LocalDateTime.now();</span>
+
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (expirationTime == null)</span>
+<span class="nc" id="L39">            expirationTime = createdAt.plusMinutes(30);</span>
+
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (expirationTime.isBefore(createdAt))</span>
+<span class="fc" id="L42">            throw new IllegalArgumentException(&quot;Expiration time cannot be before createdAt.&quot;);</span>
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (expirationTime.isBefore(LocalDateTime.now()))</span>
+<span class="fc" id="L45">            throw new IllegalArgumentException(&quot;Expiration time cannot be before now.&quot;);</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Checks if the incident has expired based on the current time.
+     *
+     * @return {@code true} if the expiration time is in the past.
+     */
+    public boolean isExpired() {
+<span class="fc" id="L54">        return LocalDateTime.now().isAfter(expirationTime);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
