@@ -162,12 +162,7 @@ buildNumber.properties
 .classpath
 
 ### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+.vscode/
 
 # Local History for Visual Studio Code
 .history/
@@ -187,4 +182,6 @@ buildNumber.properties
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,maven,visualstudiocode
 
 .idea/
-infra/src/main/resources/application.properties
+
+# Exclude all application properties files
+**/application.properties
