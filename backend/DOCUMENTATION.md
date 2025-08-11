@@ -4,18 +4,24 @@
 
 ### Environment Setup
 ```bash
-# 1. Start all required services
+# 1. IMPORTANT: Start Docker containers FIRST
 docker-compose up -d
 
-# 2. Verify services are running
+# 2. Verify services are running (should see keycloak_db and app_db containers)
 docker ps
 
-# 3. Build the application
+# 3. Build and test the application
 mvn clean package
-
-# 4. Run tests
 mvn test
+
+# 4. Start the Spring Boot application (from /backend directory)
+cd infra
+mvn spring-boot:run
 ```
+
+### ⚠️ Critical Startup Order
+**Docker containers MUST be started before the Spring Boot application!**
+The app will immediately try to connect to databases on startup and fail if containers aren't running.
 
 ### Service Access URLs
 - **Backend API**: http://localhost:8100
@@ -114,9 +120,9 @@ docker-compose down -v
 ## 🔐 Security & Authentication
 
 ### Keycloak Setup
-- Realm: ecomeal
-- Client ID: looma
-- Client Secret: looma-secret
+- Realm: glimpse
+- Client ID: aroundly
+- Client Secret: aroundly-secret
 - Admin Console: http://localhost:7080
 - Realm config: `infra/src/main/resources/keycloak/realm.json`
 
@@ -127,16 +133,43 @@ docker-compose down -v
 
 ## 🗄️ Database Information
 
-### Connection Details
-- **Type**: PostgreSQL with PostGIS extension
+### Separate Database Setup
+The project uses **two separate PostgreSQL databases** to isolate application data from authentication data:
+
+#### Keycloak Database (Authentication)
 - **Host**: localhost:5432
 - **Database**: users
 - **User**: shogun
 - **Password**: password
+- **Purpose**: Keycloak authentication tables (~60+ tables)
+
+#### Application Database (Business Logic)
+- **Host**: localhost:5433 
+- **Database**: appdb
+- **User**: appuser
+- **Password**: app_password
+- **Purpose**: Application tables (incidents, events, etc.)
+
+### For WSL Users (DBeaver Connection)
+Use your WSL IP instead of localhost. Find it with:
+```bash
+ip route show | grep -i default | awk '{ print $3}' | head -1
+```
+Then connect using that IP (e.g., `172.28.112.1:5433`)
 
 ### Management Tools
 - **PGAdmin**: http://localhost:15432
 - **Direct connection**: Use above credentials with any PostgreSQL client
+
+### Database Migration (Flyway)
+- **Status**: Enabled in application.properties but **dependencies removed from pom.xml**
+- **Migration Location**: `adapter/src/main/resources/db/migration/` 
+- **Current Migration**: `V1__create_incidents_table.sql` (creates incidents table)
+- **⚠️ Important**: Flyway dependencies need to be re-added to infra/pom.xml for automatic migrations
+
+### Database Versions  
+- **PostgreSQL**: 14.13 (via `postgis/postgis:14-3.4`)
+- **Compatibility**: PostgreSQL 14.x works with most Flyway versions
 
 ## 📊 Monitoring & Observability
 
@@ -164,11 +197,41 @@ docker-compose down -v
 ## 🚨 Troubleshooting
 
 ### Common Issues
-1. **Port conflicts**: Check if ports 8100, 5432, 7080, etc. are available
-2. **Docker issues**: Try `docker-compose down -v && docker-compose up -d`
-3. **Database connection**: Verify PostgreSQL container is running
-4. **Keycloak realm**: Check if realm.json is properly imported
-5. **Memory issues**: Increase Docker memory allocation
+
+#### 1. Database Connection Refused (Most Common)
+**Error**: `Connection to localhost:5433 refused`  
+**Cause**: Docker containers are not running  
+**Solution**:
+```bash
+# Check if containers are running
+docker ps
+
+# If not running, start them  
+docker-compose up -d
+
+# Verify both databases are up
+docker ps | grep -E "(keycloak_db|app_db)"
+```
+
+#### 2. Flyway Migration Issues
+**Error**: Various Flyway-related errors  
+**Cause**: Flyway dependencies removed from infra/pom.xml  
+**Solution**: Add back Flyway dependencies or disable in application.properties
+
+#### 3. Port Conflicts
+Check if ports 8100, 5432, 5433, 7080, etc. are available
+
+#### 4. Docker Issues
+Try complete reset: `docker-compose down -v && docker-compose up -d`
+
+#### 5. Database Connection Issues
+Verify PostgreSQL containers are running and healthy
+
+#### 6. Keycloak Realm Issues
+Check if realm.json is properly imported
+
+#### 7. Memory Issues
+Increase Docker memory allocation in Docker Desktop
 
 ### Useful Commands
 ```bash
@@ -178,8 +241,11 @@ docker ps
 # Check application logs
 docker-compose logs backend
 
-# Check database connection
-docker exec -it db psql -U shogun -d users
+# Check Keycloak database connection
+docker exec -it keycloak_db psql -U shogun -d users
+
+# Check application database connection  
+docker exec -it app_db psql -U appuser -d appdb
 
 # Restart specific service
 docker-compose restart keycloak
