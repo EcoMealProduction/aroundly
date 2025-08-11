@@ -1,18 +1,33 @@
 services:
+  # Keycloak database
   postgres:
     image: postgis/postgis
     restart: always
-    container_name: db
-    hostname: localhost
+    container_name: keycloak_db
+    hostname: keycloak_db
     ports:
       - "${POSTGRES_PORT}:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
     volumes:
       - postgres:/var/lib/postgresql/data
+
+  # App database
+  app_postgres:
+    image: postgis/postgis:14-3.4
+    restart: always
+    container_name: app_db
+    hostname: app_db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${APP_DB}
+      POSTGRES_USER: ${APP_USER}
+      POSTGRES_PASSWORD: ${APP_PASSWORD}
+    volumes:
+      - app_postgres:/var/lib/postgresql/data
 
   pg_admin:
     image: dpage/pgadmin4
@@ -27,6 +42,7 @@ services:
       - pg_admin:/var/lib/pgadmin
     depends_on:
       - postgres
+      - app_postgres
 
   keycloak:
     image: quay.io/keycloak/keycloak
@@ -76,6 +92,7 @@ services:
 
 volumes:
   postgres:
+  app_postgres:
   pg_admin:
   minio_data:
   grafana_data:
