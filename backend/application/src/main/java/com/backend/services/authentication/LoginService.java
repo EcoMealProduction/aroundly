@@ -13,6 +13,17 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+/**
+ * Service implementation for user authentication using Keycloak OAuth2.
+ * 
+ * This service handles user authentication by integrating with Keycloak's
+ * token endpoint using the Resource Owner Password Credentials (ROPC) flow.
+ * It manages the communication with Keycloak and transforms responses into
+ * application-specific data structures.
+ * 
+ * @since 1.0
+ * @author Backend Team
+ */
 @Service
 public class LoginService implements LoginUseCase {
 

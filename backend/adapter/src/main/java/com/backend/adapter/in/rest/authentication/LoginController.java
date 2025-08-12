@@ -7,6 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for user authentication operations.
+ * 
+ * This controller provides public endpoints for user login functionality,
+ * handling authentication requests and returning appropriate responses
+ * based on the authentication outcome.
+ * 
+ * @since 1.0
+ * @author Backend Team
+ */
 @RestController
 @RequestMapping("/public")
 public class LoginController {
