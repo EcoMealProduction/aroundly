@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Backend Team
  */
 @RestController
-@RequestMapping("/public")
+@RequestMapping("/auth")
 public class LoginController {
 
     private final LoginUseCase loginUseCase;
