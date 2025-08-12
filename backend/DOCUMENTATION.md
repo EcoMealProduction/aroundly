@@ -23,8 +23,69 @@ mvn spring-boot:run
 **Docker containers MUST be started before the Spring Boot application!**
 The app will immediately try to connect to databases on startup and fail if containers aren't running.
 
+### Complete OpenAPI Testing Startup Sequence
+**CRITICAL ORDER** - Follow these exact steps to ensure OpenAPI shows actual backend endpoints:
+
+```bash
+# 1. Start Docker containers FIRST (databases must be running before app starts)
+docker-compose up -d
+
+# 2. Verify containers are running (should see keycloak_db and app_db)
+docker ps | grep -E "(keycloak_db|app_db)"
+
+# 3. Clean and build application (ensures fresh compilation)
+mvn clean package
+
+# 4. Start Spring Boot application (from backend/ directory)
+cd infra
+mvn spring-boot:run
+
+# 5. Wait for complete startup (look for "Started InfraApplication in X.XXX seconds")
+
+# 6. Access OpenAPI documentation:
+# - Swagger UI: http://localhost:8100/swagger-ui.html
+# - JSON Schema: http://localhost:8100/api-docs
+```
+
+### 🚨 Total Clean Build Process (For OpenAPI Changes)
+
+**CRITICAL:** If you make changes to OpenAPI annotations (controllers, DTOs, schema definitions) and they don't appear in Swagger UI, you **MUST** perform this complete clean build process:
+
+```bash
+# 1. Start Docker containers first (always required)
+docker-compose up -d
+
+# 2. Delete all compiled artifacts (critical for OpenAPI updates)
+find . -name "target" -type d -exec rm -rf {} + 2>/dev/null || true
+find . -name "*.class" -delete
+
+# 3. Clean install all modules
+mvn clean install -DskipTests
+
+# 4. Clean package build
+mvn clean package -DskipTests
+
+# 5. Start application
+cd infra && mvn spring-boot:run
+
+# 6. Verify changes appear in OpenAPI documentation
+# - Swagger UI: http://localhost:8100/swagger-ui.html
+# - JSON Schema: http://localhost:8100/api-docs
+```
+
+**Why this is necessary:** OpenAPI annotation changes can be cached in compiled class files. SpringDoc scans compiled classes, so old annotations may persist until a complete rebuild occurs.
+
+**When to use:** After modifying any `@Schema`, `@Operation`, `@ApiResponse`, or controller `@RequestMapping` annotations.
+
+**⚠️ Important Notes:**
+- Docker containers **must** start before the Spring Boot app (app fails immediately if databases aren't available)
+- Wait for full application startup before accessing OpenAPI URLs
+- If OpenAPI shows cached/old endpoints, use the Total Clean Build Process above
+
 ### Service Access URLs
 - **Backend API**: http://localhost:8100
+- **OpenAPI Documentation**: http://localhost:8100/swagger-ui.html
+- **OpenAPI JSON Schema**: http://localhost:8100/api-docs
 - **Keycloak Admin**: http://localhost:7080 (admin/admin)
 - **PGAdmin**: http://localhost:15432 (admin@pgadmin.com/password)
 - **MinIO Console**: http://localhost:6001 (admin/password)

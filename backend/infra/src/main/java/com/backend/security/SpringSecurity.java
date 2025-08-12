@@ -36,11 +36,12 @@ public class SpringSecurity {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/auth/login").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/events/**", "/api/v1/events").hasRole("BUSINESS")
                         .requestMatchers("/api/v1/**").authenticated())
-                .logout(logout -> logout.logoutSuccessUrl("/public/login"))
+                .logout(logout -> logout.logoutSuccessUrl("/auth/login"))
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter()))
                 );
