@@ -57,10 +57,7 @@ public class RegistrationService {
         Map<String, Object> user = new HashMap<>();
         user.put("username", username);
         user.put("email", email);
-        user.put("firstName", username);
-        user.put("lastName", "User");
         user.put("enabled", true);
-        user.put("emailVerified", false);
         
         Map<String, Object> cred = new HashMap<>();
         cred.put("type", "password");
