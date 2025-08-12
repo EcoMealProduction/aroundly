@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Map;
 @Service
 public class RegistrationService {
 
+    private static final Logger log = LoggerFactory.getLogger(RegistrationService.class);
+    
     private final KeycloakProperties keycloakProperties;
     private final RestTemplate restTemplate;
 
@@ -53,7 +57,11 @@ public class RegistrationService {
         Map<String, Object> user = new HashMap<>();
         user.put("username", username);
         user.put("email", email);
+        user.put("firstName", username);
+        user.put("lastName", "User");
         user.put("enabled", true);
+        user.put("emailVerified", false);
+        
         Map<String, Object> cred = new HashMap<>();
         cred.put("type", "password");
         cred.put("value", password);
@@ -68,12 +76,13 @@ public class RegistrationService {
 
         if (resp.getStatusCode().value() == 201) {
             String location = resp.getHeaders().getFirst(HttpHeaders.LOCATION);
-            return (location != null) ? location.substring(location.lastIndexOf('/') + 1) : null;
+            String userId = (location != null) ? location.substring(location.lastIndexOf('/') + 1) : null;
+            log.info("User created successfully with ID: {}", userId);
+            return userId;
         } else if (resp.getStatusCode().value() == 409) {
             throw new IllegalStateException("User already exists (409).");
         } else {
             throw new IllegalStateException("User create failed: " + resp.getStatusCode() + " body=" + resp.getBody());
         }
     }
-
 }
