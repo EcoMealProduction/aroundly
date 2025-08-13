@@ -40,17 +40,39 @@ mvn clean package
 # Skip tests during build
 mvn clean package -DskipTests
 
-# Run only tests
+# Build with Docker
+./build-backend.sh
+```
+
+### Test Commands
+```bash
+# Run all tests
 mvn test
+
+# Run tests with clean first
+mvn clean test
+
+# Run specific test class
+mvn test -Dtest=LoginServiceTest
+
+# Run specific test method  
+mvn test -Dtest=LoginServiceTest#shouldAuthenticateUserWithValidCredentials
+
+# Run multiple test classes
+mvn test -Dtest=LoginServiceTest,LoginControllerTest
+
+# Run tests matching pattern
+mvn test -Dtest=*Login*Test
+
+# Run tests in specific module
+cd application && mvn test -Dtest=LoginServiceTest
+cd adapter && mvn test -Dtest=LoginControllerTest
 
 # Generate code coverage report
 mvn test jacoco:report
 
-# Run specific test class
-mvn test -Dtest=ClassName
-
-# Build with Docker
-./build-backend.sh
+# Clean, test, and coverage
+mvn clean test jacoco:report
 ```
 
 ### Docker Commands
