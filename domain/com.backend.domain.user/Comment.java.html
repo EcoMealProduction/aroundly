@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
  * Represents a user-generated comment associated with a {@code Happening} (such as an Event or Incident).
  * Contains the author's username, the comment content, and the timestamp of creation.
  */
-<span class="pc bpc" id="L12" title="3 of 6 branches missed.">@Builder(toBuilder = true)</span>
+<span class="pc bpc" id="L12" title="2 of 4 branches missed.">@Builder(toBuilder = true)</span>
 public record Comment(
-<span class="pc bpc" id="L14" title="1 of 2 branches missed.">        @NonNull String authorUsername,</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">        @NonNull Actor actor,</span>
 <span class="pc bpc" id="L15" title="1 of 2 branches missed.">        @NonNull String text,</span>
-<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        @NonNull LocalDateTime createdAt) {</span>
+        LocalDateTime createdAt) {
 
     /**
      * Constructs a {@code Comment} instance with input validation.
@@ -29,8 +29,12 @@ public record Comment(
 <span class="fc bfc" id="L29" title="All 2 branches covered.">        if (text.length() &lt; 5)</span>
 <span class="fc" id="L30">            throw new IllegalArgumentException(&quot;Text must have at least 5 characters.&quot;);</span>
 
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (createdAt.isAfter(LocalDateTime.now()))</span>
-<span class="fc" id="L33">            throw new IllegalArgumentException(&quot;Comment date cannot be in the future.&quot;);</span>
-<span class="fc" id="L34">    }</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (createdAt == null) {</span>
+<span class="nc" id="L33">            createdAt = LocalDateTime.now();</span>
+        }
+
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (createdAt.isAfter(LocalDateTime.now()))</span>
+<span class="fc" id="L37">            throw new IllegalArgumentException(&quot;Comment date cannot be in the future.&quot;);</span>
+<span class="fc" id="L38">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

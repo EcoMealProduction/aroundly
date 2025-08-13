@@ -35,8 +35,16 @@ public record Incident(
 <span class="fc bfc" id="L35" title="All 2 branches covered.">        if (description.length() &lt; 20)</span>
 <span class="fc" id="L36">            throw new IllegalArgumentException(&quot;Description too short.&quot;);</span>
 
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        comments = comments == null ? List.of() : new ArrayList&lt;&gt;(comments);</span>
-<span class="fc" id="L39">    }</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (sentimentEngagement == null) {</span>
+<span class="nc" id="L39">            sentimentEngagement = new SentimentEngagement(0 ,0);</span>
+        }
+        
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (incidentEngagementStats == null) {</span>
+<span class="nc" id="L43">            incidentEngagementStats = new IncidentEngagementStats(0, 0, 0);</span>
+        }
+
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        comments = comments == null ? List.of() : new ArrayList&lt;&gt;(comments);</span>
+<span class="fc" id="L47">    }</span>
 
     /**
      * Creates a builder pre-filled with the current incident's field values.
@@ -45,20 +53,20 @@ public record Incident(
      */
     @Override
     public Builder toBuilder() {
-<span class="fc" id="L48">        return new Builder()</span>
-<span class="fc" id="L49">                .title(title)</span>
-<span class="fc" id="L50">                .description(description)</span>
-<span class="fc" id="L51">                .comments(comments)</span>
-<span class="fc" id="L52">                .metadata(metadata)</span>
-<span class="fc" id="L53">                .sentimentEngagement(sentimentEngagement)</span>
-<span class="fc" id="L54">                .incidentEngagementStats(incidentEngagementStats);</span>
+<span class="fc" id="L56">        return new Builder()</span>
+<span class="fc" id="L57">                .title(title)</span>
+<span class="fc" id="L58">                .description(description)</span>
+<span class="fc" id="L59">                .comments(comments)</span>
+<span class="fc" id="L60">                .metadata(metadata)</span>
+<span class="fc" id="L61">                .sentimentEngagement(sentimentEngagement)</span>
+<span class="fc" id="L62">                .incidentEngagementStats(incidentEngagementStats);</span>
     }
 
     /**
      * Builder class for constructing {@link Incident} instances.
      * Inherits common builder logic from {@link Happening.Builder}.
      */
-<span class="fc" id="L61">    public static class Builder extends Happening.Builder&lt;Builder&gt; {</span>
+<span class="fc" id="L69">    public static class Builder extends Happening.Builder&lt;Builder&gt; {</span>
         protected IncidentEngagementStats incidentEngagementStats;
 
         /**
@@ -69,7 +77,7 @@ public record Incident(
          */
         @Override
         Builder self() {
-<span class="fc" id="L72">            return (Builder) this;</span>
+<span class="fc" id="L80">            return (Builder) this;</span>
         }
 
         /**
@@ -80,8 +88,8 @@ public record Incident(
          */
         @Override
         public Builder title(String aTitle) {
-<span class="fc" id="L83">            this.title = aTitle;</span>
-<span class="fc" id="L84">            return self();</span>
+<span class="fc" id="L91">            this.title = aTitle;</span>
+<span class="fc" id="L92">            return self();</span>
         }
 
         /**
@@ -92,8 +100,8 @@ public record Incident(
          */
         @Override
         public Builder description(String aDescription) {
-<span class="fc" id="L95">            this.description = aDescription;</span>
-<span class="fc" id="L96">            return self();</span>
+<span class="fc" id="L103">            this.description = aDescription;</span>
+<span class="fc" id="L104">            return self();</span>
         }
 
         /**
@@ -104,8 +112,8 @@ public record Incident(
          */
         @Override
         public Builder comments(List&lt;Comment&gt; aComments) {
-<span class="fc" id="L107">            this.comments = aComments;</span>
-<span class="fc" id="L108">            return self();</span>
+<span class="fc" id="L115">            this.comments = aComments;</span>
+<span class="fc" id="L116">            return self();</span>
         }
 
         /**
@@ -116,8 +124,8 @@ public record Incident(
          */
         @Override
         public Builder sentimentEngagement(SentimentEngagement aSentimentEngagement) {
-<span class="fc" id="L119">            this.sentimentEngagement = aSentimentEngagement;</span>
-<span class="fc" id="L120">            return self();</span>
+<span class="fc" id="L127">            this.sentimentEngagement = aSentimentEngagement;</span>
+<span class="fc" id="L128">            return self();</span>
         }
 
         /**
@@ -127,8 +135,8 @@ public record Incident(
          * @return this builder.
          */
         public Builder metadata(IncidentMetadata aIncidentMetadata) {
-<span class="fc" id="L130">            this.metadata = aIncidentMetadata;</span>
-<span class="fc" id="L131">            return self();</span>
+<span class="fc" id="L138">            this.metadata = aIncidentMetadata;</span>
+<span class="fc" id="L139">            return self();</span>
         }
 
         /**
@@ -138,8 +146,8 @@ public record Incident(
          * @return this builder.
          */
         public Builder incidentEngagementStats(IncidentEngagementStats aIncidentEngagementStats) {
-<span class="fc" id="L141">            this.incidentEngagementStats = aIncidentEngagementStats;</span>
-<span class="fc" id="L142">            return self();</span>
+<span class="fc" id="L149">            this.incidentEngagementStats = aIncidentEngagementStats;</span>
+<span class="fc" id="L150">            return self();</span>
         }
 
         /**
@@ -149,7 +157,7 @@ public record Incident(
          */
         @Override
         public Incident build() {
-<span class="fc" id="L152">            return new Incident(</span>
+<span class="fc" id="L160">            return new Incident(</span>
                     title,
                     description,
                     comments,
@@ -166,7 +174,7 @@ public record Incident(
      * @return {@code true} if the incident should be removed.
      */
     public boolean isDeleted() {
-<span class="pc bpc" id="L169" title="1 of 4 branches missed.">            return this.incidentEngagementStats().consecutiveDenies() &gt;=3 || isExpired();</span>
+<span class="pc bpc" id="L177" title="1 of 4 branches missed.">            return this.incidentEngagementStats().consecutiveDenies() &gt;=3 || isExpired();</span>
     }
 
     /**
@@ -177,19 +185,19 @@ public record Incident(
      * @return A new {@code Incident} instance with updated state.
      */
     public Incident confirmIncident() {
-<span class="fc" id="L180">        final IncidentMetadata increasedExpirationTime = metadata.toBuilder()</span>
-<span class="fc" id="L181">                .expirationTime(metadata.expirationTime().plusMinutes(5))</span>
-<span class="fc" id="L182">                .build();</span>
+<span class="fc" id="L188">        final IncidentMetadata increasedExpirationTime = metadata.toBuilder()</span>
+<span class="fc" id="L189">                .expirationTime(metadata.expirationTime().plusMinutes(5))</span>
+<span class="fc" id="L190">                .build();</span>
 
-<span class="fc" id="L184">        final IncidentEngagementStats updatedEngagementStats = incidentEngagementStats.toBuilder()</span>
-<span class="fc" id="L185">                .confirms(incidentEngagementStats().confirms() + 1)</span>
-<span class="fc" id="L186">                .consecutiveDenies(0)</span>
-<span class="fc" id="L187">                .build();</span>
+<span class="fc" id="L192">        final IncidentEngagementStats updatedEngagementStats = incidentEngagementStats.toBuilder()</span>
+<span class="fc" id="L193">                .confirms(incidentEngagementStats().confirms() + 1)</span>
+<span class="fc" id="L194">                .consecutiveDenies(0)</span>
+<span class="fc" id="L195">                .build();</span>
 
-<span class="fc" id="L189">        return this.toBuilder()</span>
-<span class="fc" id="L190">                .incidentEngagementStats(updatedEngagementStats)</span>
-<span class="fc" id="L191">                .metadata(increasedExpirationTime)</span>
-<span class="fc" id="L192">                .build();</span>
+<span class="fc" id="L197">        return this.toBuilder()</span>
+<span class="fc" id="L198">                .incidentEngagementStats(updatedEngagementStats)</span>
+<span class="fc" id="L199">                .metadata(increasedExpirationTime)</span>
+<span class="fc" id="L200">                .build();</span>
     }
 
     /**
@@ -199,14 +207,14 @@ public record Incident(
      * @return A new {@code Incident} instance with updated denial counts.
      */
     public Incident denyIncident() {
-<span class="fc" id="L202">        final IncidentEngagementStats updatedEngagementStats = incidentEngagementStats.toBuilder()</span>
-<span class="fc" id="L203">                .denies(incidentEngagementStats().denies() + 1)</span>
-<span class="fc" id="L204">                .consecutiveDenies(incidentEngagementStats.consecutiveDenies() + 1)</span>
-<span class="fc" id="L205">                .build();</span>
+<span class="fc" id="L210">        final IncidentEngagementStats updatedEngagementStats = incidentEngagementStats.toBuilder()</span>
+<span class="fc" id="L211">                .denies(incidentEngagementStats().denies() + 1)</span>
+<span class="fc" id="L212">                .consecutiveDenies(incidentEngagementStats.consecutiveDenies() + 1)</span>
+<span class="fc" id="L213">                .build();</span>
 
-<span class="fc" id="L207">        return this.toBuilder()</span>
-<span class="fc" id="L208">                .incidentEngagementStats(updatedEngagementStats)</span>
-<span class="fc" id="L209">                .build();</span>
+<span class="fc" id="L215">        return this.toBuilder()</span>
+<span class="fc" id="L216">                .incidentEngagementStats(updatedEngagementStats)</span>
+<span class="fc" id="L217">                .build();</span>
     }
 
     /**
@@ -215,7 +223,7 @@ public record Incident(
      * @return {@code true} if the expiration time is in the past.
      */
     public boolean isExpired() {
-<span class="fc" id="L218">        return LocalDateTime.now().isAfter(metadata.expirationTime());</span>
+<span class="fc" id="L226">        return LocalDateTime.now().isAfter(metadata.expirationTime());</span>
     }
 
     /**
@@ -226,12 +234,12 @@ public record Incident(
      */
     @Override
     public Incident addComment(Comment comment) {
-<span class="fc" id="L229">        List&lt;Comment&gt; commentsCopy = new  ArrayList&lt;&gt;(comments());</span>
-<span class="fc" id="L230">        commentsCopy.add(comment);</span>
+<span class="fc" id="L237">        List&lt;Comment&gt; commentsCopy = new  ArrayList&lt;&gt;(comments());</span>
+<span class="fc" id="L238">        commentsCopy.add(comment);</span>
 
-<span class="fc" id="L232">        return toBuilder()</span>
-<span class="fc" id="L233">                .comments(commentsCopy)</span>
-<span class="fc" id="L234">                .build();</span>
+<span class="fc" id="L240">        return toBuilder()</span>
+<span class="fc" id="L241">                .comments(commentsCopy)</span>
+<span class="fc" id="L242">                .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
