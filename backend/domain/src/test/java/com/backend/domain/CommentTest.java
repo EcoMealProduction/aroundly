@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static com.backend.domain.Fixtures.validComment;
+import static com.backend.domain.Fixtures.vaneaUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CommentTest {
 
     @Test
     void testValidComment() {
-        assertEquals("testUser", validComment.authorUsername());
+        assertEquals(vaneaUser, validComment.actor());
         assertEquals("Un comentariu valid pentru test.", validComment.text());
     }
 

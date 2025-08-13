@@ -15,7 +15,7 @@ public class EventTest {
     void testValidEventCreatedSuccessfully() {
         assertEquals("Concert în aer liber", validEvent.title());
         assertEquals("Eveniment cu muzică live și food trucks.", validEvent.description());
-        assertEquals("testUser", validEvent.metadata().authorUsername());
+        assertEquals(vaneaUser, validEvent.metadata().actor());
         assertNotNull(validEvent.metadata().location());
         assertEquals(0, validEvent.sentimentEngagement().likes());
         assertEquals(0, validEvent.sentimentEngagement().dislikes());
