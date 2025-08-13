@@ -2,7 +2,10 @@ package com.backend.domain.happening.metadata;
 
 import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.media.MediaRef;
 import com.backend.domain.shared.Location;
+import com.backend.domain.user.Actor;
+import java.util.Set;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -16,8 +19,9 @@ import java.time.LocalDateTime;
  */
 @Builder(toBuilder = true)
 public record IncidentMetadata(
-        @NonNull String authorUsername,
+        Actor actor,
         @NonNull Location location,
+        Set<MediaRef> media,
         LocalDateTime createdAt,
         LocalDateTime expirationTime) implements Metadata {
 
