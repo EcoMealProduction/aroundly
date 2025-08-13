@@ -309,7 +309,7 @@ class LoginControllerTest {
         @Test
         @DisplayName("Should handle empty request body")
         void shouldHandleEmptyRequestBody() throws Exception {
-            // Given - mock the behavior for null credentials
+
             when(loginUseCase.authenticateUser(null, null))
                     .thenThrow(new IllegalArgumentException("Invalid credentials"));
             
@@ -361,17 +361,15 @@ class LoginControllerTest {
         @Test
         @DisplayName("Should only accept POST requests")
         void shouldOnlyAcceptPostRequests() throws Exception {
-            // When & Then - GET should not be allowed
+
             mockMvc.perform(get(LOGIN_ENDPOINT))
                     .andExpect(status().isMethodNotAllowed());
 
-            // When & Then - PUT should not be allowed
             mockMvc.perform(put(LOGIN_ENDPOINT)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{}"))
                     .andExpect(status().isMethodNotAllowed());
 
-            // When & Then - DELETE should not be allowed
             mockMvc.perform(delete(LOGIN_ENDPOINT))
                     .andExpect(status().isMethodNotAllowed());
 
