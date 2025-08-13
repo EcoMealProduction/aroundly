@@ -38,12 +38,12 @@ public record Incident(
 <span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (sentimentEngagement == null) {</span>
 <span class="nc" id="L39">            sentimentEngagement = new SentimentEngagement(0 ,0);</span>
         }
-        
+
 <span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (incidentEngagementStats == null) {</span>
 <span class="nc" id="L43">            incidentEngagementStats = new IncidentEngagementStats(0, 0, 0);</span>
         }
 
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        comments = comments == null ? List.of() : new ArrayList&lt;&gt;(comments);</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">      comments = comments == null ? List.of() : new ArrayList&lt;&gt;(comments);</span>
 <span class="fc" id="L47">    }</span>
 
     /**
