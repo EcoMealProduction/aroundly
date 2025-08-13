@@ -30,12 +30,14 @@ public class IncidentService implements IncidentUseCase {
     /**
      * Retrieves all {@link Incident} entries within a given visibility range.
      *
-     * @param range visibility range in meters (currently unused in the method body).
+     * @param userLatitude  latitude of the origin point in decimal degrees
+     * @param userLongitude longitude of the origin point in decimal degrees
+     * @param radiusMeters  maximum search radius, in meters
      * @return list of matching {@code Incident} instances.
      */
     @Override
-    public List<Incident> findAllInGivenRange(int range) {
-        return incidentRepository.findByAllInGivenRange(range);
+    public List<Incident> findAllInGivenRange(double userLatitude, double userLongitude, double radiusMeters) {
+        return incidentRepository.findByAllInGivenRange(userLatitude, userLongitude, radiusMeters);
     }
 
     /**
@@ -116,4 +118,5 @@ public class IncidentService implements IncidentUseCase {
     public void delete(long id) {
         incidentRepository.deleteById(id);
     }
+
 }
