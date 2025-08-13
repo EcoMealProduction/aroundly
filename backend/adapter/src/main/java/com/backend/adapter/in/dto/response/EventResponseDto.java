@@ -1,7 +1,7 @@
 package com.backend.adapter.in.dto.response;
 
 import com.backend.adapter.in.dto.shared.CommentDto;
-import com.backend.adapter.in.dto.shared.EventMetadataDto;
+import com.backend.adapter.in.dto.metadata.EventMetadataDto;
 import com.backend.adapter.in.dto.shared.SentimentEngagementDto;
 import lombok.Builder;
 

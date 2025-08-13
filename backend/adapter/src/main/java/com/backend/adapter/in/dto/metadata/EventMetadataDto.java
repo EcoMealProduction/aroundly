@@ -1,5 +1,6 @@
-package com.backend.adapter.in.dto.shared;
+package com.backend.adapter.in.dto.metadata;
 
+import com.backend.adapter.in.dto.shared.LocationDto;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -7,10 +8,9 @@ import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object containing event metadata information.
- * <p>
+ *
  * Holds contextual information about an event including who created it,
  * where it takes place, and when it occurs.
- * </p>
  *
  * @param authorUsername Username of the event creator
  * @param location       Where the event takes place
