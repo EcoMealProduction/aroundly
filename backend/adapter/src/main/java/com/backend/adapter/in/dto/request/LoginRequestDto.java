@@ -8,9 +8,6 @@ package com.backend.adapter.in.dto.request;
  * 
  * @param usernameOrEmail The user's username or email address used for login
  * @param password The user's password for authentication
- * 
- * @since 1.0
- * @author Backend Team
  */
 public record LoginRequestDto(
         String usernameOrEmail,

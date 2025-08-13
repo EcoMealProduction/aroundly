@@ -12,9 +12,6 @@ package com.backend.adapter.in.dto.response;
  * @param refreshToken Token used to refresh the access token
  * @param username The authenticated user's username
  * @param email The authenticated user's email address
- * 
- * @since 1.0
- * @author Backend Team
  */
 public record LoginResponseDto(
         String accessToken,

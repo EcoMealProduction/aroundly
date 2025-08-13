@@ -11,9 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * This class maps application properties with the "keycloak" prefix to
  * provide centralized configuration for Keycloak authentication services.
  * It includes helper methods to construct commonly used Keycloak URLs.
- * 
- * @since 1.0
- * @author Backend Team
  */
 @Getter
 @Setter

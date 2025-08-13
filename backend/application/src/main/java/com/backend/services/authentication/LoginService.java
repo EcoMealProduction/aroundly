@@ -20,9 +20,6 @@ import java.util.Map;
  * token endpoint using the Resource Owner Password Credentials (ROPC) flow.
  * It manages the communication with Keycloak and transforms responses into
  * application-specific data structures.
- * 
- * @since 1.0
- * @author Backend Team
  */
 @Service
 public class LoginService implements LoginUseCase {
