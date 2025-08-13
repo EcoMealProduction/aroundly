@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
  */
 @Builder(toBuilder = true)
 public record Comment(
-        @NonNull String authorUsername,
+        @NonNull Actor actor,
         @NonNull String text,
-        @NonNull LocalDateTime createdAt) {
+        LocalDateTime createdAt) {
 
     /**
      * Constructs a {@code Comment} instance with input validation.
@@ -28,6 +28,10 @@ public record Comment(
 
         if (text.length() < 5)
             throw new IllegalArgumentException("Text must have at least 5 characters.");
+
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
 
         if (createdAt.isAfter(LocalDateTime.now()))
             throw new IllegalArgumentException("Comment date cannot be in the future.");
