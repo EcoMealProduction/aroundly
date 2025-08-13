@@ -171,6 +171,12 @@ public class MapperFixtures {
         .sentimentEngagement(new SentimentEngagement(0, 0))
         .build();
 
+    public static final Incident domainIncidentForController = new Incident.Builder()
+        .title("Valid Incident")
+        .description("Valid long incident description")
+        .metadata(incidentMetadata)
+        .build();
+
     public static final EventResponseDto eventResponseDto = EventResponseDto.builder()
             .title(domainEvent.title())
             .description(domainEvent.description())
