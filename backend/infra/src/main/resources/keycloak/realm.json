@@ -1,10 +1,13 @@
 {
-  "realm": "glimpse",
+  "realm": "glimpse", 
   "enabled": true,
   "registrationAllowed": true,
   "loginWithEmailAllowed": true,
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
+  "verifyEmail": false,
+  "registrationEmailAsUsername": false,
+  "loginTheme": "keycloak",
 
   "passwordPolicy": "length(8) and digits(1) and upperCase(1) and specialChars(1) and notUsername()",
   "displayName": "glimpse realm",
@@ -13,7 +16,7 @@
     "realm-management": [
       {
         "client": "aroundly",
-        "roles": [ "manage-users" ]
+        "roles": [ "manage-users", "view-users", "query-users" ]
       }
     ]
   },

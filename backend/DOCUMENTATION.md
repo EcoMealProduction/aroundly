@@ -40,17 +40,39 @@ mvn clean package
 # Skip tests during build
 mvn clean package -DskipTests
 
-# Run only tests
+# Build with Docker
+./build-backend.sh
+```
+
+### Test Commands
+```bash
+# Run all tests
 mvn test
+
+# Run tests with clean first
+mvn clean test
+
+# Run specific test class
+mvn test -Dtest=LoginServiceTest
+
+# Run specific test method  
+mvn test -Dtest=LoginServiceTest#shouldAuthenticateUserWithValidCredentials
+
+# Run multiple test classes
+mvn test -Dtest=LoginServiceTest,LoginControllerTest
+
+# Run tests matching pattern
+mvn test -Dtest=*Login*Test
+
+# Run tests in specific module
+cd application && mvn test -Dtest=LoginServiceTest
+cd adapter && mvn test -Dtest=LoginControllerTest
 
 # Generate code coverage report
 mvn test jacoco:report
 
-# Run specific test class
-mvn test -Dtest=ClassName
-
-# Build with Docker
-./build-backend.sh
+# Clean, test, and coverage
+mvn clean test jacoco:report
 ```
 
 ### Docker Commands
@@ -120,11 +142,24 @@ docker-compose down -v
 ## 🔐 Security & Authentication
 
 ### Keycloak Setup
-- Realm: glimpse
-- Client ID: aroundly
-- Client Secret: aroundly-secret
-- Admin Console: http://localhost:7080
-- Realm config: `infra/src/main/resources/keycloak/realm.json`
+- **Version**: 23.0.7 (downgraded from 24+ due to firstName/lastName Admin API issues)
+- **Realm**: glimpse
+- **Client ID**: aroundly
+- **Client Secret**: aroundly-secret
+- **Admin Console**: http://localhost:7080 (admin/admin)
+- **Realm config**: `infra/src/main/resources/keycloak/realm.json`
+
+#### ⚠️ One-Time Service Account Setup Required
+After starting Keycloak for the first time, you **must manually assign service account roles** (this cannot be automated in Keycloak 23.0.7):
+
+1. Go to http://localhost:7080/admin (admin/admin)
+2. Switch to **'glimpse'** realm (dropdown in top-left)
+3. Navigate: **Clients** → **aroundly** → **Service Account Roles** tab
+4. Click **"Assign role"** → Find **"manage-users"** with Client ID **"realm-management"**
+5. Also assign: **"view-users"** and **"query-users"** (same client)
+6. Click **"Assign"**
+
+**Note**: This is only needed once per fresh Keycloak installation. These roles allow your Spring Boot application to create and manage users via the Admin API.
 
 ### Authentication Flow
 1. OAuth2 authorization code flow

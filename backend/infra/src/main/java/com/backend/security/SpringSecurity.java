@@ -19,7 +19,7 @@ public class SpringSecurity {
     /**
      * Configures the security filter chain for the application.
      *
-     * - Allows unauthenticated access to the "/public" endpoint.
+     * - Allows unauthenticated access to "/public" endpoints and "/auth/login".
      * - Requires authentication for all other requests.
      * - Uses JWT-based authentication via OAuth2 resource server.
      * - Applies a custom JWT converter to extract user roles.
@@ -36,7 +36,7 @@ public class SpringSecurity {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/public/**", "/auth/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/events/**", "/api/v1/events").hasRole("BUSINESS")
                         .requestMatchers("/api/v1/**").authenticated())
