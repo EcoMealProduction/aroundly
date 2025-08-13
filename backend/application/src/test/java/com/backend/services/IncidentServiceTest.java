@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,12 +27,14 @@ public class IncidentServiceTest {
 
     @Test
     void testFindAllInGivenRange() {
+        double lat = 47.0101;
+        double lon = 28.8576;
+        double radius = 1500.0;
         final int oneKm = 1;
-        when(incidentRepository.findByAllInGivenRange(oneKm)).thenReturn(Collections.singletonList(validIncident));
-        List<Incident> foundIncident = incidentService.findAllInGivenRange(oneKm);
+        when(incidentRepository.findByAllInGivenRange(lat, lon, radius)).thenReturn(List.of(validIncident));
+        List<Incident> result = incidentService.findAllInGivenRange(lat, lon, radius);
 
-        verify(incidentRepository, times(1)).findByAllInGivenRange(oneKm);
-        assertEquals(List.of(validIncident), foundIncident);
+        assertEquals(result, List.of(validIncident));
     }
 
     @Test

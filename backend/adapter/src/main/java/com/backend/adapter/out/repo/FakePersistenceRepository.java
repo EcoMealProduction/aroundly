@@ -1,7 +1,8 @@
 package com.backend.adapter.out.repo;
 
-import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.metadata.IncidentMetadata;
+import com.backend.domain.shared.Location;
 import com.backend.port.out.IncidentRepository;
 import java.util.Objects;
 import org.springframework.stereotype.Repository;
@@ -37,8 +38,30 @@ public class FakePersistenceRepository implements IncidentRepository {
     }
 
     @Override
-    public List<Incident> findByAllInGivenRange(int range) {
-        return storage.values().stream().limit(range).toList();
+    public List<Incident> findByAllInGivenRange(double lat0, double lon0, double radiusMeters) {
+        final double radiusKm = radiusMeters / 1000.0;
+        return storage.values().stream()
+            .filter(Objects::nonNull)
+            .filter(i -> {
+                IncidentMetadata metadata = i.metadata();
+                if (metadata == null) return false;
+                Location loc = metadata.location();
+                double lat = loc.latitude().doubleValue();
+                double lon = loc.longitude().doubleValue();
+
+                return haversineKm(lat0, lon0, lat, lon) <= radiusKm;
+            })
+            .toList();
+    }
+
+    private static double haversineKm(double lat1, double lon1, double lat2, double lon2) {
+        final double R = 6371.0; // km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2)
+            + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+            * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return 2 * R * Math.asin(Math.sqrt(a));
     }
 
     @Override

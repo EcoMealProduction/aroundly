@@ -15,7 +15,7 @@ public interface IncidentUseCase {
      *
      * @return A list of all incidents in the given range.
      */
-    List<Incident> findAllInGivenRange(int range);
+    List<Incident> findAllInGivenRange(double lat, double lon, double radiusMeter);
 
     /**
      * Finds a incident by its unique identifier.
