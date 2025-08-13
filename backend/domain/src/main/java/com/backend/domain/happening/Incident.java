@@ -38,12 +38,12 @@ public record Incident(
         if (sentimentEngagement == null) {
             sentimentEngagement = new SentimentEngagement(0 ,0);
         }
-        
+
         if (incidentEngagementStats == null) {
             incidentEngagementStats = new IncidentEngagementStats(0, 0, 0);
         }
 
-        comments = comments == null ? List.of() : new ArrayList<>(comments);
+      comments = comments == null ? List.of() : new ArrayList<>(comments);
     }
 
     /**
