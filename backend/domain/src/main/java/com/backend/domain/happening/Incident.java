@@ -35,6 +35,14 @@ public record Incident(
         if (description.length() < 20)
             throw new IllegalArgumentException("Description too short.");
 
+        if (sentimentEngagement == null) {
+            sentimentEngagement = new SentimentEngagement(0 ,0);
+        }
+        
+        if (incidentEngagementStats == null) {
+            incidentEngagementStats = new IncidentEngagementStats(0, 0, 0);
+        }
+
         comments = comments == null ? List.of() : new ArrayList<>(comments);
     }
 

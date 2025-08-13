@@ -2,7 +2,8 @@ package com.backend.adapter.out.repo;
 
 import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
-import com.backend.port.out.HappeningRepository;
+import com.backend.port.out.IncidentRepository;
+import java.util.Objects;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,30 +14,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class FakePersistenceRepository implements HappeningRepository {
+public class FakePersistenceRepository implements IncidentRepository {
 
-    private final Map<Long, Happening> storage = new ConcurrentHashMap<>();
+    private final Map<Long, Incident> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override
-    public Happening save(Happening happening) {
+    public Incident save(Incident incident) {
         long id = idGenerator.getAndIncrement();
-        storage.put(id, happening);
-        return happening;
+        storage.put(id, incident);
+        return incident;
     }
 
     @Override
-    public Optional<Happening> findById(long id) {
+    public Optional<Incident> findById(long id) {
         return Optional.ofNullable(storage.get(id));
     }
 
     @Override
-    public List<Happening> findAll() {
+    public List<Incident> findAll() {
         return new ArrayList<>(storage.values());
     }
 
     @Override
-    public List<Happening> findByAllInGivenRange(int range) {
+    public List<Incident> findByAllInGivenRange(int range) {
         return storage.values().stream().limit(range).toList();
     }
 
@@ -46,9 +47,9 @@ public class FakePersistenceRepository implements HappeningRepository {
     }
 
     @Override
-    public List<Happening> findByUserId(long userId) {
+    public List<Incident> findByUserId(long userId) {
         return storage.values().stream()
-                .filter(h -> h instanceof Incident)
+                .filter(Objects::nonNull)
                 .toList();
     }
 }
