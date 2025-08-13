@@ -7,14 +7,22 @@ import com.backend.domain.happening.metadata.EventMetadata;
 import com.backend.domain.happening.metadata.IncidentMetadata;
 import com.backend.domain.shared.Location;
 import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.user.Actor;
+import com.backend.domain.user.ActorId;
 import com.backend.domain.user.Comment;
 
+import com.backend.domain.user.Role;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public final class Fixtures {
-    public static final String authorUsername = "testUser";
+    public static final Actor vaneaUser = new Actor(
+        new ActorId(1L),
+        "vanea",
+        Set.of(Role.USER));
+
     public static final Location validLocation = Location.builder()
             .latitude(BigDecimal.valueOf(47.0))
             .longitude(BigDecimal.valueOf(28.0))
@@ -33,21 +41,21 @@ public final class Fixtures {
             .build();
 
     public static final EventMetadata eventMetadata = EventMetadata.builder()
-            .authorUsername(authorUsername)
+            .actor(vaneaUser)
             .location(validLocation)
             .startTime(LocalDateTime.now().plusHours(1))
             .endTime(LocalDateTime.now().plusHours(2))
             .build();
 
     public static final IncidentMetadata incidentMetadata = IncidentMetadata.builder()
-            .authorUsername(authorUsername)
+            .actor(vaneaUser)
             .location(validLocation)
             .createdAt(LocalDateTime.now())
             .expirationTime(LocalDateTime.now().plusMinutes(45))
             .build();
 
     public static final Comment validComment = Comment.builder()
-            .authorUsername(authorUsername)
+            .actor(vaneaUser)
             .text("Un comentariu valid pentru test.")
             .createdAt(LocalDateTime.now())
             .build();
