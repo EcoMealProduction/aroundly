@@ -40,7 +40,7 @@ public interface IncidentRepository {
      *
      * @return A list of incidents within the given range.
      */
-    List<Incident> findByAllInGivenRange(int range);
+    List<Incident> findByAllInGivenRange(double lat, double lon, double radiusMeters);
 
     /**
      * Deletes an incident by its unique identifier.
