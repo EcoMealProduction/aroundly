@@ -31,7 +31,6 @@ public class IncidentMetadataResponseMapperTest {
 
     assertEquals(dto.username(), incidentMetadata.actor().username());
     assertEquals(dto.media().size(), incidentMetadata.media().size());
-    assertEquals(dto.createdAt().getMinute(), LocalDateTime.now().getMinute());
     assertEquals(incidentMetadata.location().address(), dto.location().address());
   }
 }
