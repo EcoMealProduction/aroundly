@@ -1,6 +1,9 @@
 package com.backend.domain.happening.metadata;
 
+import com.backend.domain.happening.media.MediaRef;
 import com.backend.domain.shared.Location;
+import com.backend.domain.user.Actor;
+import java.util.Set;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -13,10 +16,11 @@ import java.time.LocalDateTime;
  */
 @Builder(toBuilder = true)
 public record EventMetadata(
-        @NonNull String authorUsername,
-        @NonNull Location location,
-        @NonNull LocalDateTime startTime,
-        @NonNull LocalDateTime endTime) implements Metadata {
+    @NonNull Actor actor,
+    @NonNull Location location,
+    Set<MediaRef> media,
+    @NonNull LocalDateTime startTime,
+    @NonNull LocalDateTime endTime) implements Metadata {
 
     /**
      * Compact constructor with validation logic to ensure temporal consistency.

@@ -1,15 +1,14 @@
 package com.backend.adapter.in.dto.request;
 
-import com.backend.adapter.in.dto.shared.EventMetadataDto;
+import com.backend.adapter.in.dto.metadata.EventMetadataDto;
 import lombok.Builder;
 import lombok.NonNull;
 
 /**
  * Data Transfer Object for creating new events in the system.
- * <p>
+ *
  * Contains all necessary information required to create an event,
  * including basic details and associated metadata.
- * </p>
  *
  * @param title         The name or title of the event
  * @param description   Detailed description of what the event is about

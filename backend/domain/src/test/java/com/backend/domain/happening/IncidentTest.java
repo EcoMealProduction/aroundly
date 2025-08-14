@@ -16,7 +16,7 @@ public class IncidentTest {
         assertEquals("Accident rutier la intersecție", validIncident.title());
         assertEquals("Coliziune minoră între două autoturisme. Traficul este ușor îngreunat.",
                 validIncident.description());
-        assertEquals("testUser", validIncident.metadata().authorUsername());
+        assertEquals(vaneaUser, validIncident.metadata().actor());
         assertNotNull(validIncident.metadata().location());
         assertEquals(0, validIncident.sentimentEngagement().likes());
         assertEquals(0, validIncident.incidentEngagementStats().denies());
