@@ -13,6 +13,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 127.0.0.1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   # App database
   app_postgres:
@@ -28,6 +33,11 @@ services:
       POSTGRES_PASSWORD: ${APP_PASSWORD}
     volumes:
       - app_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${APP_USER} -d ${APP_DB} -h 127.0.0.1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   pg_admin:
     image: dpage/pgadmin4
@@ -62,9 +72,44 @@ services:
       - "7080:7080"
     depends_on:
       - postgres
-    command: start-dev --http-port=7080 --import-realm
+    command: start-dev --http-port=7080 --import-realm --health-enabled=true
     volumes:
       - ./infra/src/main/resources/keycloak/realm.json:/opt/keycloak/data/import/realm.json
+    healthcheck:
+      test: [ "CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/7080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      app_postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: "8100"
+      SPRING_APPLICATION_NAME: infra
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: "http://keycloak:7080/realms/glimpse"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://keycloak:7080/realms/glimpse"
+
+      KEYCLOAK_BASE_URL: "http://keycloak:7080"
+      KEYCLOAK_REALM: "glimpse"
+      KEYCLOAK_CLIENT_ID: "aroundly"
+      KEYCLOAK_CLIENT_SECRET: "aroundly-secret"
+
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://app_postgres:5432/appdb"
+      SPRING_DATASOURCE_USERNAME: "appuser"
+      SPRING_DATASOURCE_PASSWORD: "app_password"
+
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: "classpath:db/migration"
+
+    ports:
+      - "8100:8100"
+
 
   minio:
     image: minio/minio

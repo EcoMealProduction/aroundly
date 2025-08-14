@@ -1,4 +1,8 @@
-.PHONY: up down stop clean prune
+.PHONY: up down stop clean prune start
+
+start:
+	chmod +x ./scripts/build-backend.sh
+	./scripts/build-backend.sh
 
 # Docker container management
 
