@@ -185,3 +185,8 @@ buildNumber.properties
 
 # Exclude all application properties files
 **/application.properties
+
+
+# Zed
+.factorypath
+.settings
