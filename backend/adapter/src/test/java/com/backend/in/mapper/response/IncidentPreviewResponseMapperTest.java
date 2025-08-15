@@ -37,7 +37,6 @@ public class IncidentPreviewResponseMapperTest {
     assertNotNull(domainIncident.metadata());
     assertEquals(dto.metadata().username(), domainIncident.metadata().actor().username());
     assertEquals(dto.metadata().media().size(), domainIncident.metadata().media().size());
-    assertEquals(dto.metadata().createdAt().getMinute(), LocalDateTime.now().getMinute());
     assertEquals(dto.metadata().location().address(), domainIncident.metadata().location().address());
   }
 }
