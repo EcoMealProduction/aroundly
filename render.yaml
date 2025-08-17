@@ -1,9 +1,9 @@
 databases:
   - name: keycloak-db
-    plan: starter
+    plan: basic-1gb
     databaseName: users
   - name: app-db
-    plan: starter
+    plan: basic-1gb
     databaseName: appdb
 
 services:
