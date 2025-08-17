@@ -2,20 +2,19 @@ databases:
   - name: keycloak-db
     plan: starter
     databaseName: users
-
   - name: app-db
     plan: starter
     databaseName: appdb
 
 services:
-  - type: web
+  # --- Keycloak (private) ---
+  - type: pserv
     name: keycloak
-    env: docker
+    runtime: docker
     plan: starter
-    docker:
-      image: quay.io/keycloak/keycloak:23.0.7
-      command: >
-        start-dev --http-port=7080 --import-realm --health-enabled=true
+    image: quay.io/keycloak/keycloak:23.0.7
+    dockerCommand: >
+      start-dev --http-port=7080 --import-realm --health-enabled=true
     ports:
       - port: 7080
         protocol: tcp
@@ -23,21 +22,13 @@ services:
       - key: KC_DB
         value: postgres
       - key: KC_DB_URL_HOST
-        fromDatabase:
-          name: keycloak-db
-          property: host
+        fromDatabase: { name: keycloak-db, property: host }
       - key: KC_DB_URL_DATABASE
-        fromDatabase:
-          name: keycloak-db
-          property: database
+        fromDatabase: { name: keycloak-db, property: database }
       - key: KC_DB_USERNAME
-        fromDatabase:
-          name: keycloak-db
-          property: user
+        fromDatabase: { name: keycloak-db, property: user }
       - key: KC_DB_PASSWORD
-        fromDatabase:
-          name: keycloak-db
-          property: password
+        fromDatabase: { name: keycloak-db, property: password }
       - key: KEYCLOAK_ADMIN
         value: admin
       - key: KEYCLOAK_ADMIN_PASSWORD
@@ -46,10 +37,12 @@ services:
         value: "true"
       - key: KC_LOG_LEVEL
         value: info
+    # NOTE: if you need realm.json, bake it into a custom image with a small Dockerfile.
 
+  # --- Spring Boot app (public web) ---
   - type: web
     name: app
-    env: docker
+    runtime: docker
     plan: starter
     dockerfilePath: ./Dockerfile
     dockerContext: .
@@ -74,29 +67,23 @@ services:
       - key: KEYCLOAK_CLIENT_SECRET
         value: aroundly-secret
       - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: app-db
-          property: connectionString
+        fromDatabase: { name: app-db, property: connectionString }
       - key: SPRING_DATASOURCE_USERNAME
-        fromDatabase:
-          name: app-db
-          property: user
+        fromDatabase: { name: app-db, property: user }
       - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: app-db
-          property: password
+        fromDatabase: { name: app-db, property: password }
       - key: SPRING_FLYWAY_ENABLED
         value: "true"
       - key: SPRING_FLYWAY_LOCATIONS
-        value: classpath:db/migration
+        value: "classpath:db/migration"
 
-  - type: web
+  # --- MinIO (private) ---
+  - type: pserv
     name: minio
-    env: docker
+    runtime: docker
     plan: starter
-    docker:
-      image: minio/minio
-      command: server /data --console-address ":9001"
+    image: minio/minio
+    dockerCommand: 'server /data --console-address ":9001"'
     ports:
       - port: 9000
         protocol: tcp
@@ -112,12 +99,12 @@ services:
       mountPath: /data
       sizeGB: 10
 
+  # --- Grafana (public web) ---
   - type: web
     name: grafana
-    env: docker
+    runtime: docker
     plan: starter
-    docker:
-      image: grafana/grafana-oss
+    image: grafana/grafana-oss
     ports:
       - port: 3000
         protocol: tcp
@@ -131,12 +118,12 @@ services:
       mountPath: /var/lib/grafana
       sizeGB: 1
 
+  # --- pgAdmin (public web) ---
   - type: web
     name: pgadmin
-    env: docker
+    runtime: docker
     plan: starter
-    docker:
-      image: dpage/pgadmin4
+    image: dpage/pgadmin4
     ports:
       - port: 80
         protocol: tcp
