@@ -8,7 +8,7 @@ databases:
     databaseName: appdb
 
 services:
-  - type: private_service
+  - type: web
     name: keycloak
     env: docker
     plan: starter
@@ -90,7 +90,7 @@ services:
       - key: SPRING_FLYWAY_LOCATIONS
         value: classpath:db/migration
 
-  - type: private_service
+  - type: web
     name: minio
     env: docker
     plan: starter
