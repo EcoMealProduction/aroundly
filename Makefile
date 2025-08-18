@@ -19,7 +19,6 @@ down:
 	docker-compose down -v
 
 kill:
-	docker stop $(docker ps -a -q)
 	docker rm $(docker ps -a -q)
 
 # Delete all Docker volumes (dangerous)
