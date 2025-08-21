@@ -1,4 +1,4 @@
-.PHONY: up down stop clean prune start
+.PHONY: up down stop clean prune start kill
 
 start:
 	chmod +x ./scripts/build-backend.sh
@@ -18,9 +18,12 @@ stop:
 down:
 	docker-compose down -v
 
+kill:
+	docker rm $(docker ps -a -q)
+
 # Delete all Docker volumes (dangerous)
 prune:
 	docker volume prune -f
 
 # Stop containers and remove them along with volumes
-clean: stop down
+clean: stop down kill

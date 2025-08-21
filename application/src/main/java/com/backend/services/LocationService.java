@@ -1,7 +1,6 @@
 package com.backend.services;
 
 import com.backend.port.in.LocationUseCase;
-import com.backend.port.out.LocationRepository;
 import com.backend.domain.shared.Location;
 import org.springframework.stereotype.Service;
 
