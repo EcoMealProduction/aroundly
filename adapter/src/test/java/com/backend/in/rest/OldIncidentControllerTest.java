@@ -17,7 +17,7 @@ import com.backend.adapter.in.mapper.response.IncidentDetailedResponseMapper;
 import com.backend.adapter.in.mapper.response.IncidentPreviewResponseMapper;
 import com.backend.adapter.in.rest.IncidentController;
 import com.backend.domain.happening.old.OldIncident;
-import com.backend.port.in.IncidentUseCase;
+import com.backend.port.inbound.IncidentUseCase;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.backend.services.authentication;
 
-import com.backend.port.in.LoginUseCase;
+import com.backend.port.inbound.LoginUseCase;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

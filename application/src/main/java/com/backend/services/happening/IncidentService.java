@@ -1,8 +1,8 @@
 package com.backend.services.happening;
 
 import com.backend.domain.happening.old.OldIncident;
-import com.backend.port.in.IncidentUseCase;
-import com.backend.port.out.IncidentRepository;
+import com.backend.port.inbound.IncidentUseCase;
+import com.backend.port.outbound.IncidentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

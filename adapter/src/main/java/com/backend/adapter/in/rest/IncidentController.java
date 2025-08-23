@@ -6,7 +6,7 @@ import com.backend.adapter.in.mapper.request.IncidentRequestMapper;
 import com.backend.adapter.in.mapper.response.IncidentDetailedResponseMapper;
 import com.backend.adapter.in.mapper.response.IncidentPreviewResponseMapper;
 import com.backend.domain.happening.old.OldIncident;
-import com.backend.port.in.IncidentUseCase;
+import com.backend.port.inbound.IncidentUseCase;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

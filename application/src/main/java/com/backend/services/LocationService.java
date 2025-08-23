@@ -1,7 +1,7 @@
 package com.backend.services;
 
 import com.backend.domain.old.OldLocation;
-import com.backend.port.in.LocationUseCase;
+import com.backend.port.inbound.LocationUseCase;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

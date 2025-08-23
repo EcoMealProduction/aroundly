@@ -2,7 +2,7 @@ package com.backend.adapter.in.rest.authentication;
 
 import com.backend.adapter.in.dto.request.LoginRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
-import com.backend.port.in.LoginUseCase;
+import com.backend.port.inbound.LoginUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -3,7 +3,7 @@ package com.backend.adapter.out.repo;
 import com.backend.domain.happening.old.OldIncident;
 import com.backend.domain.happening.metadata.IncidentMetadata;
 import com.backend.domain.old.OldLocation;
-import com.backend.port.out.IncidentRepository;
+import com.backend.port.outbound.IncidentRepository;
 import java.util.Objects;
 import org.springframework.stereotype.Repository;
 

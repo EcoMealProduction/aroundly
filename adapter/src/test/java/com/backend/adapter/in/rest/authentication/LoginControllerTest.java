@@ -2,7 +2,7 @@ package com.backend.adapter.in.rest.authentication;
 
 import com.backend.adapter.in.dto.request.LoginRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
-import com.backend.port.in.LoginUseCase;
+import com.backend.port.inbound.LoginUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

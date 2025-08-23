@@ -1,6 +1,6 @@
 package com.backend.services;
 
-import com.backend.port.in.CommentUseCase;
+import com.backend.port.inbound.CommentUseCase;
 import com.backend.domain.actor.Comment;
 import org.springframework.stereotype.Service;
 

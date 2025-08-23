@@ -1,6 +1,6 @@
 package com.backend.services.authentication;
 
-import com.backend.port.in.LoginUseCase;
+import com.backend.port.inbound.LoginUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

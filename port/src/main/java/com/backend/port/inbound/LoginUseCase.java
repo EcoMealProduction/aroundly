@@ -1,4 +1,4 @@
-package com.backend.port.in;
+package com.backend.port.inbound;
 
 /**
  * Defines use cases for user authentication operations.

@@ -1,7 +1,7 @@
 package com.backend.services;
 
 import com.backend.domain.happening.old.OldIncident;
-import com.backend.port.out.IncidentRepository;
+import com.backend.port.outbound.IncidentRepository;
 import com.backend.services.happening.IncidentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

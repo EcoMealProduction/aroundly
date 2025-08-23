@@ -1,7 +1,9 @@
 package com.backend.domain.actor;
 
 import com.backend.domain.happening.HappeningId;
+import com.backend.domain.mixins.Reactable;
 import com.backend.domain.mixins.TimeStamped;
+import com.backend.domain.reactions.SentimentEngagement;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.NonNull;
@@ -14,11 +16,12 @@ import java.time.LocalDateTime;
  */
 @Builder(toBuilder = true)
 public record Comment(
-        long id,
-        @NonNull String text,
-        @NonNull HappeningId happeningId,
-        @NonNull ActorId actorId,
-        Instant createdAt) implements TimeStamped {
+    long id,
+    @NonNull String text,
+    @NonNull HappeningId happeningId,
+    @NonNull ActorId actorId,
+    Instant createdAt,
+    SentimentEngagement sentimentEngagement) implements TimeStamped, Reactable {
 
     /**
      * Constructs a {@code Comment} instance with input validation.
