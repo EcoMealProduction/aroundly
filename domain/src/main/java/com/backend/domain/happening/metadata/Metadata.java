@@ -1,16 +1,16 @@
 package com.backend.domain.happening.metadata;
 
-import com.backend.domain.happening.Event;
-import com.backend.domain.happening.Happening;
-import com.backend.domain.happening.Incident;
-import com.backend.domain.happening.media.MediaRef;
-import com.backend.domain.shared.Location;
-import com.backend.domain.user.Actor;
+import com.backend.domain.happening.old.Event;
+import com.backend.domain.happening.old.OldHappening;
+import com.backend.domain.happening.old.OldIncident;
+import com.backend.domain.media.Media;
+import com.backend.domain.old.OldLocation;
+import com.backend.domain.actor.Actor;
 import java.util.Set;
 
 /**
- * Mixin interface for metadata associated with {@link Happening} entities,
- * such as {@link Incident} or {@link Event}.
+ * Mixin interface for metadata associated with {@link OldHappening} entities,
+ * such as {@link OldIncident} or {@link Event}.
  *
  * This interface is intended to be implemented by types like {@code EventMetadata}
  * or {@code IncidentMetadata} to provide contextual information such as time,
@@ -20,6 +20,6 @@ import java.util.Set;
  */
 public interface Metadata {
     Actor actor();
-    Set<MediaRef> media();
-    Location location();
+    Set<Media> media();
+    OldLocation location();
 }

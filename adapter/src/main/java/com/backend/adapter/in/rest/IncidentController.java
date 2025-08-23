@@ -5,7 +5,7 @@ import com.backend.adapter.in.dto.response.incident.IncidentPreviewResponseDto;
 import com.backend.adapter.in.mapper.request.IncidentRequestMapper;
 import com.backend.adapter.in.mapper.response.IncidentDetailedResponseMapper;
 import com.backend.adapter.in.mapper.response.IncidentPreviewResponseMapper;
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
 import com.backend.port.in.IncidentUseCase;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -50,7 +50,7 @@ public class IncidentController {
    * Creates a new incident based on client-provided request data.
    *
    * Request data is converted from {@link IncidentRequestDto} to the
-   * {@link Incident} domain model using the {@link IncidentRequestMapper}.
+   * {@link OldIncident} domain model using the {@link IncidentRequestMapper}.
    * The domain object is then persisted via the {@link IncidentUseCase} and
    * returned to the client.
    *
@@ -58,11 +58,11 @@ public class IncidentController {
    * @return the created {@code Incident} as JSON with HTTP status {@code 201 Created}
    */
   @PostMapping
-  public ResponseEntity<Incident> create(@RequestBody IncidentRequestDto incidentRequestDto) {
-    Incident domainIncident = requestMapper.toDomain(incidentRequestDto);
-    Incident incident = incidentUseCase.create(domainIncident);
+  public ResponseEntity<OldIncident> create(@RequestBody IncidentRequestDto incidentRequestDto) {
+    OldIncident domainOldIncident = requestMapper.toDomain(incidentRequestDto);
+    OldIncident oldIncident = incidentUseCase.create(domainOldIncident);
 
-    return new ResponseEntity<>(incident, HttpStatus.CREATED);
+    return new ResponseEntity<>(oldIncident, HttpStatus.CREATED);
   }
 
   /**
@@ -82,7 +82,7 @@ public class IncidentController {
       @RequestParam("lon") double longitude,
       @RequestParam("radiusMeters") double radiusMeters) {
 
-    List<Incident> results = incidentUseCase.findAllInGivenRange(latitude, longitude, radiusMeters);
+    List<OldIncident> results = incidentUseCase.findAllInGivenRange(latitude, longitude, radiusMeters);
     List<IncidentPreviewResponseDto> responseDtos = results.stream()
         .map(previewResponseMapper::toDto)
         .toList();

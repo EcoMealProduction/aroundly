@@ -1,8 +1,8 @@
 package com.backend.services.happening;
 
-import com.backend.domain.happening.Event;
-import com.backend.domain.happening.Happening;
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.Event;
+import com.backend.domain.happening.old.OldHappening;
+import com.backend.domain.happening.old.OldIncident;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Central resolver for {@link HappeningStrategy} implementations.
  *
- * This class maps {@link Happening} subtypes (e.g., {@link Event}, {@link Incident}) to their
+ * This class maps {@link OldHappening} subtypes (e.g., {@link Event}, {@link OldIncident}) to their
  * corresponding strategy implementations and delegates update operations accordingly.
  *
  * Registered as a Spring {@link Component} for automatic injection and discovery.
@@ -21,17 +21,17 @@ import java.util.Map;
 public class HappeningStrategyResolver {
 
     /**
-     * Internal registry mapping supported {@link Happening} classes to their corresponding strategies.
+     * Internal registry mapping supported {@link OldHappening} classes to their corresponding strategies.
      */
-    private final Map<Class<? extends Happening>, HappeningStrategy<? extends Happening>> strategies = new HashMap<>();
+    private final Map<Class<? extends OldHappening>, HappeningStrategy<? extends OldHappening>> strategies = new HashMap<>();
 
     /**
      * Constructs the resolver with all discovered {@link HappeningStrategy} beans.
      *
      * @param strategyList the list of available strategy implementations injected by Spring.
      */
-    public HappeningStrategyResolver(List<HappeningStrategy<? extends Happening>> strategyList) {
-        for (HappeningStrategy<? extends Happening> strategy : strategyList) {
+    public HappeningStrategyResolver(List<HappeningStrategy<? extends OldHappening>> strategyList) {
+        for (HappeningStrategy<? extends OldHappening> strategy : strategyList) {
             strategies.put(strategy.getSupportedType(), strategy);
         }
     }
@@ -42,12 +42,12 @@ public class HappeningStrategyResolver {
      *
      * @param existing the current happening instance to be updated.
      * @param updated the new instance containing the updated state.
-     * @param <T> the type of {@link Happening}.
-     * @return a new {@link Happening} instance with applied updates.
+     * @param <T> the type of {@link OldHappening}.
+     * @return a new {@link OldHappening} instance with applied updates.
      * @throws IllegalArgumentException if no strategy is found for the type.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Happening> Happening update(T existing, T updated) {
+    public <T extends OldHappening> OldHappening update(T existing, T updated) {
         HappeningStrategy<T> strategy = (HappeningStrategy<T>) strategies.get(existing.getClass());
         if (strategy == null) throw new IllegalArgumentException("No strategy for type: " + existing.getClass());
 

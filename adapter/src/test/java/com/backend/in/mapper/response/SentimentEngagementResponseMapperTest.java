@@ -1,6 +1,6 @@
 package com.backend.in.mapper.response;
 
-import static com.backend.in.mapper.MapperFixtures.plainSentimentEngagementDomain;
+import static com.backend.in.mapper.MapperFixtures.PLAIN_OLD_SENTIMENT_ENGAGEMENT_DOMAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.backend.adapter.in.dto.response.SentimentEngagementResponseDto;
@@ -22,9 +22,9 @@ public class SentimentEngagementResponseMapperTest {
 
   @Test
   void testToDto() {
-    SentimentEngagementResponseDto dto = mapper.toDto(plainSentimentEngagementDomain);
+    SentimentEngagementResponseDto dto = mapper.toDto(PLAIN_OLD_SENTIMENT_ENGAGEMENT_DOMAIN);
 
-    assertEquals(dto.likes(), plainSentimentEngagementDomain.likes());
-    assertEquals(dto.dislikes(), plainSentimentEngagementDomain.dislikes());
+    assertEquals(dto.likes(), PLAIN_OLD_SENTIMENT_ENGAGEMENT_DOMAIN.likes());
+    assertEquals(dto.dislikes(), PLAIN_OLD_SENTIMENT_ENGAGEMENT_DOMAIN.dislikes());
   }
 }

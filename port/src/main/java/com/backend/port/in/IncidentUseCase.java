@@ -1,6 +1,6 @@
 package com.backend.port.in;
 
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface IncidentUseCase {
      *
      * @return A list of all incidents in the given range.
      */
-    List<Incident> findAllInGivenRange(double lat, double lon, double radiusMeter);
+    List<OldIncident> findAllInGivenRange(double lat, double lon, double radiusMeter);
 
     /**
      * Finds a incident by its unique identifier.
@@ -23,24 +23,24 @@ public interface IncidentUseCase {
      * @param id The id of the incident to retrieve.
      * @return The found incident, or null if not found.
      */
-    Incident findById(long id);
+    OldIncident findById(long id);
 
     /**
      * Creates a new incident.
      *
-     * @param incident The incident object to create (should not have an ID yet).
+     * @param oldIncident The incident object to create (should not have an ID yet).
      * @return The created incident with assigned ID and metadata.
      */
-    Incident create(Incident incident);
+    OldIncident create(OldIncident oldIncident);
 
     /**
      * Updates an existing incident.
      *
      * @param id The id of an existing incident to edit.
-     * @param newIncident updated incident
+     * @param newOldIncident updated incident
      * @return The updated incident.
      */
-    Incident update(long id, Incident newIncident);
+    OldIncident update(long id, OldIncident newOldIncident);
 
     /**
      * Sets up the visibility range for a specific incident.
@@ -58,7 +58,7 @@ public interface IncidentUseCase {
      * @param id The id of incident to extend.
      * @return The updated (extended) incident.
      */
-    Incident extendIncidentLifespan(long id);
+    OldIncident extendIncidentLifespan(long id);
 
     /**
      * Deletes the specified incident.

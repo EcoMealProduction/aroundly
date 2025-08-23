@@ -1,7 +1,7 @@
 package com.backend.adapter.in.mapper.response;
 
 import com.backend.adapter.in.dto.response.SentimentEngagementResponseDto;
-import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.reactions.SentimentEngagement;
 import org.mapstruct.Mapper;
 
 /**

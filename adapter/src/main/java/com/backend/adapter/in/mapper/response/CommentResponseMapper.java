@@ -1,7 +1,7 @@
 package com.backend.adapter.in.mapper.response;
 
 import com.backend.adapter.in.dto.response.CommentResponseDto;
-import com.backend.domain.user.Comment;
+import com.backend.domain.actor.Comment;
 import org.mapstruct.Mapper;
 
 /**

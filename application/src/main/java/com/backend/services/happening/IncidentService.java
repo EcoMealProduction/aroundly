@@ -1,6 +1,6 @@
 package com.backend.services.happening;
 
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
 import com.backend.port.in.IncidentUseCase;
 import com.backend.port.out.IncidentRepository;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Service implementation for handling operations on {@link Incident} entities.
+ * Service implementation for handling operations on {@link OldIncident} entities.
  * Delegates persistence to the {@link IncidentRepository}.
  *
  * Registered as a Spring {@link Service} for business logic orchestration.
@@ -28,7 +28,7 @@ public class IncidentService implements IncidentUseCase {
     }
 
     /**
-     * Retrieves all {@link Incident} entries within a given visibility range.
+     * Retrieves all {@link OldIncident} entries within a given visibility range.
      *
      * @param userLatitude  latitude of the origin point in decimal degrees
      * @param userLongitude longitude of the origin point in decimal degrees
@@ -36,57 +36,57 @@ public class IncidentService implements IncidentUseCase {
      * @return list of matching {@code Incident} instances.
      */
     @Override
-    public List<Incident> findAllInGivenRange(double userLatitude, double userLongitude, double radiusMeters) {
+    public List<OldIncident> findAllInGivenRange(double userLatitude, double userLongitude, double radiusMeters) {
         return incidentRepository.findByAllInGivenRange(userLatitude, userLongitude, radiusMeters);
     }
 
     /**
-     * Retrieves a specific {@link Incident} by its ID.
+     * Retrieves a specific {@link OldIncident} by its ID.
      *
      * @param id the unique identifier.
      * @return the matching {@code Incident}.
      * @throws IllegalArgumentException if not found.
      */
     @Override
-    public Incident findById(long id) {
+    public OldIncident findById(long id) {
         return incidentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Incident not found"));
     }
 
     /**
-     * Persists a new {@link Incident}.
+     * Persists a new {@link OldIncident}.
      *
-     * @param incident the instance to create.
+     * @param oldIncident the instance to create.
      * @return the saved instance.
      */
     @Override
-    public Incident create(Incident incident) {
-        return incidentRepository.save(incident);
+    public OldIncident create(OldIncident oldIncident) {
+        return incidentRepository.save(oldIncident);
     }
 
     /**
-     * Updates an existing {@link Incident} by applying changes from a new instance.
+     * Updates an existing {@link OldIncident} by applying changes from a new instance.
      * Ensures the types of the original and new incident match.
      *
      * @param id ID of the happening to update.
-     * @param newIncident the new values.
+     * @param newOldIncident the new values.
      * @return the updated and saved instance.
      * @throws IllegalArgumentException if types mismatch or ID not found.
      */
     @Override
-    public Incident update(long id, Incident newIncident) {
-        Incident existingIncident = findById(id);
+    public OldIncident update(long id, OldIncident newOldIncident) {
+        OldIncident existingOldIncident = findById(id);
 
-        Incident updatedExistingIncident = existingIncident.toBuilder()
-            .title(newIncident.title())
-            .description(newIncident.description())
-            .comments(newIncident.comments())
-            .metadata(newIncident.metadata())
-            .sentimentEngagement(newIncident.sentimentEngagement())
-            .incidentEngagementStats(newIncident.incidentEngagementStats())
+        OldIncident updatedExistingOldIncident = existingOldIncident.toBuilder()
+            .title(newOldIncident.title())
+            .description(newOldIncident.description())
+            .comments(newOldIncident.comments())
+            .metadata(newOldIncident.metadata())
+            .sentimentEngagement(newOldIncident.sentimentEngagement())
+            .incidentEngagementStats(newOldIncident.engagementStats())
             .build();
 
-        return incidentRepository.save(updatedExistingIncident);
+        return incidentRepository.save(updatedExistingOldIncident);
     }
 
     // is visibility range static?
@@ -99,18 +99,18 @@ public class IncidentService implements IncidentUseCase {
      * Extends the expiration time of an incident by confirming it.
      *
      * @param incidentId the ID of the incident.
-     * @return a new {@link Incident} instance with extended lifespan.
+     * @return a new {@link OldIncident} instance with extended lifespan.
      * @throws IllegalStateException if the given ID does not point to an {@code Incident}.
      */
     @Override
-    public Incident extendIncidentLifespan(long incidentId) {
-        Incident existingIncident = findById(incidentId);
+    public OldIncident extendIncidentLifespan(long incidentId) {
+        OldIncident existingOldIncident = findById(incidentId);
 
-        return incidentRepository.save(existingIncident.confirmIncident());
+        return incidentRepository.save(existingOldIncident.confirmIncident());
     }
 
     /**
-     * Deletes a {@link Incident} by ID.
+     * Deletes a {@link OldIncident} by ID.
      *
      * @param id the unique identifier of the entity to delete.
      */

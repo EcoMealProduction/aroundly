@@ -1,8 +1,8 @@
 package com.backend.domain.happening.metadata;
 
-import com.backend.domain.happening.media.MediaRef;
-import com.backend.domain.shared.Location;
-import com.backend.domain.user.Actor;
+import com.backend.domain.media.Media;
+import com.backend.domain.old.OldLocation;
+import com.backend.domain.actor.Actor;
 import java.util.Set;
 import lombok.Builder;
 import lombok.NonNull;
@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public record EventMetadata(
     @NonNull Actor actor,
-    @NonNull Location location,
-    Set<MediaRef> media,
+    @NonNull OldLocation oldLocation,
+    Set<Media> media,
     @NonNull LocalDateTime startTime,
     @NonNull LocalDateTime endTime) implements Metadata {
 
@@ -45,5 +45,10 @@ public record EventMetadata(
      */
     public boolean isFinished() {
         return LocalDateTime.now().isAfter(this.endTime);
+    }
+
+    @Override
+    public OldLocation location() {
+        return null;
     }
 }

@@ -1,12 +1,12 @@
 package com.backend.adapter.in.mapper.response;
 
 import com.backend.adapter.in.dto.response.incident.IncidentDetailedResponseDto;
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * MapStruct mapper for converting the domain {@link Incident} entity
+ * MapStruct mapper for converting the domain {@link OldIncident} entity
  * into a detailed {@link IncidentDetailedResponseDto} representation.
  *
  * Uses {@link IncidentMetadataResponseMapper}, {@link CommentResponseMapper},
@@ -22,15 +22,15 @@ import org.mapstruct.Mapping;
 public interface IncidentDetailedResponseMapper {
 
   /**
-   * Maps a domain {@link Incident} to a {@link IncidentDetailedResponseDto}.
+   * Maps a domain {@link OldIncident} to a {@link IncidentDetailedResponseDto}.
    * Maps sentimentEngagement to reaction in the DTO.
    * Maps metadata using a qualified method named metadataToIncidentMetadataDto
    * from the metadata mapper.
    *
-   * @param incident the domain incident
+   * @param oldIncident the domain incident
    * @return the detailed response DTO
    */
   @Mapping(target = "reaction", source = "sentimentEngagement")
   @Mapping(target = "metadata", source = "metadata", qualifiedByName = "metadataToIncidentMetadataDto")
-  IncidentDetailedResponseDto toDto(Incident incident);
+  IncidentDetailedResponseDto toDto(OldIncident oldIncident);
 }

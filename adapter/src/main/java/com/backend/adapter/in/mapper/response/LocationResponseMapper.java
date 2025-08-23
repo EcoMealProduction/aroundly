@@ -1,11 +1,11 @@
 package com.backend.adapter.in.mapper.response;
 
 import com.backend.adapter.in.dto.response.LocationResponseDto;
-import com.backend.domain.shared.Location;
+import com.backend.domain.old.OldLocation;
 import org.mapstruct.Mapper;
 
 /**
- * MapStruct mapper for converting the domain {@link Location} entity
+ * MapStruct mapper for converting the domain {@link OldLocation} entity
  * into its corresponding {@link LocationResponseDto} representation.
  *
  * This mapper is used to translate location details from the domain
@@ -15,11 +15,11 @@ import org.mapstruct.Mapper;
 public interface LocationResponseMapper {
 
   /**
-   * Maps a domain {@link Location} to a {@link LocationResponseDto}
+   * Maps a domain {@link OldLocation} to a {@link LocationResponseDto}
    * for use in API responses.
    *
-   * @param location the domain location
+   * @param oldLocation the domain location
    * @return the response DTO
    */
-  LocationResponseDto toDto(Location location);
+  LocationResponseDto toDto(OldLocation oldLocation);
 }

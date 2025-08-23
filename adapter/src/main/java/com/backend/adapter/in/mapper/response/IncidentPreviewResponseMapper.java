@@ -1,13 +1,13 @@
 package com.backend.adapter.in.mapper.response;
 
 import com.backend.adapter.in.dto.response.incident.IncidentPreviewResponseDto;
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 /**
- * MapStruct mapper for converting the domain {@link Incident} entity
+ * MapStruct mapper for converting the domain {@link OldIncident} entity
  * into a preview {@link IncidentPreviewResponseDto} representation.
  *
  * Uses {@link IncidentMetadataResponseMapper} to handle the mapping
@@ -20,13 +20,13 @@ import org.mapstruct.ReportingPolicy;
 public interface IncidentPreviewResponseMapper {
 
   /**
-   * Maps a domain {@link Incident} to a {@link IncidentPreviewResponseDto}.
+   * Maps a domain {@link OldIncident} to a {@link IncidentPreviewResponseDto}.
    * Maps metadata using the qualified method {@code metadataToIncidentMetadataDto}
    * from {@link IncidentMetadataResponseMapper}.
    *
-   * @param incident the domain incident
+   * @param oldIncident the domain incident
    * @return the preview response DTO
    */
   @Mapping(target = "metadata", source = "metadata", qualifiedByName = "metadataToIncidentMetadataDto")
-  IncidentPreviewResponseDto toDto(Incident incident);
+  IncidentPreviewResponseDto toDto(OldIncident oldIncident);
 }

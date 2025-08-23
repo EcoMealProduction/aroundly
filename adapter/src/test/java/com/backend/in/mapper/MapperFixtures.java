@@ -13,24 +13,24 @@ import com.backend.adapter.in.dto.response.incident.IncidentPreviewResponseDto;
 import com.backend.adapter.in.dto.shared.IncidentEngagementStatsDto;
 import com.backend.adapter.in.dto.metadata.IncidentMetadataDto;
 import com.backend.adapter.in.dto.shared.LocationDto;
-import com.backend.domain.happening.Event;
-import com.backend.domain.happening.Incident;
-import com.backend.domain.happening.IncidentEngagementStats;
-import com.backend.domain.happening.media.MediaKind;
-import com.backend.domain.happening.media.MediaRef;
+import com.backend.domain.happening.old.Event;
+import com.backend.domain.happening.old.OldIncident;
+import com.backend.domain.reactions.EngagementStats;
+import com.backend.domain.media.MediaKind;
+import com.backend.domain.media.Media;
 import com.backend.domain.happening.metadata.EventMetadata;
 import com.backend.domain.happening.metadata.IncidentMetadata;
 import com.backend.adapter.in.dto.request.EventRequestDto;
 import com.backend.adapter.in.dto.request.IncidentRequestDto;
 import com.backend.adapter.in.dto.response.EventResponseDto;
 import com.backend.adapter.in.dto.response.IncidentResponseOldDto;
-import com.backend.domain.shared.Location;
+import com.backend.domain.old.OldLocation;
 
-import com.backend.domain.shared.SentimentEngagement;
-import com.backend.domain.user.Actor;
-import com.backend.domain.user.ActorId;
-import com.backend.domain.user.Comment;
-import com.backend.domain.user.Role;
+import com.backend.domain.reactions.SentimentEngagement;
+import com.backend.domain.actor.Actor;
+import com.backend.domain.actor.ActorId;
+import com.backend.domain.actor.Comment;
+import com.backend.domain.actor.Role;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -42,13 +42,13 @@ public class MapperFixtures {
     private static final LocalDateTime SAFE_TIME = LocalDateTime.of(2026, 1, 1, 12, 0);
     public static final Actor vaneaUser = new Actor(new ActorId(1L), "vanea",  Set.of(Role.USER));
     public static final MediaRefDto mediaDto = new MediaRefDto(URI.create("/path/"));
-    public static final MediaRef mediaDomain = new MediaRef(MediaKind.IMAGE, "content-type", URI.create("/path/"));
+    public static final Media mediaDomain = new Media(MediaKind.IMAGE, "content-type", URI.create("/path/"));
     public static final Comment commentDomain = Comment.builder()
         .actor(vaneaUser)
         .text("comment")
         .build();
 
-    public static final SentimentEngagement plainSentimentEngagementDomain = SentimentEngagement.builder()
+    public static final SentimentEngagement PLAIN_OLD_SENTIMENT_ENGAGEMENT_DOMAIN = SentimentEngagement.builder()
         .build();
 
     public static final LocationDto locationDto = LocationDto.builder()
@@ -96,7 +96,7 @@ public class MapperFixtures {
         .metadata(incidentMetadataRequestDto)
         .build();
 
-    public static final Location location = Location.builder()
+    public static final OldLocation OLD_LOCATION = OldLocation.builder()
             .latitude(BigDecimal.valueOf(47.0101))
             .longitude(BigDecimal.valueOf(28.8576))
             .address("Strada Test, Chisinau")
@@ -111,7 +111,7 @@ public class MapperFixtures {
 
     public static final EventMetadata eventMetadata = EventMetadata.builder()
             .actor(vaneaUser)
-            .location(location)
+            .oldLocation(OLD_LOCATION)
             .startTime(SAFE_TIME.plusMinutes(40))
             .endTime(SAFE_TIME.plusMinutes(90))
             .build();
@@ -126,7 +126,7 @@ public class MapperFixtures {
 
     public static final IncidentMetadata incidentMetadata = IncidentMetadata.builder()
         .actor(vaneaUser)
-        .location(location)
+        .oldLocation(OLD_LOCATION)
         .media(Set.of(mediaDomain))
         .expirationTime(SAFE_TIME.plusMinutes(60))
         .build();
@@ -137,7 +137,7 @@ public class MapperFixtures {
             .consecutiveDenies(1)
             .build();
 
-    public static final IncidentEngagementStats stats = IncidentEngagementStats.builder()
+    public static final EngagementStats stats = EngagementStats.builder()
             .confirms(3)
             .denies(1)
             .consecutiveDenies(1)
@@ -162,7 +162,7 @@ public class MapperFixtures {
             .metadata(eventMetadata)
             .build();
 
-    public static final Incident domainIncident = new Incident.Builder()
+    public static final OldIncident DOMAIN_OLD_INCIDENT = new OldIncident.Builder()
         .title("Valid Incident")
         .description("Valid long incident description")
         .metadata(incidentMetadata)
@@ -171,7 +171,7 @@ public class MapperFixtures {
         .sentimentEngagement(new SentimentEngagement(0, 0))
         .build();
 
-    public static final Incident domainIncidentForController = new Incident.Builder()
+    public static final OldIncident DOMAIN_OLD_INCIDENT_FOR_CONTROLLER = new OldIncident.Builder()
         .title("Valid Incident")
         .description("Valid long incident description")
         .metadata(incidentMetadata)
@@ -185,8 +185,8 @@ public class MapperFixtures {
             .build();
 
     public static final IncidentResponseOldDto INCIDENT_RESPONSE_OLD_DTO = IncidentResponseOldDto.builder()
-            .title(domainIncident.title())
-            .description(domainIncident.description())
+            .title(DOMAIN_OLD_INCIDENT.title())
+            .description(DOMAIN_OLD_INCIDENT.description())
             .incidentMetadata(incidentMetadataDto)
             .comments(List.of())
             .engagementStats(statsDto)

@@ -1,10 +1,10 @@
 package com.backend.domain.happening.metadata;
 
-import com.backend.domain.happening.Happening;
-import com.backend.domain.happening.Incident;
-import com.backend.domain.happening.media.MediaRef;
-import com.backend.domain.shared.Location;
-import com.backend.domain.user.Actor;
+import com.backend.domain.happening.old.OldHappening;
+import com.backend.domain.happening.old.OldIncident;
+import com.backend.domain.media.Media;
+import com.backend.domain.old.OldLocation;
+import com.backend.domain.actor.Actor;
 import java.util.Set;
 import lombok.Builder;
 import lombok.NonNull;
@@ -12,16 +12,16 @@ import lombok.NonNull;
 import java.time.LocalDateTime;
 
 /**
- * Metadata specific to an {@link Incident}, including author, location,
+ * Metadata specific to an {@link OldIncident}, including author, location,
  * creation timestamp, and expiration deadline.
  *
- * Implements the {@link Metadata} mixin interface used across different {@link Happening} types.
+ * Implements the {@link Metadata} mixin interface used across different {@link OldHappening} types.
  */
 @Builder(toBuilder = true)
 public record IncidentMetadata(
         Actor actor,
-        @NonNull Location location,
-        Set<MediaRef> media,
+        @NonNull OldLocation oldLocation,
+        Set<Media> media,
         LocalDateTime createdAt,
         LocalDateTime expirationTime) implements Metadata {
 
@@ -56,5 +56,10 @@ public record IncidentMetadata(
      */
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expirationTime);
+    }
+
+    @Override
+    public OldLocation location() {
+        return null;
     }
 }

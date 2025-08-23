@@ -1,14 +1,14 @@
 package com.backend.port.in;
 
-import com.backend.domain.happening.Incident;
-import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.happening.old.OldIncident;
+import com.backend.domain.reactions.SentimentEngagement;
 
 public interface ReactionUseCase {
     <T> SentimentEngagement addLike(T object);
 
     <T> SentimentEngagement addDislike(T object);
 
-    Incident confirmIncident(Incident incident);
+    OldIncident confirmIncident(OldIncident oldIncident);
 
-    Incident denyIncident(Incident incident);
+    OldIncident denyIncident(OldIncident oldIncident);
 }

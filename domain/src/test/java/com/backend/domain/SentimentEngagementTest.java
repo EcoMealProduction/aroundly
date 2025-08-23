@@ -1,9 +1,9 @@
 package com.backend.domain;
 
-import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.reactions.SentimentEngagement;
 import org.junit.jupiter.api.Test;
 
-import static com.backend.domain.Fixtures.validSentimentEngagement;
+import static com.backend.domain.Fixtures.VALID_OLD_SENTIMENT_ENGAGEMENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -11,13 +11,13 @@ public class SentimentEngagementTest {
 
     @Test
     void testAddLike() {
-        SentimentEngagement addLike = validSentimentEngagement.addLike();
+        SentimentEngagement addLike = VALID_OLD_SENTIMENT_ENGAGEMENT.addLike();
         assertEquals(1, addLike.likes());
     }
 
     @Test
     void testRemoveLike() {
-        SentimentEngagement addLike = validSentimentEngagement.addLike();
+        SentimentEngagement addLike = VALID_OLD_SENTIMENT_ENGAGEMENT.addLike();
         assertEquals(1, addLike.likes());
 
         SentimentEngagement removeLike = addLike.removeLike();
@@ -26,13 +26,13 @@ public class SentimentEngagementTest {
 
     @Test
     void testAddDislike() {
-        SentimentEngagement eventWithDislike = validSentimentEngagement.addDislike();
+        SentimentEngagement eventWithDislike = VALID_OLD_SENTIMENT_ENGAGEMENT.addDislike();
         assertEquals(1, eventWithDislike.dislikes());
     }
 
     @Test
     void testRemoveDislike() {
-        SentimentEngagement addDislike = validSentimentEngagement.addDislike();
+        SentimentEngagement addDislike = VALID_OLD_SENTIMENT_ENGAGEMENT.addDislike();
         assertEquals(1, addDislike.dislikes());
 
         SentimentEngagement removeDislike = addDislike.removeDislike();
@@ -42,7 +42,7 @@ public class SentimentEngagementTest {
     @Test
     void testNegativeLikesAndDislikesThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validSentimentEngagement.toBuilder()
+                VALID_OLD_SENTIMENT_ENGAGEMENT.toBuilder()
                         .likes(-1)
                         .dislikes(-1)
                         .build()

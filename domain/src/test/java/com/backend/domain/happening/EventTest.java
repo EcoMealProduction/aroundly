@@ -1,7 +1,8 @@
 package com.backend.domain.happening;
 
 import com.backend.domain.happening.metadata.EventMetadata;
-import com.backend.domain.user.Comment;
+import com.backend.domain.actor.Comment;
+import com.backend.domain.happening.old.Event;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class EventTest {
         assertEquals("Concert în aer liber", validEvent.title());
         assertEquals("Eveniment cu muzică live și food trucks.", validEvent.description());
         assertEquals(vaneaUser, validEvent.metadata().actor());
-        assertNotNull(validEvent.metadata().location());
+        assertNotNull(validEvent.metadata().oldLocation());
         assertEquals(0, validEvent.sentimentEngagement().likes());
         assertEquals(0, validEvent.sentimentEngagement().dislikes());
         assertEquals(1, validEvent.comments().size());

@@ -1,7 +1,7 @@
 package com.backend.services;
 
+import com.backend.domain.old.OldLocation;
 import com.backend.port.in.LocationUseCase;
-import com.backend.domain.shared.Location;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -10,22 +10,22 @@ import java.util.Map;
 public class LocationService implements LocationUseCase {
 
     @Override
-    public Location save(Location location) {
+    public OldLocation save(OldLocation oldLocation) {
         return null;
     }
 
     @Override
-    public Location findById(long locationId) {
+    public OldLocation findById(long locationId) {
         return null;
     }
 
     @Override
-    public Location findByCoordinates(double latitude, double longitude) {
+    public OldLocation findByCoordinates(double latitude, double longitude) {
         return null;
     }
 
     @Override
-    public Map<Double, Double> sendCoordinates(Location location) {
+    public Map<Double, Double> sendCoordinates(OldLocation oldLocation) {
         return Map.of();
     }
 

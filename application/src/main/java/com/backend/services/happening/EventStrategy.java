@@ -1,7 +1,7 @@
 package com.backend.services.happening;
 
-import com.backend.domain.happening.Event;
-import com.backend.domain.happening.Happening;
+import com.backend.domain.happening.old.Event;
+import com.backend.domain.happening.old.OldHappening;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,7 +37,7 @@ public class EventStrategy implements HappeningStrategy<Event> {
     }
 
     /**
-     * Returns the supported {@link Happening} type handled by this strategy.
+     * Returns the supported {@link OldHappening} type handled by this strategy.
      *
      * @return the {@code Event.class} type token
      */

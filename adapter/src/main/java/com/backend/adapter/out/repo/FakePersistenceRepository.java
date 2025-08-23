@@ -1,8 +1,8 @@
 package com.backend.adapter.out.repo;
 
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
 import com.backend.domain.happening.metadata.IncidentMetadata;
-import com.backend.domain.shared.Location;
+import com.backend.domain.old.OldLocation;
 import com.backend.port.out.IncidentRepository;
 import java.util.Objects;
 import org.springframework.stereotype.Repository;
@@ -17,35 +17,35 @@ import java.util.concurrent.atomic.AtomicLong;
 @Repository
 public class FakePersistenceRepository implements IncidentRepository {
 
-    private final Map<Long, Incident> storage = new ConcurrentHashMap<>();
+    private final Map<Long, OldIncident> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override
-    public Incident save(Incident incident) {
+    public OldIncident save(OldIncident oldIncident) {
         long id = idGenerator.getAndIncrement();
-        storage.put(id, incident);
-        return incident;
+        storage.put(id, oldIncident);
+        return oldIncident;
     }
 
     @Override
-    public Optional<Incident> findById(long id) {
+    public Optional<OldIncident> findById(long id) {
         return Optional.ofNullable(storage.get(id));
     }
 
     @Override
-    public List<Incident> findAll() {
+    public List<OldIncident> findAll() {
         return new ArrayList<>(storage.values());
     }
 
     @Override
-    public List<Incident> findByAllInGivenRange(double lat0, double lon0, double radiusMeters) {
+    public List<OldIncident> findByAllInGivenRange(double lat0, double lon0, double radiusMeters) {
         final double radiusKm = radiusMeters / 1000.0;
         return storage.values().stream()
             .filter(Objects::nonNull)
             .filter(i -> {
                 IncidentMetadata metadata = i.metadata();
                 if (metadata == null) return false;
-                Location loc = metadata.location();
+                OldLocation loc = metadata.oldLocation();
                 double lat = loc.latitude().doubleValue();
                 double lon = loc.longitude().doubleValue();
 
@@ -70,7 +70,7 @@ public class FakePersistenceRepository implements IncidentRepository {
     }
 
     @Override
-    public List<Incident> findByUserId(long userId) {
+    public List<OldIncident> findByUserId(long userId) {
         return storage.values().stream()
                 .filter(Objects::nonNull)
                 .toList();

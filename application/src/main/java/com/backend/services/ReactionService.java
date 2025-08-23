@@ -1,8 +1,8 @@
 package com.backend.services;
 
-import com.backend.domain.happening.Incident;
+import com.backend.domain.happening.old.OldIncident;
+import com.backend.domain.reactions.SentimentEngagement;
 import com.backend.port.in.ReactionUseCase;
-import com.backend.domain.shared.SentimentEngagement;
 
 public class ReactionService implements ReactionUseCase {
 
@@ -17,12 +17,12 @@ public class ReactionService implements ReactionUseCase {
     }
 
     @Override
-    public Incident confirmIncident(Incident incident) {
+    public OldIncident confirmIncident(OldIncident oldIncident) {
         return null;
     }
 
     @Override
-    public Incident denyIncident(Incident incident) {
+    public OldIncident denyIncident(OldIncident oldIncident) {
         return null;
     }
 }

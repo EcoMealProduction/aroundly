@@ -1,6 +1,6 @@
 package com.backend.port.out;
 
-import com.backend.domain.shared.Location;
+import com.backend.domain.old.OldLocation;
 
 import java.util.Optional;
 
@@ -12,10 +12,10 @@ public interface LocationRepository {
     /**
      * Saves a new location or updates an existing location.
      *
-     * @param location The Location object to be saved or updated.
+     * @param oldLocation The Location object to be saved or updated.
      * @return The saved or updated Location object (with assigned ID if new).
      */
-    Location save(Location location);
+    OldLocation save(OldLocation oldLocation);
 
     /**
      * Finds a location by its unique identifier.
@@ -23,7 +23,7 @@ public interface LocationRepository {
      * @param id The unique ID of the location to retrieve.
      * @return An Optional containing the Location if found, or empty if not found.
      */
-    Optional<Location> findById(long id);
+    Optional<OldLocation> findById(long id);
 
     /**
      * Finds a location by its latitude and longitude coordinates.
@@ -32,7 +32,7 @@ public interface LocationRepository {
      * @param longitude The longitude coordinate of the location.
      * @return An Optional containing the Location if found, or empty if not found.
      */
-    Optional<Location> findByCoordinate(double latitude, double longitude);
+    Optional<OldLocation> findByCoordinate(double latitude, double longitude);
 
     /**
      * Deletes a location by its unique identifier.
