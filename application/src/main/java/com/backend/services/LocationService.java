@@ -1,36 +1,28 @@
 package com.backend.services;
 
-import com.backend.domain.old.OldLocation;
+import com.backend.domain.location.Location;
 import com.backend.port.inbound.LocationUseCase;
+import com.backend.port.inbound.commands.CoordinatesCommand;
+import com.backend.port.outbound.LocationRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
+@AllArgsConstructor
 public class LocationService implements LocationUseCase {
 
+    private final LocationRepository locationRepository;
+
     @Override
-    public OldLocation save(OldLocation oldLocation) {
-        return null;
+    public Location findById(long locationId) {
+        return locationRepository.findById(locationId);
     }
 
     @Override
-    public OldLocation findById(long locationId) {
-        return null;
-    }
+    public Location findByCoordinates(CoordinatesCommand coordinatesCommand) {
+        final double latitude = coordinatesCommand.lat();
+        final double longitude = coordinatesCommand.lon();
 
-    @Override
-    public OldLocation findByCoordinates(double latitude, double longitude) {
-        return null;
-    }
-
-    @Override
-    public Map<Double, Double> sendCoordinates(OldLocation oldLocation) {
-        return Map.of();
-    }
-
-    @Override
-    public String detectAddress(double latitude, double longitude) {
-        return "";
+        return locationRepository.findByCoordinate(latitude, longitude);
     }
 }
