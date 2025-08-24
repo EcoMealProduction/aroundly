@@ -2,6 +2,7 @@ package com.backend.services;
 
 import com.backend.port.inbound.CommentUseCase;
 import com.backend.domain.actor.Comment;
+import com.backend.port.inbound.commands.CommentTextCommand;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,8 +11,13 @@ import java.util.List;
 public class CommentService implements CommentUseCase {
 
     @Override
-    public Comment create(Comment comment) {
+    public Comment create(CommentTextCommand commentText) {
         return null;
+    }
+
+    @Override
+    public List<Comment> findByActorId(long actorId) {
+        return List.of();
     }
 
     @Override
@@ -20,17 +26,12 @@ public class CommentService implements CommentUseCase {
     }
 
     @Override
-    public Comment updated(long id, Comment newComment) {
+    public Comment update(long commentId, CommentTextCommand newCommentText) {
         return null;
     }
 
     @Override
-    public Comment findById(long id) {
-        return null;
-    }
-
-    @Override
-    public void delete(long id) {
+    public void delete(long commentId) {
 
     }
 }
