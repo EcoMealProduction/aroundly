@@ -2,6 +2,7 @@ package com.backend.port.outbound;
 
 import com.backend.domain.media.Media;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Repository interface for managing {@link Media} persistence.
@@ -29,14 +30,7 @@ public interface MediaRepository {
   /**
    * Deletes a single media object.
    *
-   * @param media the media to delete
+   * @param id media id the media to delete
    */
-  void delete(Media media);
-
-  /**
-   * Deletes multiple media objects in bulk.
-   *
-   * @param mediaSet the set of media objects to delete
-   */
-  void deleteAll(Set<Media> mediaSet);
+  void delete(long id);
 }
