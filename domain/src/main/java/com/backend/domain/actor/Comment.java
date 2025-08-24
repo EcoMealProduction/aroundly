@@ -8,15 +8,12 @@ import java.time.Instant;
 import lombok.Builder;
 import lombok.NonNull;
 
-import java.time.LocalDateTime;
-
 /**
  * Represents a user-generated comment associated with a {@code Happening} (such as an Event or Incident).
  * Contains the author's username, the comment content, and the timestamp of creation.
  */
 @Builder(toBuilder = true)
 public record Comment(
-    long id,
     @NonNull String text,
     @NonNull HappeningId happeningId,
     @NonNull ActorId actorId,
