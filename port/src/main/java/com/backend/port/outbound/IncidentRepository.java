@@ -22,5 +22,5 @@ public interface IncidentRepository extends HappeningRepository {
      *
      * @return A list of incidents within the given range.
      */
-    List<Incident> findByAllInGivenRange(double lat, double lon, double radiusMeters);
+    List<Incident> findAllInGivenRange(double lat, double lon, double radiusMeters);
 }

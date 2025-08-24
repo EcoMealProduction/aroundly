@@ -47,5 +47,28 @@ public interface IncidentUseCase extends HappeningUseCase {
      * @param incidentId the identifier of the incident
      * @return the updated incident with extended lifespan
      */
-    Incident extendLifespan(long incidentId);
+    Incident confirm(long incidentId);
+
+    /**
+     * Registers a denial for the given incident.
+     *
+     * - Increments both the total and consecutive denial counters.
+     * - May cause the incident to be marked for deletion if the
+     *   maximum number of consecutive denies is reached.
+     *
+     * @param incidentId the unique identifier of the incident
+     * @return the updated {@link Incident} after the denial has been applied
+     */
+    Incident deny(long incidentId);
+
+    /**
+     * Deletes the given incident if it has expired.
+     *
+     * - An incident is considered expired once its {@code expiresAt} timestamp
+     *   is in the past relative to the system clock.
+     * - If the incident has not expired, this method does nothing.
+     *
+     * @param incidentId the unique identifier of the incident to check and possibly delete
+     */
+    void deleteIfExpired(long incidentId);
 }

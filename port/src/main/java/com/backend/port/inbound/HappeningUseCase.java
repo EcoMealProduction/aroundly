@@ -30,5 +30,5 @@ public interface HappeningUseCase {
    * @param actorId the identifier of the actor
    * @return the list of Happenings by the actor
    */
-  List<Happening> findByActorId(long actorId);
+  List<Happening> findByActorId(String actorId);
 }
