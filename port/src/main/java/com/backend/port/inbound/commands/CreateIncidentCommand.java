@@ -10,6 +10,7 @@ import java.util.Set;
  * @param description the description of the incident
  * @param media       the set of media associated with the incident
  */
-public record CreateIncidentCommand(String title, String description, Set<Media> media) {
+public record CreateIncidentCommand(String title, String description, Set<Media> media,
+                                    double lat, double lon) {
 
 }
