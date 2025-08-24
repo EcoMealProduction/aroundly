@@ -40,14 +40,14 @@ public class LoginService implements LoginUseCase {
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("grant_type", "password");
-            body.add("client_id", keycloakProperties.getClientId());
-            body.add("client_secret", keycloakProperties.getClientSecret());
+            body.add("client_id", keycloakProperties.clientId());
+            body.add("client_secret", keycloakProperties.clientSecret());
             body.add("username", usernameOrEmail);
             body.add("password", password);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
             ResponseEntity<Map> responseEntity = restTemplate.postForEntity(
-                    keycloakProperties.getTokenUrl(), request, Map.class);
+                    keycloakProperties.tokenUrl(), request, Map.class);
 
             if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
                 Map<String, Object> tokenResponse = responseEntity.getBody();
