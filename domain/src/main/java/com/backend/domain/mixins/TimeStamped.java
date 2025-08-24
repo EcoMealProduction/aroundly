@@ -12,5 +12,7 @@ public interface TimeStamped {
    *
    * @return the creation timestamp
    */
-  Instant createdAt();
+  default Instant createdAt() {
+    return Instant.now();
+  };
 }

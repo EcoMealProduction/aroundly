@@ -35,12 +35,12 @@ public class RegistrationService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "client_credentials");
-        body.add("client_id", keycloakProperties.getClientId());
-        body.add("client_secret", keycloakProperties.getClientSecret());
+        body.add("client_id", keycloakProperties.clientId());
+        body.add("client_secret", keycloakProperties.clientSecret());
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         ResponseEntity<Map> responseEntity = restTemplate.postForEntity(
-                keycloakProperties.getTokenUrl(), request, Map.class);
+                keycloakProperties.tokenUrl(), request, Map.class);
 
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null || responseEntity.getBody().get("access_token") == null) {
             throw new IllegalStateException("Failed to obtain admin access token: " + responseEntity.getStatusCode());
@@ -66,7 +66,7 @@ public class RegistrationService {
         user.put("credentials", List.of(cred));
 
         ResponseEntity<String> resp = restTemplate.postForEntity(
-                keycloakProperties.getUserCreateUrl(),
+                keycloakProperties.userCreateUrl(),
                 new HttpEntity<>(user, headers),
                 String.class
         );

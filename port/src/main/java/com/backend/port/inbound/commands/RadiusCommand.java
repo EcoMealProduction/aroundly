@@ -7,6 +7,6 @@ package com.backend.port.inbound.commands;
  * @param lon    the longitude of the center point
  * @param radius the search radius in meters
  */
-public record RadiusCommand(double lat, double lon, int radius) {
+public record RadiusCommand(double lat, double lon, double radius) {
 
 }
