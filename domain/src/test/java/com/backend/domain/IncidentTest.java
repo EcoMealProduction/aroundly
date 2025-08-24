@@ -1,14 +1,15 @@
 package com.backend.domain;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.backend.domain.actor.ActorId;
-import com.backend.domain.happening.HappeningId;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
 import com.backend.domain.media.MediaKind;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Clock;
@@ -58,14 +59,66 @@ public class IncidentTest {
     assertFalse(incident.isDeleted());
   }
 
-  private Incident createIncident() throws URISyntaxException {
-    return new Incident(
-        new HappeningId(1L),
-        new ActorId(1L),
-        new LocationId(1L),
-        Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))),
-        "Title",
-        "description");
+  @Test
+  public void testConfirmIncident() throws URISyntaxException {
+    Instant created = incident.createdAt();
+    setExpiresAt(incident, created.plus(Duration.ofMinutes(10)));
+
+    incident.confirmIncident();
+    assertEquals(15, Duration.between(created, getExpiresAt(incident)).toMinutes());
+
+    incident.confirmIncident();
+    assertEquals(20, Duration.between(created, getExpiresAt(incident)).toMinutes());
+
+    incident.confirmIncident();
+    assertEquals(25, Duration.between(created, getExpiresAt(incident)).toMinutes());
+
+    incident.confirmIncident();
+    assertEquals(30, Duration.between(created, getExpiresAt(incident)).toMinutes());
+
+    incident.confirmIncident();
+    assertEquals(30, Duration.between(created, getExpiresAt(incident)).toMinutes());
   }
 
+  @Test
+  public void testDenyIncident() {
+    setExpiresAt(incident, Instant.now().plus(Duration.ofHours(30)));
+    assertFalse(incident.isDeleted());
+    incident.denyIncident();
+    assertFalse(incident.isDeleted());
+    incident.denyIncident();
+    assertFalse(incident.isDeleted());
+    incident.denyIncident();
+    assertTrue(incident.isDeleted(), "Three consecutive denies should delete the incident");
+  }
+
+  private static Instant getExpiresAt(Incident i) {
+    try {
+      Field f = Incident.class.getDeclaredField("expiresAt");
+      f.setAccessible(true);
+      return (Instant) f.get(i);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static void setExpiresAt(Incident i, Instant value) {
+    try {
+      Field f = Incident.class.getDeclaredField("expiresAt");
+      f.setAccessible(true);
+      f.set(i, value);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Incident createIncident() throws URISyntaxException {
+    return new Incident(
+        new ActorId("id"),
+        new LocationId(1L),
+        "title",
+        "description",
+        Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/")))
+    );
+  }
 }
