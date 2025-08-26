@@ -35,8 +35,8 @@ public class RegistrationService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "client_credentials");
-        body.add("client_id", keycloakProperties.clientId());
-        body.add("client_secret", keycloakProperties.clientSecret());
+        body.add("client_id", keycloakProperties.getClientId());
+        body.add("client_secret", keycloakProperties.getClientSecret());
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         ResponseEntity<Map> responseEntity = restTemplate.postForEntity(

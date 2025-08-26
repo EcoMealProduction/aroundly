@@ -1,5 +1,7 @@
 package com.backend.services.authentication;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,13 +12,15 @@ import org.springframework.context.annotation.Configuration;
  * provide centralized configuration for Keycloak authentication services.
  * It includes helper methods to construct commonly used Keycloak URLs.
  */
+@Getter
+@Setter
 @Configuration
 @ConfigurationProperties(prefix = "keycloak")
-public record KeycloakProperties(
-    String baseUrl,
-    String realm,
-    String clientId,
-    String clientSecret) {
+public class KeycloakProperties {
+    private String baseUrl;
+    private String realm;
+    private String clientId;
+    private String clientSecret;
 
     public String tokenUrl() {
         return baseUrl + "/realms/" + realm + "/protocol/openid-connect/token";

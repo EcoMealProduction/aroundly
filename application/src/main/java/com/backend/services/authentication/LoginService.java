@@ -40,8 +40,8 @@ public class LoginService implements LoginUseCase {
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("grant_type", "password");
-            body.add("client_id", keycloakProperties.clientId());
-            body.add("client_secret", keycloakProperties.clientSecret());
+            body.add("client_id", keycloakProperties.getClientId());
+            body.add("client_secret", keycloakProperties.getClientSecret());
             body.add("username", usernameOrEmail);
             body.add("password", password);
 
