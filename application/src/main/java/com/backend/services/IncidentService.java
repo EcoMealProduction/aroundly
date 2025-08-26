@@ -7,12 +7,14 @@ import com.backend.domain.happening.old.OldIncident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
+import com.backend.port.inbound.ActorUseCase;
 import com.backend.port.inbound.IncidentUseCase;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
 import com.backend.port.outbound.IncidentRepository;
 import com.backend.port.outbound.LocationRepository;
 import com.backend.services.authentication.SecurityCurrentActorExtractor;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +31,16 @@ public class IncidentService implements IncidentUseCase {
 
     private final IncidentRepository incidentRepository;
     private final LocationRepository locationRepository;
-    private final SecurityCurrentActorExtractor actorExtractor;
+    private final ActorUseCase actorExtractor;
 
   public IncidentService(
       IncidentRepository incidentRepository,
-      LocationRepository locationRepository) {
+      LocationRepository locationRepository,
+      ActorUseCase actorExtractor) {
 
     this.incidentRepository = incidentRepository;
     this.locationRepository = locationRepository;
-    this.actorExtractor = new SecurityCurrentActorExtractor();
+    this.actorExtractor = actorExtractor;
   }
 
   /**
@@ -56,10 +59,16 @@ public class IncidentService implements IncidentUseCase {
         return incidentRepository.findAllInGivenRange(userLatitude, userLongitude, radiusMeters);
     }
 
-  @Override
-  public List<Happening> findByActorId(String actorId) {
-    return incidentRepository.findByUserId(actorId);
-  }
+  /**
+   * Finds all incidents created by a specific actor.
+   *
+   * @param actorId identifier of the actor (user)
+   * @return list of incidents reported by the given actor
+   */
+    @Override
+    public List<Happening> findByActorId(String actorId) {
+      return incidentRepository.findByUserId(actorId);
+    }
 
     /**
      * Retrieves a specific Incident by its ID.
@@ -86,9 +95,9 @@ public class IncidentService implements IncidentUseCase {
         final String title = createIncidentCommand.title();
         final String description = createIncidentCommand.description();
         final Set<Media> media = createIncidentCommand.media();
-        final Location location = locationRepository
+        final Optional<Location> location = locationRepository
             .findByCoordinate(createIncidentCommand.lat(), createIncidentCommand.lon());
-      final LocationId locationId = location.id();
+      final LocationId locationId = location.get().id();
 
         Incident incident = Incident.builder()
             .actorId(actorId)

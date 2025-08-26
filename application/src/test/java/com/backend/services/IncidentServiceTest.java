@@ -11,6 +11,7 @@ import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
 import com.backend.port.outbound.IncidentRepository;
 import com.backend.port.outbound.LocationRepository;
+import com.backend.services.authentication.SecurityCurrentActorExtractor;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
@@ -31,6 +32,7 @@ class IncidentServiceTest {
 
     @Mock private IncidentRepository incidentRepository;
     @Mock private LocationRepository locationRepository;
+    @Mock private SecurityCurrentActorExtractor actorExtractor;
     @InjectMocks private IncidentService incidentService;
 
     @Test
@@ -73,16 +75,11 @@ class IncidentServiceTest {
         final double longitude = createIncidentCommand().lon();
 
         when(locationRepository.findByCoordinate(latitude, longitude))
-            .thenReturn(createLocation());
+            .thenReturn(Optional.of(createLocation()));
         when(incidentRepository.save(createIncident())).thenReturn(createIncident());
         Incident result = incidentService.create(createIncidentCommand());
 
         assertEquals(createIncident(), result);
-    }
-
-    @Test
-    void testExtendIncidentLifespan() {
-
     }
 
     @Test
