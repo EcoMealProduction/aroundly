@@ -47,8 +47,8 @@ class LoginServiceTest {
     @BeforeEach
     void setUp() {
         when(keycloakProperties.tokenUrl()).thenReturn(TOKEN_URL);
-        when(keycloakProperties.clientId()).thenReturn(CLIENT_ID);
-        when(keycloakProperties.clientSecret()).thenReturn(CLIENT_SECRET);
+        when(keycloakProperties.getClientId()).thenReturn(CLIENT_ID);
+        when(keycloakProperties.getClientSecret()).thenReturn(CLIENT_SECRET);
 
         loginCommand = new LoginCommand(USERNAME, PASSWORD);
 
