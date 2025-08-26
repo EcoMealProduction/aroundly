@@ -1,7 +1,8 @@
-package com.backend.adapter.in.rest.authentication;
+package com.backend.adapter.inbound.rest.authentication;
 
 import com.backend.adapter.in.dto.request.LoginRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
+import com.backend.adapter.in.rest.authentication.LoginController;
 import com.backend.port.inbound.LoginUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
