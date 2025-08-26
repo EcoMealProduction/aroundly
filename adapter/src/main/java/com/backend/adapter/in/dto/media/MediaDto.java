@@ -7,4 +7,4 @@ import java.net.URI;
  *
  * Contains the URI pointing to the media content, such as an image or video.
  */
-public record MediaRefDto(URI uri) { }
+public record MediaDto(URI uri) { }

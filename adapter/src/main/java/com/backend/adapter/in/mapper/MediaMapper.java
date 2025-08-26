@@ -1,31 +1,31 @@
 package com.backend.adapter.in.mapper;
 
-import com.backend.adapter.in.dto.media.MediaRefDto;
+import com.backend.adapter.in.dto.media.MediaDto;
 import com.backend.domain.media.Media;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * MapStruct mapper for converting between {@link MediaRefDto}
+ * MapStruct mapper for converting between {@link MediaDto}
  * received in controller requests and the {@link Media} domain model.
  *
  * Used to translate client-provided media references into domain objects
  * for use within the application layer.
  */
 @Mapper(componentModel = "spring")
-public interface MediaRefMapper {
+public interface MediaMapper {
 
   /**
-   * Maps a domain {@link Media} to a {@link MediaRefDto},
+   * Maps a domain {@link Media} to a {@link MediaDto},
    * typically for echoing submitted values or preparing request payloads.
    *
    * @param media the domain media reference
    * @return a media reference DTO
    */
-  MediaRefDto toDto(Media media);
+  MediaDto toDto(Media media);
 
   /**
-   * Maps a {@link MediaRefDto} from the client into a domain {@link Media}.
+   * Maps a {@link MediaDto} from the client into a domain {@link Media}.
    * Ignores {@code kind} and {@code contentType} fields, which are set by the server.
    *
    * @param media the client-provided media reference DTO
@@ -33,5 +33,5 @@ public interface MediaRefMapper {
    */
   @Mapping(target = "kind", ignore = true)
   @Mapping(target = "contentType", ignore = true)
-  Media toDomain(MediaRefDto media);
+  Media toDomain(MediaDto media);
 }
