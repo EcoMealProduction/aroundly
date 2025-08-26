@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class IncidentDtoAssembler {
 
-  public final IncidentMapper mapper;
-  public final LocationRepository locationRepository;
-  public final SecurityCurrentActorExtractor actorExtractor;
+  private final IncidentMapper mapper;
+  private final LocationRepository locationRepository;
+  private final SecurityCurrentActorExtractor actorExtractor;
 
   /**
    * Converts a domain {@link Incident} into a {@link IncidentDetailedResponseDto},

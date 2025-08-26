@@ -1,75 +1,392 @@
 package com.backend.adapter.in.rest;
 
 import com.backend.adapter.in.dto.request.IncidentRequestDto;
+import com.backend.adapter.in.dto.request.RadiusRequestDto;
 import com.backend.adapter.in.dto.response.incident.IncidentDetailedResponseDto;
 import com.backend.adapter.in.dto.response.incident.IncidentPreviewResponseDto;
 import com.backend.adapter.in.mapper.IncidentMapper;
+import com.backend.adapter.in.mapper.LocationMapper;
 import com.backend.adapter.in.mapper.assembler.IncidentDtoAssembler;
+import com.backend.adapter.in.rest.exceptions.ActorNotFoundException;
+import com.backend.adapter.in.rest.exceptions.DuplicateIncidentException;
+import com.backend.adapter.in.rest.exceptions.IncidentAlreadyConfirmedException;
+import com.backend.adapter.in.rest.exceptions.IncidentNotExpiredException;
+import com.backend.adapter.in.rest.exceptions.IncidentNotFoundException;
+import com.backend.adapter.in.rest.exceptions.InvalidCoordinatesException;
+import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.port.inbound.IncidentUseCase;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import java.util.Collections;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * REST controller for managing incidents reported by users.
- *
- * Provides endpoints for creating new incidents and retrieving existing
- * incidents within a given distance from a geographic location. This controller
- * delegates business logic to the {@link IncidentUseCase} and uses mappers to
- * translate between domain models and API DTOs.
- *
+ * REST controller exposing CRUD and query endpoints for {@link Incident} resources.
+ * Provides endpoints for creation, updates, previews, detailed views, engagement actions,
+ * and deletion of incidents.
  */
 @RestController
-@RequestMapping("/incidents")
+@Validated
+@Slf4j
+@RequestMapping("/api/v1/incidents")
+@Tag(name = "Incidents", description = "Incident manipulation endpoints")
 public class IncidentController {
 
   private final IncidentUseCase incidentUseCase;
   private final IncidentDtoAssembler assembler;
-  private final IncidentMapper mapper;
+  private final IncidentMapper incidentMapper;
+  private final LocationMapper locationMapper;
 
-  public IncidentController(IncidentUseCase incidentUseCase,
+  public IncidentController(
+      IncidentUseCase incidentUseCase,
       IncidentDtoAssembler assembler,
-      IncidentMapper mapper) {
+      IncidentMapper incidentMapper,
+      LocationMapper locationMapper) {
 
     this.incidentUseCase = incidentUseCase;
-    this.mapper = mapper;
+    this.incidentMapper = incidentMapper;
     this.assembler = assembler;
+    this.locationMapper = locationMapper;
   }
 
+  /**
+   * Creates a new incident.
+   *
+   * @param incidentRequestDto DTO containing incident data
+   * @return detailed DTO of the created incident
+   */
   @PostMapping
+  @Operation(
+      summary = "Creates an incident",
+      description = "Handles a user request to create an incident and returns details"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Incident created successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid input data"),
+      @ApiResponse(responseCode = "409", description = "Incident already exists")
+  })
   public ResponseEntity<IncidentDetailedResponseDto> create(
-      @RequestBody IncidentRequestDto incidentRequestDto) {
+      @RequestBody @Valid IncidentRequestDto incidentRequestDto) {
 
-    CreateIncidentCommand createIncidentCommand = mapper.toCreateIncidentCommand(incidentRequestDto);
-    Incident incident = incidentUseCase.create(createIncidentCommand);
-    IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(incident);
+    try {
+      CreateIncidentCommand createIncidentCommand = incidentMapper
+          .toCreateIncidentCommand(incidentRequestDto);
 
-    return new ResponseEntity<>(incidentDetailedResponseDto, HttpStatus.CREATED);
+      Incident incident = incidentUseCase.create(createIncidentCommand);
+      IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(incident);
+
+      return new ResponseEntity<>(incidentDetailedResponseDto, HttpStatus.CREATED);
+
+    } catch (DuplicateIncidentException e) {
+      log.warn("Attempted to create duplicate incident: {}", e.getMessage());
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    } catch (ValidationException e) {
+      log.warn("Invalid incident data: {}", e.getMessage());
+      return ResponseEntity.badRequest().build();
+    }
   }
 
-  @GetMapping
+  /**
+   * Updates an existing incident.
+   *
+   * @param id                   identifier of the incident
+   * @param newIncidentRequestDto DTO with updated incident data
+   * @return detailed DTO of the updated incident
+   */
+  @PatchMapping("/{id}")
+  @Operation(
+      summary = "Updates an existing incident",
+      description = "Handles a user request to update an incident and returns updated details"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Incident updated successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid input data"),
+      @ApiResponse(responseCode = "404", description = "Incident not found")
+  })
+  public ResponseEntity<IncidentDetailedResponseDto> update(
+      @PathVariable long id,
+      @RequestBody @Valid IncidentRequestDto newIncidentRequestDto) {
+
+    try {
+      CreateIncidentCommand newCreateIncidentCommand = incidentMapper
+          .toCreateIncidentCommand(newIncidentRequestDto);
+
+      Incident updatedIncident = incidentUseCase.update(id, newCreateIncidentCommand);
+      IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(updatedIncident);
+
+      return ResponseEntity.ok(incidentDetailedResponseDto);
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found for update: {}", id);
+      return ResponseEntity.notFound().build();
+    } catch (ValidationException e) {
+      log.warn("Invalid update data for incident {}: {}", id, e.getMessage());
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+  /**
+   * Retrieves a preview representation of an incident.
+   *
+   * @param id identifier of the incident
+   * @return preview DTO of the incident
+   */
+  @GetMapping("/{id}/preview")
+  @Operation(
+      summary = "Provides a preview of an incident",
+      description = "Provides a limited about of data from an incident. Best used for a preview of incident, rather than providing "
+          + "the entire list of information."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Incident preview retrieved successfully"),
+      @ApiResponse(responseCode = "404", description = "Incident not found")
+  })
+  public ResponseEntity<IncidentPreviewResponseDto> getIncidentInPreview(@PathVariable long id) {
+    try {
+      Incident incident = (Incident) incidentUseCase.findById(id);
+      IncidentPreviewResponseDto incidentPreviewResponseDto =
+          incidentMapper.toIncidentPreviewResponseDto(incident);
+
+      return ResponseEntity.ok(incidentPreviewResponseDto);
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found: {}", id);
+      return ResponseEntity.badRequest().build();
+    } catch (ClassCastException e) {
+      log.error("Found happening is not an incident: {}", id);
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+  /**
+   * Retrieves a detailed representation of an incident.
+   *
+   * @param id identifier of the incident
+   * @return detailed DTO of the incident
+   */
+  @GetMapping("/{id}/details")
+  @Operation(
+      summary = "Provides a detailed incident",
+      description = "Provides a detailed form of an incident. Used when the incident is open in separate page."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Incident details retrieved successfully"),
+      @ApiResponse(responseCode = "404", description = "Incident not found")
+  })
+  public ResponseEntity<IncidentDetailedResponseDto> getIncidentInDetails(@PathVariable long id) {
+    try {
+      Incident incident = (Incident) incidentUseCase.findById(id);
+      IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(incident);
+
+      return ResponseEntity.ok(incidentDetailedResponseDto);
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found: {}", id);
+      return ResponseEntity.badRequest().build();
+    } catch (ClassCastException e) {
+      log.error("Found happening is not an incident: {}", id);
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+  /**
+   * Finds preview representations of incidents reported by a given actor.
+   *
+   * @param id actor identifier
+   * @return list of preview DTOs
+   */
+  @GetMapping("/detailed/actor/{id}")
+  @Operation(
+      summary = "Incidents of an actor",
+      description = "Finds all incidents posted by a specific actor (in preview)"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Actor incidents retrieved successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid actor ID")
+  })
+  public ResponseEntity<List<IncidentPreviewResponseDto>> findActorIncidentsInPreview(
+      @PathVariable String id) {
+
+    try {
+      List<Happening> incidents = incidentUseCase.findByActorId(id);
+      List<IncidentPreviewResponseDto> incidentPreviewResponseDtos = incidents.stream()
+          .filter(happening -> happening instanceof Incident)
+          .map(happening -> (Incident) happening)
+          .map(incidentMapper::toIncidentPreviewResponseDto)
+          .toList();
+
+      return ResponseEntity.ok(incidentPreviewResponseDtos);
+    } catch (ActorNotFoundException e) {
+      log.warn("Actor not found: {}", id);
+      return ResponseEntity.ok(Collections.emptyList());
+    }
+  }
+
+  /**
+   * Finds incidents located within the specified radius.
+   *
+   * @param radiusRequestDto DTO containing center coordinates and radius
+   * @return list of incident previews within range
+   */
+  @GetMapping("/nearby")
+  @Operation(
+      summary = "Incidents nearby user",
+      description = "Finds all incidents in user's setup range"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Nearby incidents retrieved successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid coordinates or radius")
+  })
   public ResponseEntity<List<IncidentPreviewResponseDto>> findNearbyIncidents(
-      @RequestParam("lat") double latitude,
-      @RequestParam("lon") double longitude,
-      @RequestParam("radiusMeters") double radiusMeters) {
+      @ModelAttribute @Valid RadiusRequestDto radiusRequestDto) {
 
-    RadiusCommand radiusCommand = new RadiusCommand(latitude, longitude, radiusMeters);
+    try {
+      RadiusCommand radiusCommand = locationMapper.toRadiusCommand(radiusRequestDto);
+      List<Incident> results = incidentUseCase.findAllInGivenRange(radiusCommand);
+      List<IncidentPreviewResponseDto> responseDtos = results.stream()
+          .map(incidentMapper::toIncidentPreviewResponseDto)
+          .toList();
 
-    List<Incident> results = incidentUseCase.findAllInGivenRange(radiusCommand);
-    List<IncidentPreviewResponseDto> responseDtos = results.stream()
-        .map(mapper::toIncidentPreviewResponseDto)
-        .toList();
-
-    return ResponseEntity.ok(responseDtos);
+      return ResponseEntity.ok(responseDtos);
+    } catch (InvalidCoordinatesException e) {
+      log.warn("Invalid coordinates provided: {}", e.getMessage());
+      return ResponseEntity.badRequest().build();
+    }
   }
 
+  /**
+   * Confirms the presence of an incident (engagement action).
+   *
+   * @param id incident identifier
+   * @return updated detailed DTO
+   */
+  @PostMapping("/{id}/engagement/confirm")
+  @Operation(
+      summary = "Confirms the presence of incident",
+      description = "If user is in the range of event, he can confirm if the incident still exist"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Incident confirmed successfully"),  // Changed from 201
+      @ApiResponse(responseCode = "404", description = "Incident not found"),
+      @ApiResponse(responseCode = "409", description = "Incident already confirmed")
+  })
+  public ResponseEntity<IncidentDetailedResponseDto> confirmIncidentPresence(@PathVariable long id) {
+
+    try {
+      Incident incident = incidentUseCase.confirm(id);
+      IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(incident);
+
+      return ResponseEntity.ok(incidentDetailedResponseDto);
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found for confirmation: {}", id);
+      return ResponseEntity.notFound().build();
+    } catch (IncidentAlreadyConfirmedException e) {
+      log.warn("Incident already confirmed: {}", id);
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+  }
+
+  /**
+   * Denies the presence of an incident (engagement action).
+   *
+   * @param id incident identifier
+   * @return updated detailed DTO
+   */
+  @PostMapping("/{id}/engagement/deny")
+  @Operation(
+      summary = "Denies the presence of incident",
+      description = "If user is in the range of event, he can deny if the incident is not relevant anymore"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Incident denied successfully"),
+      @ApiResponse(responseCode = "404", description = "Incident not found"),
+      @ApiResponse(responseCode = "409", description = "Incident already denied")
+  })
+  public ResponseEntity<IncidentDetailedResponseDto> denyIncidentPresence(@PathVariable long id) {
+    try {
+      Incident incident = incidentUseCase.deny(id);
+      IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(incident);
+
+      return ResponseEntity.ok(incidentDetailedResponseDto);
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found for denial: {}", id);
+      return ResponseEntity.notFound().build();
+    } catch (IncidentAlreadyConfirmedException e) {
+      log.warn("Incident already denied: {}", id);
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+  }
+
+  /**
+   * Deletes an incident if it has expired.
+   *
+   * @param id incident identifier
+   * @return 204 No Content
+   */
+  @DeleteMapping("/{id}/expired")
+  @Operation(
+      summary = "Deletes expired incident",
+      description = "If the incident reached 3 consecutive denies, therefore it's confirmed to be deleted"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Expired incident deleted successfully"),
+      @ApiResponse(responseCode = "404", description = "Incident not found"),
+      @ApiResponse(responseCode = "400", description = "Incident has not expired")
+  })
+  public ResponseEntity<Void> deleteExpiredIncident(@PathVariable long id) {
+    try {
+      incidentUseCase.deleteIfExpired(id);
+
+      return ResponseEntity.noContent().build();
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found for expiry deletion: {}", id);
+      return ResponseEntity.notFound().build();
+    } catch (IncidentNotExpiredException e) {
+      log.warn("Attempted to delete non-expired incident: {}", id);
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+  /**
+   * Deletes an incident by its identifier.
+   *
+   * @param id incident identifier
+   * @return 204 No Content
+   */
+  @DeleteMapping("/{id}")
+  @Operation(
+      summary = "Deletes the incident",
+      description = "yea...as summary says"
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Incident deleted successfully"),
+      @ApiResponse(responseCode = "404", description = "Incident not found")
+  })
+  public ResponseEntity<Void> delete(@PathVariable long id) {
+    try {
+      incidentUseCase.deleteById(id);
+
+      return ResponseEntity.noContent().build();
+    } catch (IncidentNotFoundException e) {
+      log.warn("Incident not found for deletion: {}", id);
+      return ResponseEntity.notFound().build();
+    }
+  }
 }
