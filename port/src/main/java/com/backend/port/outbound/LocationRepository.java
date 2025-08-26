@@ -3,7 +3,6 @@ package com.backend.port.outbound;
 import com.backend.domain.location.Location;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Repository interface for accessing and managing Location entities in the data store.
@@ -33,7 +32,7 @@ public interface LocationRepository {
      * @param longitude The longitude coordinate of the location.
      * @return An Optional containing the Location if found, or empty if not found.
      */
-    Location findByCoordinate(double latitude, double longitude);
+    Optional<Location> findByCoordinate(double latitude, double longitude);
 
     /**
      * Deletes a location by its unique identifier.
