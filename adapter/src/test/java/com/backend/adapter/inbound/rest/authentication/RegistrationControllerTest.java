@@ -1,4 +1,4 @@
-package com.backend.in.rest.authentication;
+package com.backend.adapter.inbound.rest.authentication;
 
 import com.backend.adapter.in.dto.request.RegistrationRequestDto;
 import com.backend.adapter.in.rest.authentication.RegistrationController;
