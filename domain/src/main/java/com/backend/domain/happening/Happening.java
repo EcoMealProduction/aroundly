@@ -36,7 +36,7 @@ public abstract class Happening implements
 
   private final SentimentEngagement sentimentEngagement;
 
-  @Getter(AccessLevel.NONE)
+  @Getter
   private Set<Media> media;
 
   @Setter
