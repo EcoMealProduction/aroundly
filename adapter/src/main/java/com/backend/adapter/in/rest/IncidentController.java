@@ -1,12 +1,14 @@
 package com.backend.adapter.in.rest;
 
 import com.backend.adapter.in.dto.request.IncidentRequestDto;
+import com.backend.adapter.in.dto.response.incident.IncidentDetailedResponseDto;
 import com.backend.adapter.in.dto.response.incident.IncidentPreviewResponseDto;
-import com.backend.adapter.in.mapper.request.IncidentRequestMapper;
-import com.backend.adapter.in.mapper.response.IncidentDetailedResponseMapper;
-import com.backend.adapter.in.mapper.response.IncidentPreviewResponseMapper;
-import com.backend.domain.happening.old.OldIncident;
+import com.backend.adapter.in.mapper.IncidentMapper;
+import com.backend.adapter.in.mapper.assembler.IncidentDtoAssembler;
+import com.backend.domain.happening.Incident;
 import com.backend.port.inbound.IncidentUseCase;
+import com.backend.port.inbound.commands.CreateIncidentCommand;
+import com.backend.port.inbound.commands.RadiusCommand;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,60 +33,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class IncidentController {
 
   private final IncidentUseCase incidentUseCase;
-  private final IncidentDetailedResponseMapper detailedResponseMapper;
-  private final IncidentPreviewResponseMapper previewResponseMapper;
-  private final IncidentRequestMapper requestMapper;
+  private final IncidentDtoAssembler assembler;
+  private final IncidentMapper mapper;
 
   public IncidentController(IncidentUseCase incidentUseCase,
-      IncidentDetailedResponseMapper detailedResponseMapper,
-      IncidentPreviewResponseMapper previewResponseMapper,
-      IncidentRequestMapper requestMapper) {
+      IncidentDtoAssembler assembler,
+      IncidentMapper mapper) {
 
     this.incidentUseCase = incidentUseCase;
-    this.detailedResponseMapper = detailedResponseMapper;
-    this.previewResponseMapper = previewResponseMapper;
-    this.requestMapper = requestMapper;
+    this.mapper = mapper;
+    this.assembler = assembler;
   }
 
-  /**
-   * Creates a new incident based on client-provided request data.
-   *
-   * Request data is converted from {@link IncidentRequestDto} to the
-   * {@link OldIncident} domain model using the {@link IncidentRequestMapper}.
-   * The domain object is then persisted via the {@link IncidentUseCase} and
-   * returned to the client.
-   *
-   * @param incidentRequestDto the incident data provided by the client
-   * @return the created {@code Incident} as JSON with HTTP status {@code 201 Created}
-   */
   @PostMapping
-  public ResponseEntity<OldIncident> create(@RequestBody IncidentRequestDto incidentRequestDto) {
-    OldIncident domainOldIncident = requestMapper.toDomain(incidentRequestDto);
-    OldIncident oldIncident = incidentUseCase.create(domainOldIncident);
+  public ResponseEntity<IncidentDetailedResponseDto> create(
+      @RequestBody IncidentRequestDto incidentRequestDto) {
 
-    return new ResponseEntity<>(oldIncident, HttpStatus.CREATED);
+    CreateIncidentCommand createIncidentCommand = mapper.toCreateIncidentCommand(incidentRequestDto);
+    Incident incident = incidentUseCase.create(createIncidentCommand);
+    IncidentDetailedResponseDto incidentDetailedResponseDto = assembler.toDetailedDto(incident);
+
+    return new ResponseEntity<>(incidentDetailedResponseDto, HttpStatus.CREATED);
   }
 
-  /**
-   * Retrieves incidents located within a specified radius from the given coordinates.
-   *
-   * Results are mapped to {@link IncidentPreviewResponseDto} objects to provide
-   * a lightweight preview of each incident.
-   *
-   * @param latitude     the latitude of the search origin point
-   * @param longitude    the longitude of the search origin point
-   * @param radiusMeters maximum search distance in meters
-   * @return list of incident previews matching the criteria, with HTTP status {@code 200 OK}
-   */
   @GetMapping
   public ResponseEntity<List<IncidentPreviewResponseDto>> findNearbyIncidents(
       @RequestParam("lat") double latitude,
       @RequestParam("lon") double longitude,
       @RequestParam("radiusMeters") double radiusMeters) {
 
-    List<OldIncident> results = incidentUseCase.findAllInGivenRange(latitude, longitude, radiusMeters);
+    RadiusCommand radiusCommand = new RadiusCommand(latitude, longitude, radiusMeters);
+
+    List<Incident> results = incidentUseCase.findAllInGivenRange(radiusCommand);
     List<IncidentPreviewResponseDto> responseDtos = results.stream()
-        .map(previewResponseMapper::toDto)
+        .map(mapper::toIncidentPreviewResponseDto)
         .toList();
 
     return ResponseEntity.ok(responseDtos);
