@@ -1,10 +1,9 @@
 package com.backend.domain.reactions;
 
-import com.backend.domain.happening.old.OldIncident;
 import lombok.Builder;
 
 /**
- * Represents engagement statistics for an {@link OldIncident}, including
+ * Represents engagement statistics for an Incident, including
  * confirmation and denial counts from users.
  */
 @Builder(toBuilder = true)

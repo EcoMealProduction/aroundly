@@ -10,7 +10,6 @@ import com.backend.domain.mixins.Reactable;
 import com.backend.domain.reactions.SentimentEngagement;
 import java.util.Collections;
 import java.util.Set;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
