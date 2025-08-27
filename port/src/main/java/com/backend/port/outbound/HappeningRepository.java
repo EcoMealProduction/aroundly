@@ -20,6 +20,14 @@ public interface HappeningRepository {
   Optional<Happening> findById(long happeningId);
 
   /**
+   * Checks if a Happening exists by its unique identifier.
+   *
+   * @param happeningId the identifier of the Happening
+   * @return the Happening with the given id
+   */
+  boolean existsById(long happeningId);
+
+  /**
    * Finds all Happenings authored by a given user.
    *
    * @param userId the identifier of the user (actor)

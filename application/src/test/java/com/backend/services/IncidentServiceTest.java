@@ -30,6 +30,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class IncidentServiceTest {
 
+    private static final long INCIDENT_ID = 1L;
+
     @Mock private IncidentRepository incidentRepository;
     @Mock private LocationRepository locationRepository;
     @Mock private SecurityCurrentActorExtractor actorExtractor;
@@ -62,9 +64,9 @@ class IncidentServiceTest {
 
     @Test
     void testFindById() throws URISyntaxException {
-        when(incidentRepository.findById(1L)).thenReturn(Optional.ofNullable(
+        when(incidentRepository.findById(INCIDENT_ID)).thenReturn(Optional.ofNullable(
             createIncident()));
-        Happening result = incidentService.findById(1L);
+        Happening result = incidentService.findById(INCIDENT_ID);
 
         assertEquals(createIncident(), result);
     }
@@ -84,7 +86,7 @@ class IncidentServiceTest {
 
     @Test
     void testUpdateIncident() throws URISyntaxException {
-        when(incidentRepository.findById(1L))
+        when(incidentRepository.findById(INCIDENT_ID))
             .thenReturn(Optional.ofNullable(createIncident()));
         Incident expectedUpdatedOldIncident = createIncident().toBuilder()
                 .title("new title for incident")
@@ -93,15 +95,16 @@ class IncidentServiceTest {
         when(incidentRepository.save(expectedUpdatedOldIncident))
             .thenReturn(expectedUpdatedOldIncident);
 
-        Incident updatedOldIncident = incidentService.update(1L, createUpdatedIncidentCommand());
+        Incident updatedOldIncident = incidentService.update(INCIDENT_ID, createUpdatedIncidentCommand());
 
         assertEquals(expectedUpdatedOldIncident, updatedOldIncident);
     }
 
     @Test
     void testDeleteIncident() throws URISyntaxException {
-        incidentService.deleteById(1L);
-        verify(incidentRepository, times(1)).deleteById(1L);
+        when(incidentRepository.existsById(INCIDENT_ID)).thenReturn(true);
+        incidentService.deleteById(INCIDENT_ID);
+        verify(incidentRepository, times(1)).deleteById(INCIDENT_ID);
     }
 
     private Incident createIncident() throws URISyntaxException {

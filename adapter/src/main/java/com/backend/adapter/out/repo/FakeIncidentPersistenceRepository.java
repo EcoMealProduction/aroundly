@@ -35,6 +35,11 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
     }
 
     @Override
+    public boolean existsById(long happeningId) {
+      return storage.get(happeningId) != null;
+    }
+
+    @Override
     public List<Incident> findAllInGivenRange(double lat0, double lon0, double radiusMeters) {
         final double radiusKm = radiusMeters / 1000.0;
         return storage.values().stream()
