@@ -1,7 +1,5 @@
 package com.backend.services;
 
-import com.backend.domain.happening.old.OldIncident;
-import com.backend.domain.reactions.SentimentEngagement;
 import com.backend.port.inbound.ReactionUseCase;
 import com.backend.port.inbound.commands.ReactionSummary;
 
