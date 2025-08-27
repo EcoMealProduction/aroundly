@@ -35,7 +35,7 @@ class LoginServiceTest {
     private static final String USERNAME = "testuser";
     private static final String EMAIL = "test@example.com";
     private static final String PASSWORD = "password123";
-    private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...";
+    private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlciIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSJ9.signature";
     private static final String REFRESH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
     private static final String TOKEN_URL = "http://localhost:7080/realms/glimpse/protocol/openid-connect/token";
     private static final String CLIENT_ID = "aroundly";
@@ -79,13 +79,13 @@ class LoginServiceTest {
             assertEquals(3600L, result.expiresIn());
             assertEquals(REFRESH_TOKEN, result.refreshToken());
             assertEquals(USERNAME, result.username());
-            assertNull(result.email()); // Email extraction not implemented yet
+            assertEquals(EMAIL, result.email());
             
             verify(restTemplate).postForEntity(eq(TOKEN_URL), any(), any(Class.class));
         }
 
         @Test
-        @DisplayName("Should authenticate user with valid email and password")
+        @DisplayName("Should authenticate user with valid email and password and extract correct username from token")
         void shouldAuthenticateUserWithValidEmail() {
 
             Map<String, Object> tokenResponse = createSuccessfulTokenResponse();
@@ -101,8 +101,8 @@ class LoginServiceTest {
             assertEquals("Bearer", result.tokenType());
             assertEquals(3600L, result.expiresIn());
             assertEquals(REFRESH_TOKEN, result.refreshToken());
-            assertEquals(EMAIL, result.username());
-            assertNull(result.email()); // Email extraction not implemented yet
+            assertEquals(USERNAME, result.username());
+            assertEquals(EMAIL, result.email());
         }
 
         private Map<String, Object> createSuccessfulTokenResponse() {
@@ -270,7 +270,7 @@ class LoginServiceTest {
             LoginUseCase.LoginResponse result = loginService.authenticateUser("", PASSWORD);
 
             assertNotNull(result);
-            assertEquals("", result.username());
+            assertEquals(USERNAME, result.username()); // Should extract from JWT, not empty input
         }
 
         private Map<String, Object> createSuccessfulTokenResponse() {
@@ -284,22 +284,113 @@ class LoginServiceTest {
     }
 
     @Nested
-    @DisplayName("Email Extraction Tests")
-    class EmailExtractionTests {
+    @DisplayName("JWT Token Parsing Tests")
+    class JwtTokenParsingTests {
 
         @Test
-        @DisplayName("Should return null for email extraction (not implemented)")
-        void shouldReturnNullForEmailExtraction() {
-
+        @DisplayName("Should correctly extract email and username from JWT token")
+        void shouldExtractEmailAndUsernameFromJwtToken() {
             Map<String, Object> tokenResponse = createSuccessfulTokenResponse();
             ResponseEntity<Map<String, Object>> responseEntity = new ResponseEntity<>(tokenResponse, HttpStatus.OK);
             
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
 
+            LoginUseCase.LoginResponse result = loginService.authenticateUser("some_input", PASSWORD);
+
+            assertNotNull(result);
+            assertEquals(USERNAME, result.username());
+            assertEquals(EMAIL, result.email());
+        }
+
+        @Test
+        @DisplayName("Should handle JWT token with missing email claim")
+        void shouldHandleJwtTokenWithMissingEmailClaim() {
+            // JWT token with only username, no email claim
+            String tokenWithoutEmail = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlciJ9.signature";
+            
+            Map<String, Object> tokenResponse = new HashMap<>();
+            tokenResponse.put("access_token", tokenWithoutEmail);
+            tokenResponse.put("token_type", "Bearer");
+            tokenResponse.put("expires_in", 3600);
+            tokenResponse.put("refresh_token", REFRESH_TOKEN);
+            
+            ResponseEntity<Map<String, Object>> responseEntity = new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+            when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
+                    .thenReturn(responseEntity);
+
+            LoginUseCase.LoginResponse result = loginService.authenticateUser(EMAIL, PASSWORD);
+
+            assertNotNull(result);
+            assertEquals(USERNAME, result.username());
+            assertNull(result.email());
+        }
+
+        @Test
+        @DisplayName("Should handle JWT token with missing username claim")
+        void shouldHandleJwtTokenWithMissingUsernameClaim() {
+            // JWT token with only email, no preferred_username claim
+            String tokenWithoutUsername = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20ifQ.signature";
+            
+            Map<String, Object> tokenResponse = new HashMap<>();
+            tokenResponse.put("access_token", tokenWithoutUsername);
+            tokenResponse.put("token_type", "Bearer");
+            tokenResponse.put("expires_in", 3600);
+            tokenResponse.put("refresh_token", REFRESH_TOKEN);
+            
+            ResponseEntity<Map<String, Object>> responseEntity = new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+            when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
+                    .thenReturn(responseEntity);
+
             LoginUseCase.LoginResponse result = loginService.authenticateUser(USERNAME, PASSWORD);
 
-            assertNull(result.email());
+            assertNotNull(result);
+            assertNull(result.username());
+            assertEquals(EMAIL, result.email());
+        }
+
+        @Test
+        @DisplayName("Should throw exception for invalid JWT token format")
+        void shouldThrowExceptionForInvalidJwtTokenFormat() {
+            String invalidToken = "invalid.token";
+            
+            Map<String, Object> tokenResponse = new HashMap<>();
+            tokenResponse.put("access_token", invalidToken);
+            tokenResponse.put("token_type", "Bearer");
+            tokenResponse.put("expires_in", 3600);
+            tokenResponse.put("refresh_token", REFRESH_TOKEN);
+            
+            ResponseEntity<Map<String, Object>> responseEntity = new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+            when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
+                    .thenReturn(responseEntity);
+
+            IllegalStateException exception = assertThrows(
+                    IllegalStateException.class,
+                    () -> loginService.authenticateUser(USERNAME, PASSWORD)
+            );
+            
+            assertTrue(exception.getMessage().contains("Failed to extract claims from token"));
+        }
+
+        @Test
+        @DisplayName("Should prevent regression of username/email field swapping")
+        void shouldPreventUsernameEmailFieldSwapping() {
+            Map<String, Object> tokenResponse = createSuccessfulTokenResponse();
+            ResponseEntity<Map<String, Object>> responseEntity = new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+            
+            when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
+                    .thenReturn(responseEntity);
+
+            LoginUseCase.LoginResponse result = loginService.authenticateUser("user.input@email.com", PASSWORD);
+
+            assertNotEquals("user.input@email.com", result.username(), 
+                "Username field should not contain the input email");
+            assertEquals(USERNAME, result.username(), 
+                "Username should be extracted from JWT preferred_username claim");
+            assertEquals(EMAIL, result.email(), 
+                "Email should be extracted from JWT email claim");
+            assertNotEquals(result.username(), result.email(), 
+                "Username and email should be different values");
         }
 
         private Map<String, Object> createSuccessfulTokenResponse() {

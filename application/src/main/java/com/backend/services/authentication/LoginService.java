@@ -11,7 +11,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Base64;
 import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Service implementation for user authentication using Keycloak OAuth2.
@@ -26,10 +29,12 @@ public class LoginService implements LoginUseCase {
 
     private final KeycloakProperties keycloakProperties;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     public LoginService(KeycloakProperties keycloakProperties) {
         this.keycloakProperties = keycloakProperties;
         this.restTemplate = new RestTemplate();
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -51,14 +56,19 @@ public class LoginService implements LoginUseCase {
 
             if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
                 Map<String, Object> tokenResponse = responseEntity.getBody();
+                String accessToken = (String) tokenResponse.get("access_token");
+                
+                Map<String, Object> jwtClaims = extractClaimsFromToken(accessToken);
+                String username = (String) jwtClaims.get("preferred_username");
+                String email = (String) jwtClaims.get("email");
                 
                 return new LoginResponse(
-                        (String) tokenResponse.get("access_token"),
+                        accessToken,
                         (String) tokenResponse.get("token_type"),
                         Long.parseLong(tokenResponse.get("expires_in").toString()),
                         (String) tokenResponse.get("refresh_token"),
-                        usernameOrEmail,
-                        extractEmailFromToken(tokenResponse)
+                        username,
+                        email
                 );
             } else {
                 throw new IllegalArgumentException("Invalid credentials");
@@ -72,7 +82,20 @@ public class LoginService implements LoginUseCase {
         }
     }
 
-    private String extractEmailFromToken(Map<String, Object> tokenResponse) {
-        return null;
+    private Map<String, Object> extractClaimsFromToken(String accessToken) {
+        try {
+            String[] tokenParts = accessToken.split("\\.");
+            if (tokenParts.length != 3) {
+                throw new IllegalArgumentException("Invalid JWT token format");
+            }
+            
+            String payload = tokenParts[1];
+            byte[] decodedBytes = Base64.getUrlDecoder().decode(payload);
+            String decodedPayload = new String(decodedBytes);
+            
+            return objectMapper.readValue(decodedPayload, new TypeReference<Map<String, Object>>() {});
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to extract claims from token: " + ex.getMessage());
+        }
     }
 }
