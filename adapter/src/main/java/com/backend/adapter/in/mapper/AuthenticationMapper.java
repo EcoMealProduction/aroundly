@@ -1,0 +1,48 @@
+package com.backend.adapter.in.mapper;
+
+import com.backend.adapter.in.dto.request.LoginRequestDto;
+import com.backend.adapter.in.dto.request.RegistrationRequestDto;
+import com.backend.adapter.in.dto.response.LoginResponseDto;
+import com.backend.port.inbound.commands.auth.LoginCommand;
+import com.backend.port.inbound.commands.auth.LoginFeedback;
+import com.backend.port.inbound.commands.auth.RegisterCommand;
+import org.mapstruct.Mapper;
+
+/**
+ * MapStruct mapper for converting between authentication DTOs
+ * received in controller requests and domain command/feedback objects.
+ *
+ * Used to translate client-provided authentication data into domain objects
+ * for use within the application layer, and convert domain results back to DTOs.
+ */
+@Mapper
+public interface AuthenticationMapper {
+
+  /**
+   * Maps a {@link LoginRequestDto} from the client into a domain {@link LoginCommand}.
+   * Converts login credentials from the API layer to the application layer format.
+   *
+   * @param loginRequestDto the client-provided login request DTO
+   * @return the mapped domain command object
+   */
+  LoginCommand toLoginCommand(LoginRequestDto loginRequestDto);
+
+  /**
+   * Maps a domain {@link LoginFeedback} to a {@link LoginResponseDto},
+   * typically for returning authentication results to the client.
+   *
+   * @param loginFeedback the domain login processing result
+   * @return a login response DTO for the client
+   */
+  LoginResponseDto toLoginResponseDto(LoginFeedback loginFeedback);
+
+  /**
+   * Maps a {@link RegistrationRequestDto} from the client into a domain {@link RegisterCommand}.
+   * Converts registration data from the API layer to the application layer format.
+   *
+   * @param registrationRequestDto the client-provided registration request DTO
+   * @return the mapped domain command object
+   */
+  RegisterCommand toRegisterCommand(RegistrationRequestDto registrationRequestDto);
+
+}
