@@ -5,7 +5,7 @@ import com.backend.adapter.in.dto.request.RegistrationRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
-import com.backend.port.inbound.commands.auth.RegisterCommand;
+import com.backend.port.inbound.commands.auth.RegistrationCommand;
 import org.mapstruct.Mapper;
 
 /**
@@ -37,12 +37,11 @@ public interface AuthenticationMapper {
   LoginResponseDto toLoginResponseDto(LoginFeedback loginFeedback);
 
   /**
-   * Maps a {@link RegistrationRequestDto} from the client into a domain {@link RegisterCommand}.
+   * Maps a {@link RegistrationRequestDto} from the client into a domain {@link RegistrationCommand}.
    * Converts registration data from the API layer to the application layer format.
    *
    * @param registrationRequestDto the client-provided registration request DTO
    * @return the mapped domain command object
    */
-  RegisterCommand toRegisterCommand(RegistrationRequestDto registrationRequestDto);
-
+  RegistrationCommand toRegisterCommand(RegistrationRequestDto registrationRequestDto);
 }

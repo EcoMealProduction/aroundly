@@ -3,7 +3,7 @@ package com.backend.services.authentication;
 import com.backend.port.inbound.AuthenticationUseCase;
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
-import com.backend.port.inbound.commands.auth.RegisterCommand;
+import com.backend.port.inbound.commands.auth.RegistrationCommand;
 import com.backend.port.inbound.commands.auth.RegistrationFeedback;
 import java.util.HashMap;
 import java.util.List;
@@ -93,15 +93,15 @@ public class AuthenticationService implements AuthenticationUseCase {
   /**
    * Registers a new user via Keycloak Admin API.
    *
-   * @param registerCommand user details for registration (email, username, password)
+   * @param registrationCommand user details for registration (email, username, password)
    * @return a {@link RegistrationFeedback} containing the new user id (in the message field)
    * @throws IllegalStateException on user conflict (409) or unexpected response codes
    */
   @Override
-  public RegistrationFeedback register(RegisterCommand registerCommand) {
-    final String email = registerCommand.email();
-    final String username = registerCommand.username();
-    final String password = registerCommand.password();
+  public RegistrationFeedback register(RegistrationCommand registrationCommand) {
+    final String email = registrationCommand.email();
+    final String username = registrationCommand.username();
+    final String password = registrationCommand.password();
 
     String adminToken = getAdminAccessToken();
     HttpHeaders headers = new HttpHeaders();

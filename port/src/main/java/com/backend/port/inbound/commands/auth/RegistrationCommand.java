@@ -7,7 +7,7 @@ package com.backend.port.inbound.commands.auth;
  * @param username          the chosen username
  * @param password          the chosen password
  */
-public record RegisterCommand(
+public record RegistrationCommand(
     String email,
     String username,
     String password) { }

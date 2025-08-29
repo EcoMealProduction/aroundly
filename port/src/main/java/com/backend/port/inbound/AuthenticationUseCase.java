@@ -2,7 +2,7 @@ package com.backend.port.inbound;
 
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
-import com.backend.port.inbound.commands.auth.RegisterCommand;
+import com.backend.port.inbound.commands.auth.RegistrationCommand;
 import com.backend.port.inbound.commands.auth.RegistrationFeedback;
 
 /**
@@ -22,8 +22,8 @@ public interface AuthenticationUseCase {
   /**
    * Registers a new user in the system.
    *
-   * @param registerCommand the command containing registration information
+   * @param registrationCommand the command containing registration information
    * @return a {@link RegistrationFeedback} containing registration result details
    */
-  RegistrationFeedback register(RegisterCommand registerCommand);
+  RegistrationFeedback register(RegistrationCommand registrationCommand);
 }
