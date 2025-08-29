@@ -3,11 +3,15 @@ package com.backend.adapter.inbound.mapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.backend.adapter.in.dto.request.LoginRequestDto;
+import com.backend.adapter.in.dto.request.RegistrationRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
+import com.backend.adapter.in.dto.response.RegistrationResponseDto;
 import com.backend.adapter.in.mapper.AuthenticationMapper;
 import com.backend.adapter.in.mapper.AuthenticationMapperImpl;
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
+import com.backend.port.inbound.commands.auth.RegistrationCommand;
+import com.backend.port.inbound.commands.auth.RegistrationFeedback;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +24,36 @@ class AuthenticationMapperTest {
 
   @Autowired private AuthenticationMapper mapper;
 
+  private final LoginRequestDto loginRequest = new LoginRequestDto(
+      "username",
+      "Password1!");
+
+  private final RegistrationRequestDto registrationRequest = new RegistrationRequestDto(
+      "username",
+      "email@da.com",
+      "Password1!");
+
+  private final LoginFeedback loginFeedback = new LoginFeedback(
+      "token",
+      "tokenType",
+      30L,
+      "refresh",
+      "username",
+      "email@da.com");
+
+  private final RegistrationFeedback registrationFeedback = new RegistrationFeedback(
+      "Account was created successfully!");
+
   @Test
   void testToLoginCommand() {
-    LoginRequestDto loginRequestDto = createLoginRequestDto();
-    LoginCommand loginCommand = mapper.toLoginCommand(loginRequestDto);
+    LoginCommand loginCommand = mapper.toLoginCommand(loginRequest);
 
-    assertEquals(loginCommand.usernameOrEmail(), loginRequestDto.usernameOrEmail());
-    assertEquals(loginCommand.password(), loginRequestDto.password());
+    assertEquals(loginCommand.usernameOrEmail(), loginRequest.usernameOrEmail());
+    assertEquals(loginCommand.password(), loginRequest.password());
   }
 
   @Test
   void testToLoginResponse() {
-    LoginFeedback loginFeedback = createLoginFeedback();
     LoginResponseDto loginResponseDto = mapper.toLoginResponseDto(loginFeedback);
 
     assertEquals(loginResponseDto.accessToken(), loginFeedback.accessToken());
@@ -42,20 +64,20 @@ class AuthenticationMapperTest {
     assertEquals(loginResponseDto.email(), loginFeedback.email());
   }
 
-  private LoginRequestDto createLoginRequestDto() {
-    return new LoginRequestDto(
-        "username",
-        "Password1!");
+  @Test
+  void testToRegistrationCommand() {
+    RegistrationCommand registrationCommand = mapper.toRegisterCommand(registrationRequest);
+
+    assertEquals(registrationCommand.username(), registrationRequest.username());
+    assertEquals(registrationCommand.email(), registrationRequest.email());
+    assertEquals(registrationCommand.password(), registrationRequest.password());
   }
 
-  private LoginFeedback createLoginFeedback() {
-    return new LoginFeedback(
-        "token",
-        "tokenType",
-        30L,
-        "refresh",
-        "username",
-        "email@da.com"
-    );
+  @Test
+  void testToRegistrationResponse() {
+    RegistrationResponseDto registrationResponseDto =
+        mapper.toRegistrationResponseDto(registrationFeedback);
+
+    assertEquals(registrationResponseDto.userId(), registrationFeedback.userId());
   }
 }

@@ -3,9 +3,11 @@ package com.backend.adapter.in.mapper;
 import com.backend.adapter.in.dto.request.LoginRequestDto;
 import com.backend.adapter.in.dto.request.RegistrationRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
+import com.backend.adapter.in.dto.response.RegistrationResponseDto;
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
 import com.backend.port.inbound.commands.auth.RegistrationCommand;
+import com.backend.port.inbound.commands.auth.RegistrationFeedback;
 import org.mapstruct.Mapper;
 
 /**
@@ -44,4 +46,13 @@ public interface AuthenticationMapper {
    * @return the mapped domain command object
    */
   RegistrationCommand toRegisterCommand(RegistrationRequestDto registrationRequestDto);
+
+  /**
+   * Maps a domain {@link RegistrationFeedback} to a {@link RegistrationResponseDto},
+   * typically for returning registration results to the client.
+   *
+   * @param registrationFeedback the domain registration processing result
+   * @return a registration response DTO for the client
+   */
+  RegistrationResponseDto toRegistrationResponseDto(RegistrationFeedback registrationFeedback);
 }
