@@ -88,7 +88,6 @@ class LoginControllerTest {
   void setUp() {
     mockMvc = MockMvcBuilders
         .standaloneSetup(loginController)
-        .setControllerAdvice()
         .build();
     objectMapper = new ObjectMapper();
   }
