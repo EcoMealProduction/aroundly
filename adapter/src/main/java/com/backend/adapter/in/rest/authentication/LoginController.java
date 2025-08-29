@@ -2,7 +2,10 @@ package com.backend.adapter.in.rest.authentication;
 
 import com.backend.adapter.in.dto.request.LoginRequestDto;
 import com.backend.adapter.in.dto.response.LoginResponseDto;
-import com.backend.port.inbound.LoginUseCase;
+import com.backend.adapter.in.mapper.AuthenticationMapper;
+import com.backend.port.inbound.AuthenticationUseCase;
+import com.backend.port.inbound.commands.auth.LoginCommand;
+import com.backend.port.inbound.commands.auth.LoginFeedback;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,10 +28,12 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Authentication", description = "User login and authentication endpoints")
 public class LoginController {
 
-    private final LoginUseCase loginUseCase;
+    private final AuthenticationUseCase loginUseCase;
+    private final AuthenticationMapper mapper;
 
-    public LoginController(LoginUseCase loginUseCase) {
+    public LoginController(AuthenticationUseCase loginUseCase, AuthenticationMapper mapper) {
         this.loginUseCase = loginUseCase;
+        this.mapper = mapper;
     }
 
     @PostMapping("/login")
@@ -63,21 +68,11 @@ public class LoginController {
     })
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
         try {
-            LoginUseCase.LoginResponse loginResponse = loginUseCase.authenticateUser(
-                    loginRequestDto.usernameOrEmail(),
-                    loginRequestDto.password()
-            );
+            LoginCommand loginCommand = mapper.toLoginCommand(loginRequestDto);
+            LoginFeedback loginFeedback = loginUseCase.login(loginCommand);
+            LoginResponseDto loginResponseDto = mapper.toLoginResponseDto(loginFeedback);
 
-            LoginResponseDto responseDto = new LoginResponseDto(
-                    loginResponse.accessToken(),
-                    loginResponse.tokenType(),
-                    loginResponse.expiresIn(),
-                    loginResponse.refreshToken(),
-                    loginResponse.username(),
-                    loginResponse.email()
-            );
-
-            return ResponseEntity.ok(responseDto);
+            return ResponseEntity.ok(loginResponseDto);
 
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
