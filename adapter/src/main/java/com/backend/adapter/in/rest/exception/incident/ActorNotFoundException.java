@@ -1,4 +1,4 @@
-package com.backend.adapter.in.rest.exceptions;
+package com.backend.adapter.in.rest.exception.incident;
 
 /**
  * Exception thrown when an actor with the given identifier
