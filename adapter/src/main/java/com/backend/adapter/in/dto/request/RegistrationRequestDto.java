@@ -4,10 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "User registration request data")
 public record RegistrationRequestDto(
-        @Schema(description = "Username for the new account", example = "john_doe", required = true)
+        @Schema(
+            description = "Username for the new account",
+            example = "john_doe"
+        )
         String username,
         
-        @Schema(description = "Email address for the new account", example = "john.doe@example.com", required = true)
+        @Schema(
+            description = "Email address for the new account",
+            example = "john.doe@example.com"
+        )
         String email,
         
         @Schema(
@@ -16,7 +22,6 @@ public record RegistrationRequestDto(
                         "at least 1 special character (!@#$%^&*()_+-={}[]|:\"';'<>?,./), " +
                         "and cannot be the same as username",
                 example = "SecurePass123!",
-                required = true,
                 minLength = 8,
                 pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\\\-={}\\\\[\\\\]|:\\\";'<>?,.\\\\/]).*$"
         )

@@ -15,15 +15,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record LoginRequestDto(
         @Schema(
                 description = "Username or email address for authentication", 
-                example = "john_doe or john.doe@example.com",
-                required = true
+                example = "john_doe or john.doe@example.com"
         )
         String usernameOrEmail,
         
         @Schema(
                 description = "User password for authentication", 
-                example = "SecurePass123!",
-                required = true
+                example = "SecurePass123!"
         )
         String password) {
 }

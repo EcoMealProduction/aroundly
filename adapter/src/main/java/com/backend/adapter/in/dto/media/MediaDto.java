@@ -1,5 +1,6 @@
 package com.backend.adapter.in.dto.media;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.net.URI;
 
 /**
@@ -7,4 +8,10 @@ import java.net.URI;
  *
  * Contains the URI pointing to the media content, such as an image or video.
  */
-public record MediaDto(URI uri) { }
+@Schema(description = "Media reference containing the URI to access the media file")
+public record MediaDto(
+    @Schema(
+        description = "URI pointing to the media file location",
+        example = "https://api.example.com/media/images/incident_photo_123.jpg"
+    )
+    URI uri) { }
