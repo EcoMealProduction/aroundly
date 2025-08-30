@@ -17,7 +17,7 @@ import org.mapstruct.Mapper;
  * Used to translate client-provided authentication data into domain objects
  * for use within the application layer, and convert domain results back to DTOs.
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface AuthenticationMapper {
 
   /**
