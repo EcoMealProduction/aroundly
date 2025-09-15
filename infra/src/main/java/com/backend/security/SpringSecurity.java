@@ -38,9 +38,9 @@ public class SpringSecurity {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/v1/events/**", "/api/v1/events").hasRole("BUSINESS")
-                .requestMatchers("/api/v1/**").authenticated())
+                .requestMatchers("/api/v1/**").authenticated()
+                .anyRequest().authenticated()
+            )
             .logout(logout -> logout.logoutSuccessUrl("/auth/login"))
             .oauth2ResourceServer(oauth2 -> oauth2
                     .jwt(jwt -> jwt.
