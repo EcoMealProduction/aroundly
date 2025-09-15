@@ -81,36 +81,6 @@ services:
       timeout: 3s
       retries: 30
 
-  app:
-    build: .
-    restart: unless-stopped
-    depends_on:
-      app_postgres:
-        condition: service_healthy
-      keycloak:
-        condition: service_healthy
-    environment:
-      SERVER_PORT: "8100"
-      SPRING_APPLICATION_NAME: infra
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: "http://keycloak:7080/realms/glimpse"
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://keycloak:7080/realms/glimpse"
-
-      KEYCLOAK_BASE_URL: "http://keycloak:7080"
-      KEYCLOAK_REALM: "glimpse"
-      KEYCLOAK_CLIENT_ID: "aroundly"
-      KEYCLOAK_CLIENT_SECRET: "aroundly-secret"
-
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://app_postgres:5432/appdb"
-      SPRING_DATASOURCE_USERNAME: "appuser"
-      SPRING_DATASOURCE_PASSWORD: "app_password"
-
-      SPRING_FLYWAY_ENABLED: "true"
-      SPRING_FLYWAY_LOCATIONS: "classpath:db/migration"
-
-    ports:
-      - "8100:8100"
-
-
   minio:
     image: minio/minio
     container_name: minio
