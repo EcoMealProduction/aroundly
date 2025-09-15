@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("")
 @Tag(name = "Admin", description = "Administrative endpoints")
 @SecurityRequirement(name = "bearerAuth")
 public class AdminController {
