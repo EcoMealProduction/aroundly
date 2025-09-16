@@ -29,4 +29,5 @@ RUN mvn -B -pl infra -am -DskipTests clean package
 FROM eclipse-temurin:21-jre AS runtime
 WORKDIR /opt/aroundly
 COPY --from=builder /opt/aroundly/infra/target/infra-*.jar aroundly.jar
-ENTRYPOINT ["java", "-jar", "aroundly.jar"]
+ENTRYPOINT ["java", "-Dserver.port=$PORT", "-jar", "aroundly.jar"]
+
