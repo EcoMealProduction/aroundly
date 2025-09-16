@@ -39,6 +39,7 @@ public class SpringSecurity {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
+                .requestMatchers("/healthz").permitAll()
                 .anyRequest().authenticated()
             )
             .logout(logout -> logout.logoutSuccessUrl("/auth/login"))

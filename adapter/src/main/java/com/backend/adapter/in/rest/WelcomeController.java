@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Welcome", description = "Welcome endpoint to test the deploy")
 public class WelcomeController {
 
-  @GetMapping("healthz")
+  @GetMapping("/healthz")
   public String welcome() {
     return "Welcome";
   }
