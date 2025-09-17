@@ -40,7 +40,6 @@ public class SpringSecurity {
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .requestMatchers("/healthz").permitAll()
-                .anyRequest().authenticated()
             )
             .logout(logout -> logout.logoutSuccessUrl("/auth/login"))
             .oauth2ResourceServer(oauth2 -> oauth2
