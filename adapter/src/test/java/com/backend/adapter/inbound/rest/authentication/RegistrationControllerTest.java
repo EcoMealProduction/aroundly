@@ -1,9 +1,8 @@
 package com.backend.adapter.inbound.rest.authentication;
 
-import com.backend.adapter.in.dto.request.RegistrationRequestDto;
-import com.backend.adapter.in.dto.response.RegistrationResponseDto;
-import com.backend.adapter.in.mapper.AuthenticationMapper;
-import com.backend.adapter.in.rest.authentication.RegistrationController;
+import com.backend.adapter.inbound.dto.request.RegistrationRequestDto;
+import com.backend.adapter.inbound.dto.response.RegistrationResponseDto;
+import com.backend.adapter.inbound.mapper.AuthenticationMapper;
 import com.backend.port.inbound.commands.auth.RegistrationCommand;
 import com.backend.port.inbound.commands.auth.RegistrationFeedback;
 import com.backend.services.authentication.AuthenticationService;

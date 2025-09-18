@@ -3,10 +3,9 @@ package com.backend.adapter.inbound.mapper.assembler;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.backend.adapter.in.dto.response.incident.IncidentDetailedResponseDto;
-import com.backend.adapter.in.mapper.IncidentMapper;
-import com.backend.adapter.in.mapper.IncidentMapperImpl;
-import com.backend.adapter.in.mapper.assembler.IncidentDtoAssembler;
+import com.backend.adapter.inbound.dto.response.incident.IncidentDetailedResponseDto;
+import com.backend.adapter.inbound.mapper.IncidentMapper;
+import com.backend.adapter.inbound.mapper.IncidentMapperImpl;
 import com.backend.domain.actor.Actor;
 import com.backend.domain.actor.ActorId;
 import com.backend.domain.actor.Role;

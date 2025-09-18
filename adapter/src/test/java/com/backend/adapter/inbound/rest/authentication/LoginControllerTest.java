@@ -14,10 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.backend.adapter.in.dto.request.LoginRequestDto;
-import com.backend.adapter.in.dto.response.LoginResponseDto;
-import com.backend.adapter.in.mapper.AuthenticationMapper;
-import com.backend.adapter.in.rest.authentication.LoginController;
+import com.backend.adapter.inbound.dto.request.LoginRequestDto;
+import com.backend.adapter.inbound.dto.response.LoginResponseDto;
+import com.backend.adapter.inbound.mapper.AuthenticationMapper;
 import com.backend.port.inbound.AuthenticationUseCase;
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
