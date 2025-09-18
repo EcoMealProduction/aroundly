@@ -7,10 +7,10 @@ import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
 import com.backend.domain.media.MediaKind;
+import com.backend.port.inbound.commands.CoordinatesCommand;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
 import com.backend.port.outbound.IncidentRepository;
-import com.backend.port.outbound.LocationRepository;
 import com.backend.services.authentication.SecurityCurrentActorExtractor;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +33,7 @@ class IncidentServiceTest {
     private static final long INCIDENT_ID = 1L;
 
     @Mock private IncidentRepository incidentRepository;
-    @Mock private LocationRepository locationRepository;
+    @Mock private LocationService locationService;
     @Mock private SecurityCurrentActorExtractor actorExtractor;
     @InjectMocks private IncidentService incidentService;
 
@@ -73,15 +73,19 @@ class IncidentServiceTest {
 
     @Test
     void testCreateIncident() throws URISyntaxException {
-        final double latitude = createIncidentCommand().lat();
-        final double longitude = createIncidentCommand().lon();
+        final CreateIncidentCommand command = createIncidentCommand();
+        final Location resolvedLocation = createLocation();
+        final Incident expectedIncident = createIncident();
 
-        when(locationRepository.findByCoordinate(latitude, longitude))
-            .thenReturn(Optional.of(createLocation()));
+        when(actorExtractor.extractId()).thenReturn(expectedIncident.actorId());
+        when(locationService.findByCoordinates(new CoordinatesCommand(command.lat(), command.lon())))
+            .thenReturn(resolvedLocation);
         when(incidentRepository.save(createIncident())).thenReturn(createIncident());
-        Incident result = incidentService.create(createIncidentCommand());
+        Incident result = incidentService.create(command);
 
-        assertEquals(createIncident(), result);
+        assertEquals(expectedIncident, result);
+        verify(locationService).findByCoordinates(new CoordinatesCommand(command.lat(), command.lon()));
+        verify(incidentRepository).save(expectedIncident);
     }
 
     @Test

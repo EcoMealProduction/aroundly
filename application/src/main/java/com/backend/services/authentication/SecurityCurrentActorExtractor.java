@@ -53,6 +53,12 @@ public class SecurityCurrentActorExtractor implements ActorUseCase {
   @Override
   public Optional<String> extractUsername() {
     Jwt jwt = getJwtOrThrow();
+
+    String preferred = jwt.getClaimAsString("preferred_username");
+    if (preferred != null && !preferred.isBlank()) {
+      return Optional.of(preferred);
+    }
+
     String username = jwt.getClaimAsString("username");
     if (username != null && !username.isBlank()) {
       return Optional.of(username);

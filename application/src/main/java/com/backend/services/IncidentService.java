@@ -8,6 +8,7 @@ import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
 import com.backend.port.inbound.ActorUseCase;
 import com.backend.port.inbound.IncidentUseCase;
+import com.backend.port.inbound.commands.CoordinatesCommand;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
 import com.backend.port.outbound.IncidentRepository;
@@ -37,16 +38,16 @@ import java.util.List;
 public class IncidentService implements IncidentUseCase {
 
   private final IncidentRepository incidentRepository;
-  private final LocationRepository locationRepository;
+  private final LocationService locationService;
   private final ActorUseCase actorExtractor;
 
   public IncidentService(
     IncidentRepository incidentRepository,
-    LocationRepository locationRepository,
+    LocationService locationService,
     ActorUseCase actorExtractor) {
 
     this.incidentRepository = incidentRepository;
-    this.locationRepository = locationRepository;
+    this.locationService = locationService;
     this.actorExtractor = actorExtractor;
   }
 
@@ -119,6 +120,9 @@ public class IncidentService implements IncidentUseCase {
   public Incident create(CreateIncidentCommand createIncidentCommand) throws
       ValidationException, LocationNotFoundException, ActorNotFoundException, DuplicateIncidentException {
 
+    final double longitude = createIncidentCommand.lon();
+    final double latitude = createIncidentCommand.lat();
+
     validateCreateIncidentCommand(createIncidentCommand);
 
     try {
@@ -126,15 +130,19 @@ public class IncidentService implements IncidentUseCase {
       final String title = createIncidentCommand.title();
       final String description = createIncidentCommand.description();
       final Set<Media> media = createIncidentCommand.media();
-      final Optional<Location> location = locationRepository
-          .findByCoordinate(createIncidentCommand.lat(), createIncidentCommand.lon());
+      final Location location;
 
-      if (location.isEmpty())
+      try {
+        CoordinatesCommand coordinatesCommand = new CoordinatesCommand(latitude, longitude);
+        location = locationService.findByCoordinates(coordinatesCommand);
+      } catch (RuntimeException e) {
         throw new LocationNotFoundException(
-          String.format("Location not found for coordinates: lat=%f, lon=%f",
-              createIncidentCommand.lat(), createIncidentCommand.lon()));
+            String.format("Location not found for coordinates: lat=%f, lon=%f",
+                createIncidentCommand.lat(), createIncidentCommand.lon()),
+            e);
+      }
 
-      final LocationId locationId = location.get().id();
+      final LocationId locationId = location.id();
 
       Incident incident = Incident.builder()
         .actorId(actorId)
