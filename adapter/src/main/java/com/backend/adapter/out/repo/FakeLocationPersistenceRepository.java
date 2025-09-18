@@ -5,20 +5,16 @@ import com.backend.port.outbound.LocationRepository;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class FakeLocationPersistenceRepository implements LocationRepository {
 
   private final Map<Long, Location> storage = new ConcurrentHashMap<>();
-  private final AtomicLong idGenerator = new AtomicLong(1);
 
   @Override
   public Location save(Location location) {
-    long id = idGenerator.getAndIncrement();
-    storage.put(id, location);
-
+    storage.put(location.id().value(), location);
     return location;
   }
 

@@ -5,6 +5,8 @@ import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 import com.backend.port.outbound.IncidentRepository;
+import com.backend.port.outbound.LocationRepository;
+
 import java.util.Objects;
 import org.springframework.stereotype.Repository;
 
@@ -17,10 +19,13 @@ import java.util.concurrent.atomic.AtomicLong;
 @Repository
 public class FakeIncidentPersistenceRepository implements IncidentRepository {
 
-    private final FakeLocationPersistenceRepository locationRepository =
-        new FakeLocationPersistenceRepository();
+    private final LocationRepository locationRepository;
     private final Map<Long, Happening> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
+
+    public FakeIncidentPersistenceRepository(LocationRepository locationRepository) {
+        this.locationRepository = locationRepository;
+    }
 
     @Override
     public Incident save(Incident incident) {
@@ -47,11 +52,11 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
             .map(Incident.class::cast)
             .filter(i -> {
                 LocationId locationId = i.locationId();
-                Optional<Location> location = Optional.ofNullable(
-                    locationRepository.findById(locationId.value()));
-                if (location.isEmpty()) return false;
-                double lat = location.get().latitude();
-                double lon = location.get().longitude();
+                Location location = locationRepository.findById(locationId.value());
+                if (location == null) return false;
+                
+                double lat = location.latitude();
+                double lon = location.longitude();
 
                 return haversineKm(lat0, lon0, lat, lon) <= radiusKm;
             })
