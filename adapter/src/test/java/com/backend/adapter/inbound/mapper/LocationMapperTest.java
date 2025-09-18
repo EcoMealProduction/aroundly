@@ -2,11 +2,9 @@ package com.backend.adapter.inbound.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.backend.adapter.in.dto.request.CoordinatesRequestDto;
-import com.backend.adapter.in.dto.request.RadiusRequestDto;
-import com.backend.adapter.in.dto.response.CoordinateResponseDto;
-import com.backend.adapter.in.mapper.LocationMapper;
-import com.backend.adapter.in.mapper.LocationMapperImpl;
+import com.backend.adapter.inbound.dto.request.CoordinatesRequestDto;
+import com.backend.adapter.inbound.dto.request.RadiusRequestDto;
+import com.backend.adapter.inbound.dto.response.CoordinateResponseDto;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 import com.backend.port.inbound.commands.CoordinatesCommand;

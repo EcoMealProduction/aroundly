@@ -2,12 +2,10 @@ package com.backend.adapter.inbound.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.backend.adapter.in.dto.request.LoginRequestDto;
-import com.backend.adapter.in.dto.request.RegistrationRequestDto;
-import com.backend.adapter.in.dto.response.LoginResponseDto;
-import com.backend.adapter.in.dto.response.RegistrationResponseDto;
-import com.backend.adapter.in.mapper.AuthenticationMapper;
-import com.backend.adapter.in.mapper.AuthenticationMapperImpl;
+import com.backend.adapter.inbound.dto.request.LoginRequestDto;
+import com.backend.adapter.inbound.dto.request.RegistrationRequestDto;
+import com.backend.adapter.inbound.dto.response.LoginResponseDto;
+import com.backend.adapter.inbound.dto.response.RegistrationResponseDto;
 import com.backend.port.inbound.commands.auth.LoginCommand;
 import com.backend.port.inbound.commands.auth.LoginFeedback;
 import com.backend.port.inbound.commands.auth.RegistrationCommand;

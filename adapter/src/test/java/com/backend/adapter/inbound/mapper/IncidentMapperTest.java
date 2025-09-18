@@ -2,10 +2,8 @@ package com.backend.adapter.inbound.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.backend.adapter.in.dto.request.IncidentRequestDto;
-import com.backend.adapter.in.dto.response.incident.IncidentPreviewResponseDto;
-import com.backend.adapter.in.mapper.IncidentMapper;
-import com.backend.adapter.in.mapper.IncidentMapperImpl;
+import com.backend.adapter.inbound.dto.request.IncidentRequestDto;
+import com.backend.adapter.inbound.dto.response.incident.IncidentPreviewResponseDto;
 import com.backend.domain.actor.ActorId;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.LocationId;
