@@ -33,23 +33,5 @@
       "serviceAccountsEnabled": true,
       "standardFlowEnabled": true
     }
-  ],
-  "roles": {
-    "client": {
-      "aroundly": [
-        {
-          "name": "USER",
-          "description": "default user of the application"
-        },
-        {
-          "name": "BUSINESS",
-          "description": "the event creator"
-        },
-        {
-          "name": "ADMIN",
-          "description": "the messiah, the Jesus Christ of aroundly. God itself!"
-        }
-      ]
-    }
-  }
+  ]
 }

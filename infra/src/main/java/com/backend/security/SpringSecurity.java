@@ -32,19 +32,21 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthConverterConfig jwtAuthConverterConfig) throws Exception {
         httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/events/**", "/api/v1/events").hasRole("BUSINESS")
-                        .requestMatchers("/api/v1/**").authenticated())
-                .logout(logout -> logout.logoutSuccessUrl("/auth/login"))
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter()))
-                );
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/api/v1/**").authenticated()
+                .requestMatchers("/healthz").permitAll()
+            )
+            .logout(logout -> logout.logoutSuccessUrl("/auth/login"))
+            .oauth2ResourceServer(oauth2 -> oauth2
+                    .jwt(jwt -> jwt.
+                        jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter())
+                    )
+            );
         return httpSecurity.build();
     }
 }

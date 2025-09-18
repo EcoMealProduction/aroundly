@@ -18,12 +18,10 @@ stop:
 down:
 	docker-compose down -v
 
-kill:
-	docker rm $(docker ps -a -q)
 
 # Delete all Docker volumes (dangerous)
 prune:
 	docker volume prune -f
 
 # Stop containers and remove them along with volumes
-clean: stop down kill
+clean: stop down

@@ -1,8 +1,21 @@
 package com.backend.services;
 
+import com.backend.domain.actor.ActorId;
+import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
-import com.backend.port.out.IncidentRepository;
-import com.backend.services.happening.IncidentService;
+import com.backend.domain.location.Location;
+import com.backend.domain.location.LocationId;
+import com.backend.domain.media.Media;
+import com.backend.domain.media.MediaKind;
+import com.backend.port.inbound.commands.CreateIncidentCommand;
+import com.backend.port.inbound.commands.RadiusCommand;
+import com.backend.port.outbound.IncidentRepository;
+import com.backend.port.outbound.LocationRepository;
+import com.backend.services.authentication.SecurityCurrentActorExtractor;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,82 +23,122 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.backend.Fixtures.validIncident;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IncidentServiceTest {
+class IncidentServiceTest {
 
-    private static final int INCIDENT_ID = 1;
+    private static final long INCIDENT_ID = 1L;
 
     @Mock private IncidentRepository incidentRepository;
+    @Mock private LocationRepository locationRepository;
+    @Mock private SecurityCurrentActorExtractor actorExtractor;
     @InjectMocks private IncidentService incidentService;
 
     @Test
-    void testFindAllInGivenRange() {
+    void testFindAllInGivenRange() throws URISyntaxException {
         double lat = 47.0101;
         double lon = 28.8576;
         double radius = 1500.0;
-        final int oneKm = 1;
-        when(incidentRepository.findByAllInGivenRange(lat, lon, radius)).thenReturn(List.of(validIncident));
-        List<Incident> result = incidentService.findAllInGivenRange(lat, lon, radius);
 
-        assertEquals(result, List.of(validIncident));
+        RadiusCommand radiusCommand = new RadiusCommand(lat, lon, radius);
+
+        when(incidentRepository.findAllInGivenRange(lat, lon, radius))
+            .thenReturn(List.of(createIncident()));
+        List<Incident> result = incidentService.findAllInGivenRange(radiusCommand);
+
+        assertEquals(result, List.of(createIncident()));
     }
 
     @Test
-    void testFindById() {
-        when(incidentRepository.findById(INCIDENT_ID)).thenReturn(Optional.ofNullable(validIncident));
-        Incident foundIncident = incidentService.findById(INCIDENT_ID);
+    void testFindByActorId() throws URISyntaxException {
+        final ActorId actorId = new ActorId("abc-123");
+        when(incidentRepository.findByUserId(actorId.id())).thenReturn(List.of(createIncident()));
 
-        verify(incidentRepository, times(1)).findById(INCIDENT_ID);
-        assertEquals(validIncident, foundIncident);
+        List<Happening> result = incidentService.findByActorId(actorId.id());
+
+        assertEquals(result, List.of(createIncident()));
     }
 
     @Test
-    void testCreateIncident() {
-        when(incidentRepository.save(validIncident)).thenReturn(validIncident);
-        Incident createdIncident = incidentService.create(validIncident);
+    void testFindById() throws URISyntaxException {
+        when(incidentRepository.findById(INCIDENT_ID)).thenReturn(Optional.ofNullable(
+            createIncident()));
+        Happening result = incidentService.findById(INCIDENT_ID);
 
-        verify(incidentRepository, times(1)).save(validIncident);
-        assertEquals(validIncident, createdIncident);
+        assertEquals(createIncident(), result);
     }
 
     @Test
-    void testExtendIncidentLifespan() {
-        when(incidentRepository.findById(INCIDENT_ID)).thenReturn(Optional.ofNullable(validIncident));
+    void testCreateIncident() throws URISyntaxException {
+        final double latitude = createIncidentCommand().lat();
+        final double longitude = createIncidentCommand().lon();
 
-        assertNotNull(validIncident);
-        Incident expectedExtendedLifespanIncident = validIncident.confirmIncident();
-        when(incidentRepository.save(expectedExtendedLifespanIncident)).thenReturn(expectedExtendedLifespanIncident);
-        Incident extendedLifespanIncident = incidentService.extendIncidentLifespan(INCIDENT_ID);
+        when(locationRepository.findByCoordinate(latitude, longitude))
+            .thenReturn(Optional.of(createLocation()));
+        when(incidentRepository.save(createIncident())).thenReturn(createIncident());
+        Incident result = incidentService.create(createIncidentCommand());
 
-        verify(incidentRepository, times(1)).findById(INCIDENT_ID);
-        verify(incidentRepository, times(1)).save(expectedExtendedLifespanIncident);
-
-        assertEquals(expectedExtendedLifespanIncident, extendedLifespanIncident);
+        assertEquals(createIncident(), result);
     }
 
     @Test
-    void testUpdateIncident() {
-        when(incidentRepository.findById(INCIDENT_ID)).thenReturn(Optional.ofNullable(validIncident));
-        assertNotNull(validIncident);
-        Incident expectedUpdatedIncident = validIncident.toBuilder()
+    void testUpdateIncident() throws URISyntaxException {
+        when(incidentRepository.findById(INCIDENT_ID))
+            .thenReturn(Optional.ofNullable(createIncident()));
+        Incident expectedUpdatedOldIncident = createIncident().toBuilder()
                 .title("new title for incident")
                 .build();
-        when(incidentRepository.save(expectedUpdatedIncident)).thenReturn(expectedUpdatedIncident);
-        Incident updatedIncident = incidentService.update(INCIDENT_ID, expectedUpdatedIncident);
 
-        assertEquals(expectedUpdatedIncident, updatedIncident);
+        when(incidentRepository.save(expectedUpdatedOldIncident))
+            .thenReturn(expectedUpdatedOldIncident);
+
+        Incident updatedOldIncident = incidentService.update(INCIDENT_ID, createUpdatedIncidentCommand());
+
+        assertEquals(expectedUpdatedOldIncident, updatedOldIncident);
     }
 
     @Test
-    void testDeleteIncident() {
-        incidentService.delete(INCIDENT_ID);
+    void testDeleteIncident() throws URISyntaxException {
+        when(incidentRepository.existsById(INCIDENT_ID)).thenReturn(true);
+        incidentService.deleteById(INCIDENT_ID);
         verify(incidentRepository, times(1)).deleteById(INCIDENT_ID);
+    }
+
+    private Incident createIncident() throws URISyntaxException {
+        return Incident.builder()
+            .actorId(new ActorId("id"))
+            .locationId(new LocationId(1L))
+            .title("title")
+            .description("description")
+            .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
+            .build();
+    }
+
+    private CreateIncidentCommand createIncidentCommand() throws URISyntaxException {
+        return new CreateIncidentCommand(
+            "title",
+            "new title for incident",
+            Set.of(new Media(MediaKind.IMAGE, "type", new URI("path"))),
+            47.0101,
+            28.8576);
+    }
+
+    private CreateIncidentCommand createUpdatedIncidentCommand() throws URISyntaxException {
+        return new CreateIncidentCommand(
+            "title",
+            "new title for incident",
+            Set.of(new Media(MediaKind.IMAGE, "type", new URI("path"))),
+            47.0101,
+            28.8576);
+    }
+
+    private Location createLocation() {
+        return new Location(
+            new LocationId(1L),
+            47.0101, 28.8576,
+            "str. new 1");
     }
 }

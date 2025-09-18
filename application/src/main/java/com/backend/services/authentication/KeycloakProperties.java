@@ -22,11 +22,11 @@ public class KeycloakProperties {
     private String clientId;
     private String clientSecret;
 
-    public String getTokenUrl() {
+    public String tokenUrl() {
         return baseUrl + "/realms/" + realm + "/protocol/openid-connect/token";
     }
 
-    public String getUserCreateUrl() {
+    public String userCreateUrl() {
         return baseUrl + "/admin/realms/" + realm + "/users";
     }
 }

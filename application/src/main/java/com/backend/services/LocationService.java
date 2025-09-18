@@ -1,36 +1,44 @@
 package com.backend.services;
 
-import com.backend.port.in.LocationUseCase;
-import com.backend.domain.shared.Location;
+import com.backend.domain.location.Location;
+import com.backend.port.inbound.LocationUseCase;
+import com.backend.port.inbound.commands.CoordinatesCommand;
+import com.backend.port.outbound.LocationRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
+/**
+ * Service layer implementation of {@link LocationUseCase},
+ * providing access to location data through the repository.
+ */
 @Service
+@AllArgsConstructor
 public class LocationService implements LocationUseCase {
 
-    @Override
-    public Location save(Location location) {
-        return null;
-    }
+    private final LocationRepository locationRepository;
 
+    /**
+     * Finds a location by its unique identifier.
+     *
+     * @param locationId id of the location
+     * @return the matching location, or null if not found
+     */
     @Override
     public Location findById(long locationId) {
-        return null;
+        return locationRepository.findById(locationId);
     }
 
+    /**
+     * Finds a location by its latitude and longitude coordinates.
+     *
+     * @param coordinatesCommand command containing latitude and longitude
+     * @return the matching location, or null if not found
+     */
     @Override
-    public Location findByCoordinates(double latitude, double longitude) {
-        return null;
-    }
+    public Location findByCoordinates(CoordinatesCommand coordinatesCommand) {
+        final double latitude = coordinatesCommand.lat();
+        final double longitude = coordinatesCommand.lon();
 
-    @Override
-    public Map<Double, Double> sendCoordinates(Location location) {
-        return Map.of();
-    }
-
-    @Override
-    public String detectAddress(double latitude, double longitude) {
-        return "";
+        return locationRepository.findByCoordinate(latitude, longitude).get();
     }
 }

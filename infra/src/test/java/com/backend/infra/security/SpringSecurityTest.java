@@ -4,7 +4,6 @@ import com.backend.security.JwtAuthConverterConfig;
 import com.backend.security.KeycloakRoleConverter;
 import com.backend.security.SpringSecurity;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -51,20 +47,6 @@ class SpringSecurityTest {
                     .collect(Collectors.toList());
         });
     }
-//
-//    @Test
-//    void testAccessEventsWithBusinessRole() throws Exception {
-//        mockMvc.perform(get("/api/v1/events")
-//                        .with(authentication(jwtAuthTokenWithRoles("BUSINESS"))))
-//                .andExpect(status().isOk());
-//    }
-//
-//    @Test
-//    void testAccessTextWithAdminRole() throws Exception {
-//        mockMvc.perform(get("/admin/text")
-//                        .with(authentication(jwtAuthTokenWithRoles("ADMIN"))))
-//                .andExpect(status().isOk());
-//    }
 
     private Jwt createMockTokenForUserRole(String... roles) {
         return Jwt.withTokenValue("fake-token")

@@ -1,138 +1,80 @@
 package com.backend.domain.happening;
 
-import com.backend.domain.happening.metadata.Metadata;
-import com.backend.domain.shared.SentimentEngagement;
-import com.backend.domain.user.Comment;
-
-import java.util.List;
+import com.backend.domain.actor.ActorId;
+import com.backend.domain.location.LocationId;
+import com.backend.domain.media.Media;
+import com.backend.domain.mixins.Actored;
+import com.backend.domain.mixins.HasMedia;
+import com.backend.domain.mixins.Locatable;
+import com.backend.domain.mixins.Reactable;
+import com.backend.domain.reactions.SentimentEngagement;
+import java.util.Collections;
+import java.util.Set;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
- * Represents a generic reported occurrence within the application (e.g., an {@link Incident} or an {@link Event}).
- * This abstraction defines the common structure and behaviors for all reportable happenings in the system.
+ * Abstract aggregate root representing a Happening in the system.
+ *
+ * A Happening has a unique identifier, a title, and a description.
+ * It is also associated with an actor, a location, media, and sentiment engagement
+ * through the implemented mixin interfaces.
  */
-public sealed interface Happening permits Event, Incident {
+@Getter
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public abstract class Happening implements
+    Actored, Locatable, HasMedia, Reactable {
 
-    /**
-     * @return The title of the happening. Should be concise but descriptive.
-     */
-    String title();
+  private final ActorId actorId;
 
-    /**
-     * @return A detailed textual description of the happening.
-     */
-    String description();
+  private final LocationId locationId;
 
-    /**
-     * @return A list of user-submitted comments associated with this happening.
-     */
-    List<Comment> comments();
+  private final SentimentEngagement sentimentEngagement;
 
-    /**
-     * @return An Object of metadata associated with this happening.
-     */
-    Metadata metadata();
+  @Getter
+  private Set<Media> media;
 
-    /**
-     * @return The number of positive reactions (likes) associated with this happening.
-     */
-    SentimentEngagement sentimentEngagement();
+  @Setter
+  private String title;
 
-    /**
-     * Adds a user comment to the current happening.
-     *
-     * @param comment The comment to be added.
-     * @return A new instance of the happening with the comment appended.
-     */
-    Happening addComment(Comment comment);
+  @Setter
+  private String description;
 
-    /**
-     * Creates a builder that is pre-populated with the current object's field value.
-     */
-    Builder<?> toBuilder();
+  protected Happening(
+      @NonNull ActorId actorId,
+      @NonNull LocationId locationId,
+      @NonNull Set<Media> media,
+      String title,
+      String description) {
+    this.actorId = actorId;
+    this.locationId = locationId;
+    this.sentimentEngagement = new SentimentEngagement(0, 0);
+    this.media = Collections.unmodifiableSet(media);
+    this.title = title;
+    this.description = description;
+  }
 
-    /**
-     * Abstract builder class for constructing immutable {@link Happening} instances.
-     * Utilizes a self-referential generic type to support fluent method chaining in subclasses.
-     *
-     * @param <T> The type of the builder itself.
-     */
-    public abstract static class Builder<T extends Builder<T>> {
+  @Override
+  public ActorId actorId() {
+    return actorId;
+  }
 
-        protected String title;
-        protected String description;
-        protected List<Comment> comments;
-        protected Metadata metadata;
-        protected SentimentEngagement sentimentEngagement;
+  @Override
+  public LocationId locationId() {
+    return locationId;
+  }
 
-        /**
-         * Should be implemented by subclasses to return 'this' correctly typed.
-         * Enables fluent-style method chaining.
-         *
-         * @return The current builder instance.
-         */
-        abstract T self();
+  @Override
+  public SentimentEngagement sentimentEngagement() {
+    return sentimentEngagement;
+  }
 
-        /**
-         * Sets the title field.
-         *
-         * @param aTitle The title of the happening.
-         * @return The current builder instance.
-         */
-        public T title(String aTitle) {
-            this.title = aTitle;
-            return self();
-        }
-
-        /**
-         * Sets the description field.
-         *
-         * @param aDescription The detailed description.
-         * @return The current builder instance.
-         */
-        public T description(String aDescription) {
-            this.description = aDescription;
-            return self();
-        }
-
-        /**
-         * Sets the comments list.
-         *
-         * @param aComments The list of user comments.
-         * @return The current builder instance.
-         */
-        public T comments(List<Comment> aComments) {
-            this.comments = aComments;
-            return self();
-        }
-
-        /**
-         * Sets the metadata.
-         *
-         * @param aMetadata Additional information related to the happening.
-         * @return The current builder instance.
-         */
-        public T metadata(Metadata aMetadata) {
-            this.metadata = aMetadata;
-            return self();
-        }
-
-        /**
-         * Sets the sentiment engagement.
-         *
-         * @param aSentimentEngagement User engagement metrics.
-         * @return The current builder instance.
-         */
-        public T sentimentEngagement(SentimentEngagement aSentimentEngagement) {
-            this.sentimentEngagement = aSentimentEngagement;
-            return self();
-        }
-
-        /**
-         * Builds the final immutable {@link Happening} object.
-         * Subclasses must implement the build logic.
-         *
-         * @return A fully constructed Happening instance.
-         */
-        public abstract Happening build();
-    }
+  @Override
+  public Set<Media> media() {
+    return media;
+  }
 }

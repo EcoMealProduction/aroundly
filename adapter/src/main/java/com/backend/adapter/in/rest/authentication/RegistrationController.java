@@ -1,7 +1,11 @@
 package com.backend.adapter.in.rest.authentication;
 
 import com.backend.adapter.in.dto.request.RegistrationRequestDto;
-import com.backend.services.authentication.RegistrationService;
+import com.backend.adapter.in.dto.response.RegistrationResponseDto;
+import com.backend.adapter.in.mapper.AuthenticationMapper;
+import com.backend.port.inbound.AuthenticationUseCase;
+import com.backend.port.inbound.commands.auth.RegistrationCommand;
+import com.backend.port.inbound.commands.auth.RegistrationFeedback;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,10 +21,15 @@ import java.net.URI;
 @Tag(name = "Authentication", description = "User registration and authentication endpoints")
 public class RegistrationController {
 
-    private final RegistrationService registrationService;
+    private final AuthenticationUseCase authenticationUseCase;
+    private final AuthenticationMapper mapper;
 
-    public RegistrationController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
+    public RegistrationController(
+        AuthenticationUseCase authenticationUseCase,
+        AuthenticationMapper mapper) {
+
+        this.authenticationUseCase = authenticationUseCase;
+        this.mapper = mapper;
     }
 
     @GetMapping("/text")
@@ -47,16 +56,18 @@ public class RegistrationController {
             @ApiResponse(responseCode = "500", description = "Internal server error during user creation")
     })
     public ResponseEntity<String> register(@RequestBody RegistrationRequestDto registrationRequestDto) {
-        final String username = registrationRequestDto.username();
-        final String email = registrationRequestDto.email();
-        final String password = registrationRequestDto.password();
+        final String userCreationEndpoint = "/auth/users";
 
         try {
-            String userId = registrationService.registerUser(username, email, password);
-            URI location = (userId != null)
-                    ? URI.create("/auth/users/" + userId)
-                    : URI.create("/auth/users");
-            return ResponseEntity.created(location).body("User created");
+            RegistrationCommand registrationCommand = mapper.toRegisterCommand(registrationRequestDto);
+            RegistrationFeedback registrationFeedback = authenticationUseCase.register(registrationCommand);
+            RegistrationResponseDto registrationResponseDto = mapper.toRegistrationResponseDto(registrationFeedback);
+            URI location = (registrationResponseDto.userId() != null)
+                    ? URI.create(userCreationEndpoint + "/" + registrationResponseDto.userId())
+                    : URI.create(userCreationEndpoint);
+
+            return ResponseEntity.created(location).body(registrationResponseDto
+                .successfulRegistrationMessage());
 
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());

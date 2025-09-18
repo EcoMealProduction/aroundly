@@ -1,28 +1,27 @@
 package com.backend.services;
 
-import com.backend.domain.happening.Incident;
-import com.backend.port.in.ReactionUseCase;
-import com.backend.domain.shared.SentimentEngagement;
+import com.backend.port.inbound.ReactionUseCase;
+import com.backend.port.inbound.commands.ReactionSummary;
 
 public class ReactionService implements ReactionUseCase {
 
     @Override
-    public <T> SentimentEngagement addLike(T object) {
+    public ReactionSummary addLike() {
         return null;
     }
 
     @Override
-    public <T> SentimentEngagement addDislike(T object) {
+    public ReactionSummary addDislike() {
         return null;
     }
 
     @Override
-    public Incident confirmIncident(Incident incident) {
+    public ReactionSummary removeLike() {
         return null;
     }
 
     @Override
-    public Incident denyIncident(Incident incident) {
+    public ReactionSummary removeDislike() {
         return null;
     }
 }

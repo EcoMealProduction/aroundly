@@ -1,23 +1,31 @@
 package com.backend.domain;
 
-import com.backend.domain.shared.SentimentEngagement;
+import com.backend.domain.reactions.SentimentEngagement;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.backend.domain.Fixtures.validSentimentEngagement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SentimentEngagementTest {
 
+    private SentimentEngagement sentimentEngagement;
+
+    @BeforeEach
+    void setup() {
+        sentimentEngagement = SentimentEngagement.builder()
+            .build();
+    }
+
     @Test
     void testAddLike() {
-        SentimentEngagement addLike = validSentimentEngagement.addLike();
+        SentimentEngagement addLike = sentimentEngagement.addLike();
         assertEquals(1, addLike.likes());
     }
 
     @Test
     void testRemoveLike() {
-        SentimentEngagement addLike = validSentimentEngagement.addLike();
+        SentimentEngagement addLike = sentimentEngagement.addLike();
         assertEquals(1, addLike.likes());
 
         SentimentEngagement removeLike = addLike.removeLike();
@@ -26,13 +34,13 @@ public class SentimentEngagementTest {
 
     @Test
     void testAddDislike() {
-        SentimentEngagement eventWithDislike = validSentimentEngagement.addDislike();
+        SentimentEngagement eventWithDislike = sentimentEngagement.addDislike();
         assertEquals(1, eventWithDislike.dislikes());
     }
 
     @Test
     void testRemoveDislike() {
-        SentimentEngagement addDislike = validSentimentEngagement.addDislike();
+        SentimentEngagement addDislike = sentimentEngagement.addDislike();
         assertEquals(1, addDislike.dislikes());
 
         SentimentEngagement removeDislike = addDislike.removeDislike();
@@ -42,7 +50,7 @@ public class SentimentEngagementTest {
     @Test
     void testNegativeLikesAndDislikesThrowsException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                validSentimentEngagement.toBuilder()
+            sentimentEngagement.toBuilder()
                         .likes(-1)
                         .dislikes(-1)
                         .build()

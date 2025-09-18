@@ -1,6 +1,7 @@
 package com.backend.services.authentication;
 
-import com.backend.port.in.LoginUseCase;
+import com.backend.port.inbound.commands.auth.LoginCommand;
+import com.backend.port.inbound.commands.auth.LoginFeedback;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,11 +27,13 @@ class LoginServiceTest {
 
     @Mock
     private KeycloakProperties keycloakProperties;
-    
+
     @Mock
     private RestTemplate restTemplate;
-    
-    private LoginService loginService;
+
+
+    private LoginCommand loginCommand;
+    private AuthenticationService authenticationService;
 
     private static final String USERNAME = "testuser";
     private static final String EMAIL = "test@example.com";
@@ -43,16 +46,18 @@ class LoginServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(keycloakProperties.getTokenUrl()).thenReturn(TOKEN_URL);
+        when(keycloakProperties.tokenUrl()).thenReturn(TOKEN_URL);
         when(keycloakProperties.getClientId()).thenReturn(CLIENT_ID);
         when(keycloakProperties.getClientSecret()).thenReturn(CLIENT_SECRET);
-        
-        loginService = new LoginService(keycloakProperties);
+
+        loginCommand = new LoginCommand(USERNAME, PASSWORD);
+
+        authenticationService = new AuthenticationService(keycloakProperties);
 
         try {
-            java.lang.reflect.Field restTemplateField = LoginService.class.getDeclaredField("restTemplate");
+            java.lang.reflect.Field restTemplateField = AuthenticationService.class.getDeclaredField("restTemplate");
             restTemplateField.setAccessible(true);
-            restTemplateField.set(loginService, restTemplate);
+            restTemplateField.set(authenticationService, restTemplate);
         } catch (Exception e) {
             throw new RuntimeException("Failed to inject mock RestTemplate", e);
         }
@@ -71,7 +76,7 @@ class LoginServiceTest {
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
 
-            LoginUseCase.LoginResponse result = loginService.authenticateUser(USERNAME, PASSWORD);
+            LoginFeedback result = authenticationService.login(loginCommand);
 
             assertNotNull(result);
             assertEquals(ACCESS_TOKEN, result.accessToken());
@@ -93,8 +98,9 @@ class LoginServiceTest {
             
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
+            LoginCommand emailAsLoginCommand = new LoginCommand(EMAIL, PASSWORD);
 
-            LoginUseCase.LoginResponse result = loginService.authenticateUser(EMAIL, PASSWORD);
+            LoginFeedback result = authenticationService.login(emailAsLoginCommand);
 
             assertNotNull(result);
             assertEquals(ACCESS_TOKEN, result.accessToken());
@@ -127,10 +133,11 @@ class LoginServiceTest {
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
 
+            LoginCommand wrongPasswordLoginCommand = new LoginCommand(USERNAME, "wrongpassword");
 
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
-                    () -> loginService.authenticateUser(USERNAME, "wrongpassword")
+                    () -> authenticationService.login(wrongPasswordLoginCommand)
             );
             
             assertEquals("Invalid credentials", exception.getMessage());
@@ -147,7 +154,7 @@ class LoginServiceTest {
 
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
-                    () -> loginService.authenticateUser(USERNAME, PASSWORD)
+                    () -> authenticationService.login(loginCommand)
             );
             
             assertEquals("Invalid credentials", exception.getMessage());
@@ -164,7 +171,7 @@ class LoginServiceTest {
 
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
-                    () -> loginService.authenticateUser(USERNAME, PASSWORD)
+                    () -> authenticationService.login(loginCommand)
             );
             
             assertEquals("Invalid credentials", exception.getMessage());
@@ -181,7 +188,7 @@ class LoginServiceTest {
 
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
-                    () -> loginService.authenticateUser(USERNAME, PASSWORD)
+                    () -> authenticationService.login(loginCommand)
             );
             
             assertEquals("Invalid credentials", exception.getMessage());
@@ -203,7 +210,7 @@ class LoginServiceTest {
 
             IllegalStateException exception = assertThrows(
                     IllegalStateException.class,
-                    () -> loginService.authenticateUser(USERNAME, PASSWORD)
+                    () -> authenticationService.login(loginCommand)
             );
             
             assertTrue(exception.getMessage().contains("Authentication service unavailable"));
@@ -221,7 +228,7 @@ class LoginServiceTest {
 
             IllegalStateException exception = assertThrows(
                     IllegalStateException.class,
-                    () -> loginService.authenticateUser(USERNAME, PASSWORD)
+                    () -> authenticationService.login(loginCommand)
             );
             
             assertTrue(exception.getMessage().contains("Authentication service unavailable"));
@@ -247,7 +254,7 @@ class LoginServiceTest {
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
 
-            LoginUseCase.LoginResponse result = loginService.authenticateUser(USERNAME, PASSWORD);
+            LoginFeedback result = authenticationService.login(loginCommand);
 
             assertNotNull(result);
             assertEquals(ACCESS_TOKEN, result.accessToken());
@@ -267,7 +274,9 @@ class LoginServiceTest {
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
 
-            LoginUseCase.LoginResponse result = loginService.authenticateUser("", PASSWORD);
+            LoginCommand invalidUsernameLoginCommand = new LoginCommand("", PASSWORD);
+
+            LoginFeedback result = authenticationService.login(invalidUsernameLoginCommand);
 
             assertNotNull(result);
             assertEquals("", result.username());
@@ -297,7 +306,7 @@ class LoginServiceTest {
             when(restTemplate.postForEntity(eq(TOKEN_URL), any(), any(Class.class)))
                     .thenReturn(responseEntity);
 
-            LoginUseCase.LoginResponse result = loginService.authenticateUser(USERNAME, PASSWORD);
+            LoginFeedback result = authenticationService.login(loginCommand);
 
             assertNull(result.email());
         }

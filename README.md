@@ -1,6 +1,6 @@
 # Aroundly – Stay Connected to What’s Around You
 
-**Aroundly** is a **location-aware community app** that helps you discover, report, and engage with real-time happenings in your immediate surroundings. From local incidents and hidden gems to spontaneous events or neighborhood tips, Aroundly surfaces what's relevant — right where you are.
+**Aroundly** is a **oldLocation-aware community app** that helps you discover, report, and engage with real-time happenings in your immediate surroundings. From local incidents and hidden gems to spontaneous events or neighborhood tips, Aroundly surfaces what's relevant — right where you are.
 
 Designed for people who want to stay connected to their environment, Aroundly offers:
 
