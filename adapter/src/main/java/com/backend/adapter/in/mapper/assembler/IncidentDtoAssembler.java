@@ -35,7 +35,7 @@ public class IncidentDtoAssembler {
     double lat = location.latitude();
     double lon = location.longitude();
     String address = location.address();
-    String actorUsername = String.valueOf(actorExtractor.extractUsername());
+    String actorUsername = actorExtractor.extractUsername().orElse(null);
 
     return dto.toBuilder()
         .lat(lat)
