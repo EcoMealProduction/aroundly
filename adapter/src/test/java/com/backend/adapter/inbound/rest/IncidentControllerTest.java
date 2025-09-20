@@ -98,7 +98,6 @@ class IncidentControllerTest {
 
     ResponseEntity<IncidentPreviewResponseDto> response =
         controller.getIncidentInPreview(HAPPENING_ID);
-
     IncidentPreviewResponseDto body = response.getBody();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
