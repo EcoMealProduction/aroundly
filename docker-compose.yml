@@ -1,24 +1,4 @@
 services:
-  # Keycloak database
-  postgres:
-    image: postgis/postgis
-    restart: always
-    container_name: keycloak_db
-    hostname: keycloak_db
-    ports:
-      - "${POSTGRES_PORT}:5432"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 127.0.0.1" ]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-
   # App database
   app_postgres:
     image: postgis/postgis:14-3.4
@@ -53,33 +33,6 @@ services:
     depends_on:
       - postgres
       - app_postgres
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:23.0.7
-    restart: always
-    container_name: keycloak
-    environment:
-      KC_DB: ${KC_DB}
-      KC_DB_URL_HOST: ${KC_DB_URL_HOST}
-      KC_DB_URL_DATABASE: ${KC_DB_URL_DATABASE}
-      KC_DB_USERNAME: ${KC_DB_USERNAME}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_HEALTH_ENABLED: ${KC_HEALTH_ENABLED}
-      KC_LOG_LEVEL: ${KC_LOG_LEVEL}
-    ports:
-      - "7080:7080"
-    depends_on:
-      - postgres
-    command: start-dev --http-port=7080 --import-realm --health-enabled=true
-    volumes:
-      - ./infra/src/main/resources/keycloak/realm.json:/opt/keycloak/data/import/realm.json
-    healthcheck:
-      test: [ "CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/7080'"]
-      interval: 5s
-      timeout: 3s
-      retries: 30
 
   minio:
     image: minio/minio

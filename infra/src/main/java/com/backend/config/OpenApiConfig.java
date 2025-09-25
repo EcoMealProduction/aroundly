@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
                 )
         ),
         servers = {
-                @Server(url = "http://localhost:8100", description = "Development server"),
+                @Server(url = "http://localhost:8080", description = "Development server"),
                 @Server(url = "https://api.aroundly.com", description = "Production server")
         }
 )

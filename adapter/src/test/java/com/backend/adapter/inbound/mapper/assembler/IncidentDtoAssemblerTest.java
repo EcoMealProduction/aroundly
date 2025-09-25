@@ -15,7 +15,6 @@ import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
 import com.backend.domain.media.MediaKind;
 import com.backend.port.outbound.LocationRepository;
-import com.backend.services.authentication.SecurityCurrentActorExtractor;
 import java.net.URI;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +31,6 @@ public class IncidentDtoAssemblerTest {
 
   @Mock private IncidentMapper mapper;
   @Mock private LocationRepository locationRepository;
-  @Mock private SecurityCurrentActorExtractor actorExtractor;
   @InjectMocks private IncidentDtoAssembler assembler;
 
   private Incident incident;
@@ -75,7 +73,6 @@ public class IncidentDtoAssemblerTest {
 
     when(locationRepository.findById(202L)).thenReturn(location);
     when(mapper.toIncidentDetailedResponseDto(incident)).thenReturn(expected);
-    when(actorExtractor.extractUsername()).thenReturn(actor.username().describeConstable());
 
     IncidentDetailedResponseDto toDto = assembler.toDetailedDto(incident);
 

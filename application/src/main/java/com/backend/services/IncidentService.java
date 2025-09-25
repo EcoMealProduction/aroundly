@@ -6,13 +6,11 @@ import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
-import com.backend.port.inbound.ActorUseCase;
 import com.backend.port.inbound.IncidentUseCase;
 import com.backend.port.inbound.commands.CoordinatesCommand;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
 import com.backend.port.outbound.IncidentRepository;
-import com.backend.port.outbound.LocationRepository;
 import com.backend.services.exceptions.ActorNotFoundException;
 import com.backend.services.exceptions.DuplicateIncidentException;
 import com.backend.services.exceptions.IncidentAlreadyConfirmedException;
@@ -22,7 +20,6 @@ import com.backend.services.exceptions.IncidentNotFoundException;
 import com.backend.services.exceptions.InvalidCoordinatesException;
 import com.backend.services.exceptions.LocationNotFoundException;
 import com.backend.services.exceptions.ValidationException;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 
@@ -39,16 +36,13 @@ public class IncidentService implements IncidentUseCase {
 
   private final IncidentRepository incidentRepository;
   private final LocationService locationService;
-  private final ActorUseCase actorExtractor;
 
   public IncidentService(
     IncidentRepository incidentRepository,
-    LocationService locationService,
-    ActorUseCase actorExtractor) {
+    LocationService locationService) {
 
     this.incidentRepository = incidentRepository;
     this.locationService = locationService;
-    this.actorExtractor = actorExtractor;
   }
 
   /**
@@ -126,7 +120,7 @@ public class IncidentService implements IncidentUseCase {
     validateCreateIncidentCommand(createIncidentCommand);
 
     try {
-      final ActorId actorId = actorExtractor.extractId();
+      final ActorId actorId = new ActorId("abc-123");
       final String title = createIncidentCommand.title();
       final String description = createIncidentCommand.description();
       final Set<Media> media = createIncidentCommand.media();
