@@ -184,7 +184,7 @@ buildNumber.properties
 .idea/
 
 # Exclude all application properties files
-**/application.properties
+**/dev-shared.properties
 
 
 # Zed
