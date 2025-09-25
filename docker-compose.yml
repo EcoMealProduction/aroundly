@@ -1,10 +1,10 @@
 services:
-  # App database
-  app_postgres:
+  # database
+  postgres:
     image: postgis/postgis:14-3.4
     restart: always
-    container_name: app_db
-    hostname: app_db
+    container_name: db
+    hostname: db
     ports:
       - "5433:5432"
     environment:
@@ -32,7 +32,6 @@ services:
       - pg_admin:/var/lib/pgadmin
     depends_on:
       - postgres
-      - app_postgres
 
   minio:
     image: minio/minio
