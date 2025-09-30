@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @Slf4j
 @RequestMapping("/api/v1/incidents")
-@Tag(name = "Incidents", description = "Incident manipulation endpoints")
+@Tag(name = "Incidents", description = "IncidentEntity manipulation endpoints")
 public class IncidentController {
 
   private final IncidentUseCase incidentUseCase;
@@ -81,9 +81,9 @@ public class IncidentController {
       description = "Handles a user request to create an incident and returns details"
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "201", description = "Incident created successfully"),
+      @ApiResponse(responseCode = "201", description = "IncidentEntity created successfully"),
       @ApiResponse(responseCode = "400", description = "Invalid input data"),
-      @ApiResponse(responseCode = "409", description = "Incident already exists")
+      @ApiResponse(responseCode = "409", description = "IncidentEntity already exists")
   })
   public ResponseEntity<IncidentDetailedResponseDto> create(
       @RequestBody @Valid IncidentRequestDto incidentRequestDto) {
@@ -119,9 +119,9 @@ public class IncidentController {
       description = "Handles a user request to update an incident and returns updated details"
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Incident updated successfully"),
+      @ApiResponse(responseCode = "200", description = "IncidentEntity updated successfully"),
       @ApiResponse(responseCode = "400", description = "Invalid input data"),
-      @ApiResponse(responseCode = "404", description = "Incident not found")
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found")
   })
   public ResponseEntity<IncidentDetailedResponseDto> update(
       @PathVariable long id,
@@ -136,7 +136,7 @@ public class IncidentController {
 
       return ResponseEntity.ok(incidentDetailedResponseDto);
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found for update: {}", id);
+      log.warn("IncidentEntity not found for update: {}", id);
       return ResponseEntity.notFound().build();
     } catch (ValidationException e) {
       log.warn("Invalid update data for incident {}: {}", id, e.getMessage());
@@ -157,8 +157,8 @@ public class IncidentController {
           + "the entire list of information."
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Incident preview retrieved successfully"),
-      @ApiResponse(responseCode = "404", description = "Incident not found")
+      @ApiResponse(responseCode = "200", description = "IncidentEntity preview retrieved successfully"),
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found")
   })
   public ResponseEntity<IncidentPreviewResponseDto> getIncidentInPreview(@PathVariable long id) {
     try {
@@ -168,7 +168,7 @@ public class IncidentController {
 
       return ResponseEntity.ok(incidentPreviewResponseDto);
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found: {}", id);
+      log.warn("IncidentEntity not found: {}", id);
       return ResponseEntity.badRequest().build();
     } catch (ClassCastException e) {
       log.error("Found happening is not an incident: {}", id);
@@ -188,8 +188,8 @@ public class IncidentController {
       description = "Provides a detailed form of an incident. Used when the incident is open in separate page."
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Incident details retrieved successfully"),
-      @ApiResponse(responseCode = "404", description = "Incident not found")
+      @ApiResponse(responseCode = "200", description = "IncidentEntity details retrieved successfully"),
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found")
   })
   public ResponseEntity<IncidentDetailedResponseDto> getIncidentInDetails(@PathVariable long id) {
     try {
@@ -198,7 +198,7 @@ public class IncidentController {
 
       return ResponseEntity.ok(incidentDetailedResponseDto);
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found: {}", id);
+      log.warn("IncidentEntity not found: {}", id);
       return ResponseEntity.badRequest().build();
     } catch (ClassCastException e) {
       log.error("Found happening is not an incident: {}", id);
@@ -283,9 +283,9 @@ public class IncidentController {
       description = "If user is in the range of event, he can confirm if the incident still exist"
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Incident confirmed successfully"),  // Changed from 201
-      @ApiResponse(responseCode = "404", description = "Incident not found"),
-      @ApiResponse(responseCode = "409", description = "Incident already confirmed")
+      @ApiResponse(responseCode = "200", description = "IncidentEntity confirmed successfully"),  // Changed from 201
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found"),
+      @ApiResponse(responseCode = "409", description = "IncidentEntity already confirmed")
   })
   public ResponseEntity<IncidentDetailedResponseDto> confirmIncidentPresence(@PathVariable long id) {
 
@@ -295,10 +295,10 @@ public class IncidentController {
 
       return ResponseEntity.ok(incidentDetailedResponseDto);
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found for confirmation: {}", id);
+      log.warn("IncidentEntity not found for confirmation: {}", id);
       return ResponseEntity.notFound().build();
     } catch (IncidentAlreadyConfirmedException e) {
-      log.warn("Incident already confirmed: {}", id);
+      log.warn("IncidentEntity already confirmed: {}", id);
       return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
   }
@@ -315,9 +315,9 @@ public class IncidentController {
       description = "If user is in the range of event, he can deny if the incident is not relevant anymore"
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Incident denied successfully"),
-      @ApiResponse(responseCode = "404", description = "Incident not found"),
-      @ApiResponse(responseCode = "409", description = "Incident already denied")
+      @ApiResponse(responseCode = "200", description = "IncidentEntity denied successfully"),
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found"),
+      @ApiResponse(responseCode = "409", description = "IncidentEntity already denied")
   })
   public ResponseEntity<IncidentDetailedResponseDto> denyIncidentPresence(@PathVariable long id) {
     try {
@@ -326,10 +326,10 @@ public class IncidentController {
 
       return ResponseEntity.ok(incidentDetailedResponseDto);
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found for denial: {}", id);
+      log.warn("IncidentEntity not found for denial: {}", id);
       return ResponseEntity.notFound().build();
     } catch (IncidentAlreadyConfirmedException e) {
-      log.warn("Incident already denied: {}", id);
+      log.warn("IncidentEntity already denied: {}", id);
       return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
   }
@@ -347,8 +347,8 @@ public class IncidentController {
   )
   @ApiResponses({
       @ApiResponse(responseCode = "204", description = "Expired incident deleted successfully"),
-      @ApiResponse(responseCode = "404", description = "Incident not found"),
-      @ApiResponse(responseCode = "400", description = "Incident has not expired")
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found"),
+      @ApiResponse(responseCode = "400", description = "IncidentEntity has not expired")
   })
   public ResponseEntity<Void> deleteExpiredIncident(@PathVariable long id) {
     try {
@@ -356,7 +356,7 @@ public class IncidentController {
 
       return ResponseEntity.noContent().build();
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found for expiry deletion: {}", id);
+      log.warn("IncidentEntity not found for expiry deletion: {}", id);
       return ResponseEntity.notFound().build();
     } catch (IncidentNotExpiredException e) {
       log.warn("Attempted to delete non-expired incident: {}", id);
@@ -376,8 +376,8 @@ public class IncidentController {
       description = "yea...as summary says"
   )
   @ApiResponses({
-      @ApiResponse(responseCode = "204", description = "Incident deleted successfully"),
-      @ApiResponse(responseCode = "404", description = "Incident not found")
+      @ApiResponse(responseCode = "204", description = "IncidentEntity deleted successfully"),
+      @ApiResponse(responseCode = "404", description = "IncidentEntity not found")
   })
   public ResponseEntity<Void> delete(@PathVariable long id) {
     try {
@@ -385,7 +385,7 @@ public class IncidentController {
 
       return ResponseEntity.noContent().build();
     } catch (IncidentNotFoundException e) {
-      log.warn("Incident not found for deletion: {}", id);
+      log.warn("IncidentEntity not found for deletion: {}", id);
       return ResponseEntity.notFound().build();
     }
   }
