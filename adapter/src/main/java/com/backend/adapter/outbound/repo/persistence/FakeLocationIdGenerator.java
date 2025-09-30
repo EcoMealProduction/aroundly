@@ -1,4 +1,4 @@
-package com.backend.adapter.outbound.repo;
+package com.backend.adapter.outbound.repo.persistence;
 
 import java.util.concurrent.atomic.AtomicLong;
 
