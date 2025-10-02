@@ -1,6 +1,7 @@
 package com.backend.services;
 
 import com.backend.domain.location.Location;
+import com.backend.domain.location.LocationId;
 import com.backend.port.inbound.LocationUseCase;
 import com.backend.port.inbound.commands.CoordinatesCommand;
 import com.backend.port.outbound.LocationIdGenerator;
@@ -32,10 +33,10 @@ public class LocationService implements LocationUseCase {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public LocationService(
-        LocationRepository locationRepository,
-        LocationIdGenerator locationIdGenerator,
-        @Value("${mapbox.token}") String mapboxToken) {
-        
+            LocationRepository locationRepository,
+            LocationIdGenerator locationIdGenerator,
+            @Value("${mapbox.token}") String mapboxToken) {
+
         this.locationRepository = locationRepository;
         this.locationIdGenerator = locationIdGenerator;
         this.mapboxToken = mapboxToken;
@@ -64,17 +65,21 @@ public class LocationService implements LocationUseCase {
         final double longitude = coordinatesCommand.lon();
 
         return locationRepository
-            .findByCoordinate(latitude, longitude)
-            .orElseGet(() -> createLocation(longitude, latitude));
+                .findByCoordinate(latitude, longitude)
+                .orElseGet(() -> createLocation(longitude, latitude));
     }
+
+
+    /// WHY MANUALLY ASSIGN THE ID???
 
     private Location createLocation(double longitude, double latitude) {
         String address = reverseGeocode(longitude, latitude);
         Location newLocation = new Location(
-            locationIdGenerator.nextId(),
-            longitude,
-            latitude,
-            address);
+                new LocationId(0L),
+//            locationIdGenerator.nextId(),
+                longitude,
+                latitude,
+                address);
 
         return locationRepository.save(newLocation);
     }
@@ -82,11 +87,11 @@ public class LocationService implements LocationUseCase {
     private String reverseGeocode(double longitude, double latitude) {
         final String language = "en";
         String uri = String.format(
-            "https://api.mapbox.com/geocoding/v5/mapbox.places/%f,%f.json?language=%s&limit=1&access_token=%s",
-            longitude,
-            latitude,
-            language,
-            mapboxToken);
+                "https://api.mapbox.com/geocoding/v5/mapbox.places/%f,%f.json?language=%s&limit=1&access_token=%s",
+                longitude,
+                latitude,
+                language,
+                mapboxToken);
 
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create(uri)).GET().build();
