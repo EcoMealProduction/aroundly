@@ -1,5 +1,10 @@
 package com.backend.adapter.outbound.repo.persistence;
 
+import com.backend.adapter.outbound.entity.IncidentEntity;
+import com.backend.adapter.outbound.entity.LocationEntity;
+import com.backend.adapter.outbound.mapper.IncidentEntityMapper;
+import com.backend.adapter.outbound.mapper.LocationEntityMapper;
+import com.backend.adapter.outbound.repo.*;
 import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
@@ -8,6 +13,9 @@ import com.backend.port.outbound.IncidentRepository;
 import com.backend.port.outbound.LocationRepository;
 
 import java.util.Objects;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,21 +24,26 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@RequiredArgsConstructor
 @Repository
 public class FakeIncidentPersistenceRepository implements IncidentRepository {
+
+    private final IncidentPersistenceRepository incidentPersistenceRepository; //For DB
+
+    private final IncidentEntityMapper incidentEntityMapper;                    //For DB
 
     private final LocationRepository locationRepository;
     private final Map<Long, Happening> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
-    public FakeIncidentPersistenceRepository(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
-
     @Override
     public Incident save(Incident incident) {
         long id = idGenerator.getAndIncrement();
         storage.put(id, incident);
+
+        IncidentEntity incidentEntity = incidentEntityMapper.toIncidentEntity(incident); //For DB
+        incidentPersistenceRepository.save(incidentEntity);                              //FOr DB
+
         return incident;
     }
 
