@@ -1,5 +1,7 @@
 package com.backend.adapter.outbound.repo.persistence;
 
+import com.backend.adapter.outbound.entity.ClientEntity;
+import com.backend.adapter.outbound.entity.HappeningEntity;
 import com.backend.adapter.outbound.entity.IncidentEntity;
 import com.backend.adapter.outbound.entity.LocationEntity;
 import com.backend.adapter.outbound.mapper.IncidentEntityMapper;
@@ -9,9 +11,11 @@ import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
+import com.backend.port.outbound.HappeningRepository;
 import com.backend.port.outbound.IncidentRepository;
 import com.backend.port.outbound.LocationRepository;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
@@ -29,20 +33,58 @@ import java.util.concurrent.atomic.AtomicLong;
 public class FakeIncidentPersistenceRepository implements IncidentRepository {
 
     private final IncidentPersistenceRepository incidentPersistenceRepository; //For DB
+    private final HappeningPersistenceRepository happeningPersistenceRepository;
 
     private final IncidentEntityMapper incidentEntityMapper;                    //For DB
 
     private final LocationRepository locationRepository;
     private final Map<Long, Happening> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
+    private final LocationPersistenceRepository locationPersistenceRepository;
 
+
+    /**
+     * Since the Happening is abstract it needs to be created by each child entity that implements it
+     * Also it needs to be mapped manually since MapStruct is not working with abstract classes
+     * */
     @Override
     public Incident save(Incident incident) {
         long id = idGenerator.getAndIncrement();
         storage.put(id, incident);
 
-        IncidentEntity incidentEntity = incidentEntityMapper.toIncidentEntity(incident); //For DB
-        incidentPersistenceRepository.save(incidentEntity);                              //FOr DB
+        /// THIS I THINK WILL NEED TO BE MOVED TO ONE OF THE LOCATION REPOSITORY
+        LocationEntity locationEntity = locationPersistenceRepository
+                .findById(incident.locationId().value())
+                .orElseThrow(() -> new IllegalStateException("Location not found"));
+
+
+        HappeningEntity happeningEntity = HappeningEntity.builder()
+                .title(incident.getTitle())
+                .description(incident.getDescription())
+                .imageUrl("HOW TO GET THAT?")
+                .createdAt(LocalDateTime.now())
+                .location(locationEntity)
+                .build();
+
+        happeningPersistenceRepository.save(happeningEntity);
+
+        /**
+         * OLD VERSION USING THE MAPPER
+         * BUT THE HAPPENING WILL NOT BE AUTOMATICALLY SET BECAUSE IT IS ABSTRACT
+         * */
+//        IncidentEntity incidentEntity = incidentEntityMapper.toIncidentEntity(incident); //For DB
+
+        /// THIS BUILDER MAY NEED TO BE TRANSFERRED
+        IncidentEntity incidentEntity = IncidentEntity.builder()
+                .happening(happeningEntity)
+                .timePosted(LocalDateTime.now())
+                .range(1000) /// WHERE FROM DO WE NEED TO GET THIS VALUE
+                .confirms(incident.getEngagementStats().confirms())
+                .denies(incident.getEngagementStats().denies())
+                .build();
+
+        incidentPersistenceRepository.save(incidentEntity); //FOr DB
+
 
         return incident;
     }
