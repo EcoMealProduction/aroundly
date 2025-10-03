@@ -30,7 +30,7 @@ public class FakeLocationPersistenceRepository implements LocationRepository {
 
     // If ID is 0 or null, let database generate
     if (location.id().value() == 0L) {
-      locationEntity.setId(null);
+      locationEntity.setId(0L);
     }
 
     LocationEntity savedEntity = locationPersistenceRepository.save(locationEntity);

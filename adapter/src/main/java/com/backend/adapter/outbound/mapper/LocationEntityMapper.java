@@ -8,13 +8,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface LocationEntityMapper {
 
-//    @Mapping(source = "id.value", target = "id")
+    @Mapping(source = "id.value", target = "id")
     @Mapping(source = "latitude", target = "lat")
     @Mapping(source = "longitude", target = "lng")
     @Mapping(source = "address", target = "addressText")
     LocationEntity toLocationEntity(Location location);
 
-//    @Mapping(source = "id", target = "id.value")
+    @Mapping(source = "id", target = "id.value")
     @Mapping(source = "lat", target = "latitude")
     @Mapping(source = "lng", target = "longitude")
     @Mapping(source = "addressText", target = "address")

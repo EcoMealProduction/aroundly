@@ -10,6 +10,7 @@ import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 
+import com.backend.domain.media.Media;
 import com.backend.port.outbound.repo.IncidentRepository;
 import com.backend.port.outbound.repo.LocationRepository;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
 
     private final IncidentPersistenceRepository incidentPersistenceRepository; //For DB
     private final HappeningPersistenceRepository happeningPersistenceRepository;
+    private final MediaPersistenceRepository mediaPersistenceRepository;
 
     private final IncidentEntityMapper incidentEntityMapper;                    //For DB
 
@@ -57,7 +59,7 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
         HappeningEntity happeningEntity = HappeningEntity.builder()
                 .title(incident.getTitle())
                 .description(incident.getDescription())
-                .imageUrl("HOW TO GET THAT?")
+                .media(new Media())
                 .createdAt(LocalDateTime.now())
                 .location(locationEntity)
                 .build();

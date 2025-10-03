@@ -1,6 +1,5 @@
 package com.backend.domain.media;
 
-import java.io.InputStream;
 
 /**
  * Represents a media resource that holds information about its type,

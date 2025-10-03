@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS events (
                                       CONSTRAINT FK_EVENT_HAPPENING FOREIGN KEY (happening_id) REFERENCES happenings (id)
     );
 
-ALTER TABLE events OWNER TO root;
+ALTER TABLE events OWNER TO appuser;
 
 CREATE SEQUENCE event_id_seq;
-ALTER SEQUENCE event_id_seq OWNER TO root;
+ALTER SEQUENCE event_id_seq OWNER TO appuser;
 

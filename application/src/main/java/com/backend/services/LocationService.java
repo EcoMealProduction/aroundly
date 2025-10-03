@@ -73,8 +73,8 @@ public class LocationService implements LocationUseCase {
     private Location createLocation(double longitude, double latitude) {
         String address = reverseGeocode(longitude, latitude);
         Location newLocation = new Location(
-//                new LocationId(0L),
-            locationIdGenerator.nextId(),
+                new LocationId(0L),
+//            locationIdGenerator.nextId(),
             longitude,
             latitude,
             address);

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS reactions (
     CONSTRAINT FK_REACTION_CLIENT FOREIGN KEY (client_id) REFERENCES clients (id)
     );
 
-ALTER TABLE reactions OWNER TO root;
+ALTER TABLE reactions OWNER TO appuser;
 
 CREATE SEQUENCE reaction_id_seq;
-ALTER SEQUENCE reaction_id_seq OWNER TO root;
+ALTER SEQUENCE reaction_id_seq OWNER TO appuser;

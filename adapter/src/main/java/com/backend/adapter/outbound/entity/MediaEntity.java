@@ -1,12 +1,18 @@
 package com.backend.adapter.outbound.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 
@@ -16,21 +22,18 @@ import java.time.OffsetDateTime;
  * This entity contains metadata about uploaded media, including
  * its storage key, content type, size, and creation timestamp.
  */
-@Entity
-@Table(
-    name = "media",
-    indexes = { @Index(name = "ix_media_key", columnList = "key", unique = true) })
+@Entity(name = "medias")
 public class MediaEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false, updatable = false)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_id_seq")
+  @SequenceGenerator(name = "media_id_seq", sequenceName = "media_id_seq", allocationSize = 1)
   private long id;
 
-  @Column(name = "key", nullable = false, unique = true, length = 1024)
+  @Column(name = "key", nullable = false, unique = true)
   private String key;
 
-  @Column(name = "content_type", nullable = false, length = 255)
+  @Column(name = "content_type")
   private String contentType;
 
   @Column(name = "size", nullable = false)
@@ -38,6 +41,10 @@ public class MediaEntity {
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private OffsetDateTime createdAt;
+
+  @ManyToOne(fetch = LAZY, optional = false)
+  @JoinColumn(name = "happening_id", foreignKey = @ForeignKey(name = "FK_MEDIA_HAPPENING"))
+  private HappeningEntity happeningEntity;
 
   public MediaEntity() { /* JPA */ }
 
@@ -98,5 +105,13 @@ public class MediaEntity {
 
   public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
+  }
+
+  public HappeningEntity getHappeningEntity() {
+    return happeningEntity;
+  }
+
+  public void setHappeningEntity(HappeningEntity happeningEntity) {
+    this.happeningEntity = happeningEntity;
   }
 }

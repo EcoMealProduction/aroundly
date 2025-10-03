@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS comments (
     CONSTRAINT FK_COMMENT_CLIENT FOREIGN KEY (client_id) REFERENCES clients (id)
     );
 
-ALTER TABLE comments OWNER TO root;
+ALTER TABLE comments OWNER TO appuser;
 
 CREATE SEQUENCE comment_id_seq;
-ALTER SEQUENCE comment_id_seq OWNER TO root;
+ALTER SEQUENCE comment_id_seq OWNER TO appuser;
 

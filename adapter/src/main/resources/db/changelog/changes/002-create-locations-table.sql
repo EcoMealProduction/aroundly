@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS locations (
                                          address_text VARCHAR(500)
     );
 
-ALTER TABLE locations OWNER TO root;
+ALTER TABLE locations OWNER TO appuser;
 
 CREATE SEQUENCE location_id_seq;
-ALTER SEQUENCE location_id_seq OWNER TO root;
+ALTER SEQUENCE location_id_seq OWNER TO appuser;
 
