@@ -4,15 +4,16 @@ import com.backend.adapter.inbound.dto.response.incident.IncidentDetailedRespons
 import com.backend.adapter.inbound.mapper.IncidentMapper;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
-import com.backend.port.outbound.LocationRepository;
+import com.backend.port.outbound.repo.LocationRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
  * Assembles incident-related DTOs by enriching them
  * with location and actor details.
  */
-@Service
+@Component
 @AllArgsConstructor
 public class IncidentDtoAssembler {
 

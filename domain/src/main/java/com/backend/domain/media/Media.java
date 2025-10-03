@@ -1,16 +1,16 @@
 package com.backend.domain.media;
 
-import java.net.URI;
+import java.io.InputStream;
 
 /**
  * Represents a media resource that holds information about its type,
  * the associated content type, and the location where it can be accessed.
  *
- * @param kind        the type of media
+ * @param size        the size of media
  * @param contentType the content type of the media
- * @param uri         the location of the media
+ * @param filename    the filename
  */
 public record Media(
-    MediaKind kind,
-    String contentType,
-    URI uri) { }
+    long size,
+    String filename,
+    String contentType) { }

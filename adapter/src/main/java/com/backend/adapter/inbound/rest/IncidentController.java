@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,7 +76,7 @@ public class IncidentController {
    * @param incidentRequestDto DTO containing incident data
    * @return detailed DTO of the created incident
    */
-  @PostMapping
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(
       summary = "Creates an incident",
       description = "Handles a user request to create an incident and returns details"
@@ -86,7 +87,7 @@ public class IncidentController {
       @ApiResponse(responseCode = "409", description = "Incident already exists")
   })
   public ResponseEntity<IncidentDetailedResponseDto> create(
-      @RequestBody @Valid IncidentRequestDto incidentRequestDto) {
+      @ModelAttribute @Valid IncidentRequestDto incidentRequestDto) {
 
     try {
       CreateIncidentCommand createIncidentCommand = incidentMapper

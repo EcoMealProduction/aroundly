@@ -8,9 +8,7 @@ import com.backend.domain.actor.ActorId;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
-import com.backend.domain.media.MediaKind;
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Clock;
 import java.time.Duration;
@@ -60,7 +58,7 @@ public class IncidentTest {
   }
 
   @Test
-  public void testConfirmIncident() throws URISyntaxException {
+  public void testConfirmIncident() {
     Instant created = incident.createdAt();
     setExpiresAt(incident, created.plus(Duration.ofMinutes(10)));
 
@@ -112,13 +110,13 @@ public class IncidentTest {
     }
   }
 
-  private Incident createIncident() throws URISyntaxException {
+  private Incident createIncident() {
     return new Incident(
         new ActorId("id"),
         new LocationId(1L),
         "title",
         "description",
-        Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/")))
+        Set.of(new Media(3L, "file", "type"))
     );
   }
 }

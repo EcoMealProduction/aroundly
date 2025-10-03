@@ -10,7 +10,9 @@ import com.backend.port.inbound.IncidentUseCase;
 import com.backend.port.inbound.commands.CoordinatesCommand;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
-import com.backend.port.outbound.IncidentRepository;
+import com.backend.port.inbound.commands.UploadMediaCommand;
+import com.backend.port.outbound.repo.IncidentRepository;
+import com.backend.port.outbound.storage.ObjectStoragePort;
 import com.backend.services.exceptions.ActorNotFoundException;
 import com.backend.services.exceptions.DuplicateIncidentException;
 import com.backend.services.exceptions.IncidentAlreadyConfirmedException;
@@ -21,6 +23,7 @@ import com.backend.services.exceptions.InvalidCoordinatesException;
 import com.backend.services.exceptions.LocationNotFoundException;
 import com.backend.services.exceptions.ValidationException;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,18 +35,12 @@ import java.util.List;
  * Registered as a Spring {@link Service} for business logic orchestration.
  */
 @Service
+@RequiredArgsConstructor
 public class IncidentService implements IncidentUseCase {
 
   private final IncidentRepository incidentRepository;
+  private final ObjectStoragePort objectStoragePort;
   private final LocationService locationService;
-
-  public IncidentService(
-    IncidentRepository incidentRepository,
-    LocationService locationService) {
-
-    this.incidentRepository = incidentRepository;
-    this.locationService = locationService;
-  }
 
   /**
    * Retrieves all Incident entries within a given visibility range.
@@ -123,7 +120,7 @@ public class IncidentService implements IncidentUseCase {
       final ActorId actorId = new ActorId("abc-123");
       final String title = createIncidentCommand.title();
       final String description = createIncidentCommand.description();
-      final Set<Media> media = createIncidentCommand.media();
+      final Set<UploadMediaCommand> media = createIncidentCommand.media();
       final Location location;
 
       try {
@@ -137,13 +134,14 @@ public class IncidentService implements IncidentUseCase {
       }
 
       final LocationId locationId = location.id();
+      final Set<Media> uploadedMedia = objectStoragePort.uploadAll(media);
 
       Incident incident = Incident.builder()
         .actorId(actorId)
         .locationId(locationId)
         .title(title)
         .description(description)
-        .media(media)
+        .media(uploadedMedia)
         .build();
 
       return incidentRepository.save(incident);
@@ -176,12 +174,14 @@ public class IncidentService implements IncidentUseCase {
       final Incident existingIncident = (Incident) findById(id);
       final String updatedTitle = createIncidentCommand.title();
       final String updatedDescription = createIncidentCommand.description();
-      final Set<Media> updatedMedia = createIncidentCommand.media();
+      final Set<UploadMediaCommand> updatedMedia = createIncidentCommand.media();
+
+      final Set<Media> uploadUpdatedMedia = objectStoragePort.uploadAll(updatedMedia);
 
       Incident updatedExistingOldIncident = existingIncident.toBuilder()
         .title(updatedTitle)
         .description(updatedDescription)
-        .media(updatedMedia)
+        .media(uploadUpdatedMedia)
         .build();
 
       return incidentRepository.save(updatedExistingOldIncident);
