@@ -1,12 +1,11 @@
 services:
-  # database
   postgres:
     image: postgis/postgis:14-3.4
     restart: always
     container_name: db
     hostname: db
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: ${APP_DB}
       POSTGRES_USER: ${APP_USER}
@@ -37,8 +36,8 @@ services:
     image: minio/minio
     container_name: minio
     ports:
-      - "6000:6000"
-      - "6001:6001"
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
