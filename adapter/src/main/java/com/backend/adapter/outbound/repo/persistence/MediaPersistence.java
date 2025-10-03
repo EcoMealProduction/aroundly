@@ -32,7 +32,7 @@ public class MediaPersistence implements MediaRepository {
    */
   @Override
   @Transactional
-  public Set<Media> saveAll(Set<Media> media) throws Exception {
+  public Set<Media> saveAll(Set<Media> media) {
     if (media == null || media.isEmpty()) return Set.of();
 
     List<MediaEntity> entities = media.stream()

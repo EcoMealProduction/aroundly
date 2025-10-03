@@ -1,4 +1,4 @@
-package com.backend.adapter.outbound.repo;
+package com.backend.adapter.outbound.repo.persistence;
 
 import com.backend.domain.actor.Comment;
 import com.backend.port.outbound.repo.CommentRepository;

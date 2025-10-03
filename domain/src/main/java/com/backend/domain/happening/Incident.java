@@ -8,6 +8,8 @@ import com.backend.domain.reactions.EngagementStats;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
@@ -28,14 +30,16 @@ public class Incident extends Happening implements Expirable {
    */
   private static final Duration EXTENSION = Duration.ofMinutes(5);
 
+
+  //Safety net
   @Getter
-  private EngagementStats engagementStats;
+  private EngagementStats engagementStats = new EngagementStats(0, 0, 0);
 
   /**
    * Holds the current expiration timestamp (mutable).
    * Initialized to the default (createdAt + TTL) using the interface default.
    */
-  private Instant expiresAt;
+  private Instant expiresAt = Instant.now().plus(TTL);
 
   /**
    * Constructs a new {@code Incident} instance with initial values.
