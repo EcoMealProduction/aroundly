@@ -3,12 +3,10 @@ package com.backend.services;
 import com.backend.domain.location.Location;
 import com.backend.port.inbound.LocationUseCase;
 import com.backend.port.inbound.commands.CoordinatesCommand;
-import com.backend.port.outbound.LocationIdGenerator;
-import com.backend.port.outbound.LocationRepository;
+import com.backend.port.outbound.repo.LocationIdGenerator;
+import com.backend.port.outbound.repo.LocationRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.AllArgsConstructor;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -101,7 +99,7 @@ public class LocationService implements LocationUseCase {
 
             JsonNode node = objectMapper.readTree(response.body());
             JsonNode features = node.path("features");
-            if (features.isArray() && features.size() > 0) {
+            if (features.isArray() && !features.isEmpty()) {
                 return features.get(0).path("place_name").asText("Unknown address");
             }
             return "Unknown address";

@@ -4,8 +4,8 @@ import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
-import com.backend.port.outbound.IncidentRepository;
-import com.backend.port.outbound.LocationRepository;
+import com.backend.port.outbound.repo.IncidentRepository;
+import com.backend.port.outbound.repo.LocationRepository;
 
 import java.util.Objects;
 import org.springframework.stereotype.Repository;

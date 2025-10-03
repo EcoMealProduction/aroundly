@@ -1,4 +1,4 @@
-package com.backend.port.outbound;
+package com.backend.port.outbound.repo;
 
 import com.backend.domain.actor.Comment;
 import java.util.List;

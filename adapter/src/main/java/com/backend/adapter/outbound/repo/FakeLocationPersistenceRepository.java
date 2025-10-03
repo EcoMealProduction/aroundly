@@ -1,7 +1,7 @@
 package com.backend.adapter.outbound.repo;
 
 import com.backend.domain.location.Location;
-import com.backend.port.outbound.LocationRepository;
+import com.backend.port.outbound.repo.LocationRepository;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
