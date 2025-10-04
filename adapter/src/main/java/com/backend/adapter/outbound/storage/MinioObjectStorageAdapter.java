@@ -58,7 +58,7 @@ public class MinioObjectStorageAdapter implements ObjectStoragePort {
         out.add(new Media(upload.size(), key, upload.contentType()));
       }
     }
-    return mediaPersistence.saveAll(out);
+    return out;
   }
 
   /**

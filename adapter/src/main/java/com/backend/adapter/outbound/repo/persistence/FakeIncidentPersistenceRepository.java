@@ -3,14 +3,14 @@ package com.backend.adapter.outbound.repo.persistence;
 import com.backend.adapter.outbound.entity.HappeningEntity;
 import com.backend.adapter.outbound.entity.IncidentEntity;
 import com.backend.adapter.outbound.entity.LocationEntity;
-import com.backend.adapter.outbound.mapper.IncidentEntityMapper;
+import com.backend.adapter.outbound.entity.MediaEntity;
+import com.backend.adapter.outbound.mapper.MediaEntityMapper;
 import com.backend.adapter.outbound.repo.*;
 import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 
-import com.backend.domain.media.Media;
 import com.backend.port.outbound.repo.IncidentRepository;
 import com.backend.port.outbound.repo.LocationRepository;
 import java.time.LocalDateTime;
@@ -22,8 +22,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -31,11 +33,10 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
 
     private final IncidentPersistenceRepository incidentPersistenceRepository; //For DB
     private final HappeningPersistenceRepository happeningPersistenceRepository;
-    private final MediaPersistenceRepository mediaPersistenceRepository;
-
-    private final IncidentEntityMapper incidentEntityMapper;                    //For DB
-
     private final LocationRepository locationRepository;
+
+    private final MediaEntityMapper mediaEntityMapper;
+    
     private final Map<Long, Happening> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
     private final LocationPersistenceRepository locationPersistenceRepository;
@@ -55,14 +56,21 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
                 .findById(incident.locationId().value())
                 .orElseThrow(() -> new IllegalStateException("Location not found"));
 
+        Set<MediaEntity> mediaEntities = incident.media().stream()
+            .map(mediaEntityMapper::toEntity)
+            .collect(Collectors.toSet());
 
         HappeningEntity happeningEntity = HappeningEntity.builder()
                 .title(incident.getTitle())
                 .description(incident.getDescription())
-                .media(new Media())
+                .media(mediaEntities)
                 .createdAt(LocalDateTime.now())
                 .location(locationEntity)
                 .build();
+
+        for (MediaEntity mediaEntity : mediaEntities) {
+            mediaEntity.setHappeningEntity(happeningEntity);
+        }
 
         happeningPersistenceRepository.save(happeningEntity);
 
@@ -82,7 +90,6 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
                 .build();
 
         incidentPersistenceRepository.save(incidentEntity); //FOr DB
-
 
         return incident;
     }
@@ -107,7 +114,7 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
                 LocationId locationId = i.locationId();
                 Location location = locationRepository.findById(locationId.value());
                 if (location == null) return false;
-                
+
                 double lat = location.latitude();
                 double lon = location.longitude();
 
