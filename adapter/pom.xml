@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.backend</groupId>
-        <artifactId>city-safe</artifactId>
+        <artifactId>aroundly</artifactId>
         <version>0.0.1</version>
     </parent>
 
@@ -17,6 +17,12 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <minio.version>8.5.12</minio.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <logback.version>1.5.18</logback.version>
+        <jackson.databind.version>2.18.2</jackson.databind.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <openapi.version>2.3.0</openapi.version>
     </properties>
 
     <dependencies>
@@ -25,11 +31,36 @@
             <artifactId>application</artifactId>
             <version>0.0.1</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.databind.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.5.5.Final</version>
+            <version>${mapstruct.version}</version>
         </dependency>
 
         <dependency>
@@ -37,15 +68,10 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-        </dependency> -->
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -56,7 +82,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-common</artifactId>
-            <version>2.3.0</version>
+            <version>${openapi.version}</version>
         </dependency>
     </dependencies>
 

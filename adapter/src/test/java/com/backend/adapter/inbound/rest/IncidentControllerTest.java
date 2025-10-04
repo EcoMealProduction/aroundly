@@ -3,12 +3,16 @@ package com.backend.adapter.inbound.rest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.backend.adapter.inbound.dto.request.IncidentRequestDto;
 import com.backend.adapter.inbound.dto.request.RadiusRequestDto;
+import com.backend.adapter.inbound.dto.media.MediaDto;
 import com.backend.adapter.inbound.dto.response.incident.IncidentDetailedResponseDto;
 import com.backend.adapter.inbound.dto.response.incident.IncidentPreviewResponseDto;
 import com.backend.adapter.inbound.mapper.IncidentMapper;
@@ -16,18 +20,21 @@ import com.backend.adapter.inbound.mapper.LocationMapper;
 import com.backend.adapter.inbound.mapper.assembler.IncidentDtoAssembler;
 import com.backend.adapter.inbound.rest.exception.incident.IncidentNotExpiredException;
 import com.backend.adapter.inbound.rest.exception.incident.IncidentNotFoundException;
+import com.backend.adapter.outbound.factory.MediaPreviewFactory;
 import com.backend.domain.actor.ActorId;
 import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.LocationId;
 import com.backend.domain.media.Media;
-import com.backend.domain.media.MediaKind;
 import com.backend.domain.reactions.EngagementStats;
 import com.backend.port.inbound.IncidentUseCase;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import com.backend.port.inbound.commands.RadiusCommand;
-import java.net.URI;
+import com.backend.port.inbound.commands.UploadMediaCommand;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -36,7 +43,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(SpringExtension.class)
 class IncidentControllerTest {
@@ -51,49 +60,68 @@ class IncidentControllerTest {
   @Mock private IncidentDtoAssembler incidentDtoAssembler;
   @Mock private IncidentMapper incidentMapper;
   @Mock private LocationMapper locationMapper;
+  @Mock private MediaPreviewFactory mediaPreviewFactory;
   @InjectMocks private IncidentController controller;
 
   @Test
-  void testCreateIncident() throws URISyntaxException {
-    when(incidentMapper.toCreateIncidentCommand(createIncidentRequestDto()))
-        .thenReturn(createIncidentCommand());
-    when(incidentUseCase.create(createIncidentCommand())).thenReturn(createIncident());
-    when(incidentDtoAssembler.toDetailedDto(createIncident()))
-        .thenReturn(createIncidentDetailedResponseDto());
+  void testCreateIncident() throws URISyntaxException, IOException {
+    final Set<UploadMediaCommand> mediaCommands = Set.of(
+        new UploadMediaCommand(
+            mock(InputStream.class),
+            "name",
+            2L, "type"));
+    final CreateIncidentCommand command = new CreateIncidentCommand(
+        "title", "description", mediaCommands, 31.31, 41.23);
+    final Incident incident = createIncident();
+    final IncidentRequestDto incidentRequestDto = createIncidentRequestDto();
+    final IncidentDetailedResponseDto incidentDetailedResponseDto = createIncidentDetailedResponseDto();
 
-    ResponseEntity<IncidentDetailedResponseDto> response = controller.create(createIncidentRequestDto());
+    when(incidentMapper.toCreateIncidentCommand(incidentRequestDto)).thenReturn(command);
+    when(incidentUseCase.create(command)).thenReturn(incident);
+    when(incidentDtoAssembler.toDetailedDto(incident)).thenReturn(incidentDetailedResponseDto);
+
+    final ResponseEntity<IncidentDetailedResponseDto> response = controller.create(incidentRequestDto);
 
     final IncidentDetailedResponseDto body = response.getBody();
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertNotNull(body);
-    assertEquals(createIncidentDetailedResponseDto(), body);
+    assertEquals(incidentDetailedResponseDto, body);
   }
 
   @Test
-  void testUpdateIncident() throws URISyntaxException {
+  void testUpdateIncident() throws URISyntaxException, IOException {
+    final Set<UploadMediaCommand> mediaCommands = Set.of(
+        new UploadMediaCommand(
+            mock(InputStream.class),
+            "name",
+            2L, "type"));
+    final CreateIncidentCommand command = new CreateIncidentCommand(
+        "new title", "new description", mediaCommands, 31.31, 41.23);
 
-    when(incidentMapper.toCreateIncidentCommand(updateIncidentRequestDto()))
-        .thenReturn(updateIncidentCommand());
-    when(incidentUseCase.update(HAPPENING_ID, updateIncidentCommand()))
-        .thenReturn(updateIncident());
-    when(incidentDtoAssembler.toDetailedDto(updateIncident()))
-        .thenReturn(updateIncidentDetailedResponseDto());
+    final IncidentRequestDto updatedIncidentRequestDto = updateIncidentRequestDto();
+    final IncidentDetailedResponseDto updatedIncidentDetailedResponseDto = updateIncidentDetailedResponseDto();
+    final Incident updatedIncident = updateIncident();
 
-    ResponseEntity<IncidentDetailedResponseDto> response =
-        controller.update(HAPPENING_ID, updateIncidentRequestDto());
+    when(incidentMapper.toCreateIncidentCommand(updatedIncidentRequestDto)).thenReturn(command);
+    when(incidentUseCase.update(HAPPENING_ID, command)).thenReturn(updatedIncident);
+    when(incidentDtoAssembler.toDetailedDto(updatedIncident))
+        .thenReturn(updatedIncidentDetailedResponseDto);
+
+    final ResponseEntity<IncidentDetailedResponseDto> response =
+        controller.update(HAPPENING_ID, updatedIncidentRequestDto);
 
     final IncidentDetailedResponseDto body = response.getBody();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(body);
-    assertEquals(updateIncidentDetailedResponseDto(), body);
+    assertEquals(updatedIncidentDetailedResponseDto, body);
   }
 
   @Test
-  void testGetIncidentInPreview() throws URISyntaxException {
+  void testGetIncidentInPreview() throws IOException {
     when(incidentUseCase.findById(HAPPENING_ID)).thenReturn(createIncident());
-    when(incidentMapper.toIncidentPreviewResponseDto(createIncident()))
+    when(incidentMapper.toIncidentPreviewResponseDto(any(Incident.class)))
         .thenReturn(createIncidentPreviewResponseDto());
 
     ResponseEntity<IncidentPreviewResponseDto> response =
@@ -106,7 +134,7 @@ class IncidentControllerTest {
   }
 
   @Test
-  void testGetIncidentInDetails() throws URISyntaxException {
+  void testGetIncidentInDetails() throws IOException {
     when(incidentUseCase.findById(HAPPENING_ID)).thenReturn(createIncident());
     when(incidentDtoAssembler.toDetailedDto(createIncident()))
         .thenReturn(createIncidentDetailedResponseDto());
@@ -122,10 +150,10 @@ class IncidentControllerTest {
   }
 
   @Test
-  void testFindActorIncidentsInPreview() throws URISyntaxException {
+  void testFindActorIncidentsInPreview() throws IOException {
     final List<Happening> happenings = List.of(createIncident());
     when(incidentUseCase.findByActorId(ACTOR_ID)).thenReturn(happenings);
-    when(incidentMapper.toIncidentPreviewResponseDto(createIncident()))
+    when(incidentMapper.toIncidentPreviewResponseDto(any(Incident.class)))
         .thenReturn(createIncidentPreviewResponseDto());
 
     ResponseEntity<List<IncidentPreviewResponseDto>> response =
@@ -139,12 +167,13 @@ class IncidentControllerTest {
   }
 
   @Test
-  void testFindNearbyIncidents() throws URISyntaxException {
+  void testFindNearbyIncidents() throws IOException {
     when(locationMapper.toRadiusCommand(createRadiusRequestDto())).thenReturn(createRadiusCommand());
     when(incidentUseCase.findAllInGivenRange(createRadiusCommand()))
         .thenReturn(List.of(createIncident()));
-    when(incidentMapper.toIncidentPreviewResponseDto(createIncident()))
+    when(incidentMapper.toIncidentPreviewResponseDto(any(Incident.class)))
         .thenReturn(createIncidentPreviewResponseDto());
+    when(mediaPreviewFactory.build(anySet())).thenReturn(createMediaDtos());
 
     ResponseEntity<List<IncidentPreviewResponseDto>> response =
         controller.findNearbyIncidents(createRadiusRequestDto());
@@ -157,7 +186,7 @@ class IncidentControllerTest {
   }
 
   @Test
-  void testConfirmIncidentPresence() throws URISyntaxException {
+  void testConfirmIncidentPresence() throws IOException {
     when(incidentUseCase.confirm(INCIDENT_ID)).thenReturn(createConfirmedIncident());
     when(incidentDtoAssembler.toDetailedDto(createConfirmedIncident()))
         .thenReturn(createConfirmedIncidentDetailedResponseDto());
@@ -173,7 +202,7 @@ class IncidentControllerTest {
   }
 
   @Test
-  void testDenyIncidentPresence() throws URISyntaxException {
+  void testDenyIncidentPresence() throws IOException {
     when(incidentUseCase.deny(INCIDENT_ID)).thenReturn(createDeniedIncident());
     when(incidentDtoAssembler.toDetailedDto(createDeniedIncident()))
         .thenReturn(createDeniedIncidentDetailedResponseDto());
@@ -246,124 +275,114 @@ class IncidentControllerTest {
     return new RadiusRequestDto(latitude, longitude, range);
   }
 
-  private CreateIncidentCommand createIncidentCommand() throws URISyntaxException {
-    final double latitude = 12.12;
-    final double longitude = 43.43;
-
-    return new CreateIncidentCommand(
-        "title",
-        "description",
-        Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))),
-        latitude,
-        longitude);
-  }
-
-  private CreateIncidentCommand updateIncidentCommand() throws URISyntaxException {
-    final double latitude = 12.12;
-    final double longitude = 43.43;
-
-    return new CreateIncidentCommand(
-        "updated title",
-        "description",
-        Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))),
-        latitude,
-        longitude);
-  }
-
-  private IncidentRequestDto createIncidentRequestDto() throws URISyntaxException {
+  private IncidentRequestDto createIncidentRequestDto() {
     return IncidentRequestDto.builder()
       .title("title")
       .description("description")
-      .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
+      .files(createFiles())
       .lat(12.12)
       .lon(43.43)
       .build();
   }
 
-  private IncidentRequestDto updateIncidentRequestDto() throws URISyntaxException {
+  private IncidentRequestDto updateIncidentRequestDto() {
     return IncidentRequestDto.builder()
-        .title("updated title")
-        .description("description")
-        .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
-        .lat(12.12)
-        .lon(43.43)
-        .build();
-  }
-
-  private IncidentPreviewResponseDto createIncidentPreviewResponseDto() throws URISyntaxException {
-    return IncidentPreviewResponseDto.builder()
-      .title("title")
-      .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
+      .title("updated title")
+      .description("description")
+      .files(createFiles())
+      .lat(12.12)
+      .lon(43.43)
       .build();
   }
 
-  private IncidentDetailedResponseDto createIncidentDetailedResponseDto()
-      throws URISyntaxException {
+  private IncidentPreviewResponseDto createIncidentPreviewResponseDto() throws IOException {
+    return IncidentPreviewResponseDto.builder()
+      .title("title")
+      .media(createMediaDtos())
+      .build();
+  }
+
+  private IncidentDetailedResponseDto createIncidentDetailedResponseDto() throws IOException {
     return IncidentDetailedResponseDto.builder()
       .title("title")
       .description("description")
       .actorUsername("vanea")
-      .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
+      .media(createMedia())
       .lat(12.12)
       .lon(43.43)
       .build();
   }
 
+  private Set<MultipartFile> createFiles() {
+    byte[] data = "hello".getBytes(StandardCharsets.UTF_8);
+    MultipartFile mockMultipartFile = new MockMultipartFile(
+        "files",
+        "ro ad(1).png",
+        "image/png",
+        data);
+    return Set.of(mockMultipartFile);
+  }
+
+  private Set<Media> createMedia() {
+    return Set.of(new Media(3L, "file", "type"));
+  }
+
+  private Set<MediaDto> createMediaDtos() {
+    return Set.of(new MediaDto("https://example.com/file"));
+  }
+
   private IncidentDetailedResponseDto createConfirmedIncidentDetailedResponseDto()
-      throws URISyntaxException {
+      throws IOException {
 
     final int confirmations = 1;
 
     return createIncidentDetailedResponseDto().toBuilder()
-        .confirm(confirmations)
-        .build();
+      .confirm(confirmations)
+      .build();
   }
 
-  private IncidentDetailedResponseDto createDeniedIncidentDetailedResponseDto()
-      throws URISyntaxException {
-
+  private IncidentDetailedResponseDto createDeniedIncidentDetailedResponseDto() throws IOException {
     final int denies = 1;
 
     return createConfirmedIncidentDetailedResponseDto().toBuilder()
-        .deny(denies)
-        .build();
+      .deny(denies)
+      .build();
   }
 
-  private IncidentDetailedResponseDto updateIncidentDetailedResponseDto()
-      throws URISyntaxException {
+  private IncidentDetailedResponseDto updateIncidentDetailedResponseDto() {
     return IncidentDetailedResponseDto.builder()
-        .title("updated title")
-        .description("description")
-        .actorUsername("vanea")
-        .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
-        .lat(12.12)
-        .lon(43.43)
-        .build();
+      .title("updated title")
+      .description("description")
+      .actorUsername("vanea")
+      .media(createMedia())
+      .lat(12.12)
+      .lon(43.43)
+      .build();
   }
 
-  private Incident createIncident() throws URISyntaxException {
+  private Incident createIncident() {
     return Incident.builder()
       .actorId(new ActorId("id"))
       .locationId(new LocationId(1L))
       .title("title")
       .description("description")
-      .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
+      .media(createMedia())
       .build();
   }
 
-  private Incident createConfirmedIncident() throws URISyntaxException {
+  private Incident createConfirmedIncident() {
     final int confirmations = 1;
     final int denies = 0;
     final int consecutiveDenies = 0;
     final EngagementStats engagementStats = new EngagementStats(
-        confirmations, denies, consecutiveDenies);
+      confirmations, denies, consecutiveDenies);
 
     return createIncident().toBuilder()
-        .engagementStats(engagementStats)
-        .build();
+      .engagementStats(engagementStats)
+      .build();
   }
 
-  private Incident createDeniedIncident() throws URISyntaxException {
+  private Incident createDeniedIncident() {
     final int confirmations = 0;
     final int denies = 1;
     final int consecutiveDenies = 0;
@@ -371,17 +390,17 @@ class IncidentControllerTest {
         confirmations, denies, consecutiveDenies);
 
     return createIncident().toBuilder()
-        .engagementStats(engagementStats)
-        .build();
+      .engagementStats(engagementStats)
+      .build();
   }
 
-  private Incident updateIncident() throws URISyntaxException {
+  private Incident updateIncident() {
     return Incident.builder()
-        .actorId(new ActorId("id"))
-        .locationId(new LocationId(1L))
-        .title("updated title")
-        .description("description")
-        .media(Set.of(new Media(MediaKind.IMAGE, "type", new URI("/path/"))))
-        .build();
+      .actorId(new ActorId("id"))
+      .locationId(new LocationId(1L))
+      .title("updated title")
+      .description("description")
+      .media(createMedia())
+      .build();
   }
 }
