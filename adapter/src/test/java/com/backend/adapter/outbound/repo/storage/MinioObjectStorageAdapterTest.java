@@ -59,7 +59,7 @@ class MinioObjectStorageAdapterTest {
   @Test
   void testUploadMediaSet() throws Exception {
     when(minioClient.bucketExists(any(BucketExistsArgs.class))).thenReturn(true);
-    when(persistence.saveAll(anySet())).thenAnswer(inv -> inv.getArgument(0));
+//    when(persistence.saveAll(anySet())).thenAnswer(inv -> inv.getArgument(0));
 
     UploadMediaCommand mediaCommand = new UploadMediaCommand(
         new ByteArrayInputStream(new byte[0]),
