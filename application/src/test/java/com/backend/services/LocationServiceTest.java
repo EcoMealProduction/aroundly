@@ -24,8 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.backend.domain.location.Location;
 import com.backend.domain.location.LocationId;
 import com.backend.port.inbound.commands.CoordinatesCommand;
-import com.backend.port.outbound.LocationIdGenerator;
-import com.backend.port.outbound.LocationRepository;
+import com.backend.port.outbound.repo.LocationIdGenerator;
+import com.backend.port.outbound.repo.LocationRepository;
 
 @ExtendWith(MockitoExtension.class)
 class LocationServiceTest {

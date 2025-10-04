@@ -1,7 +1,7 @@
 package com.backend.adapter.outbound.repo.persistence;
 
 import com.backend.domain.actor.Comment;
-import com.backend.port.outbound.CommentRepository;
+import com.backend.port.outbound.repo.CommentRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

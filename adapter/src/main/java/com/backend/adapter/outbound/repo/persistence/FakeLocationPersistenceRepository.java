@@ -1,12 +1,10 @@
 package com.backend.adapter.outbound.repo.persistence;
 
-import com.backend.adapter.inbound.mapper.LocationMapper;
 import com.backend.adapter.outbound.entity.LocationEntity;
 import com.backend.adapter.outbound.mapper.LocationEntityMapper;
 import com.backend.adapter.outbound.repo.LocationPersistenceRepository;
 import com.backend.domain.location.Location;
-import com.backend.domain.location.LocationId;
-import com.backend.port.outbound.LocationRepository;
+import com.backend.port.outbound.repo.LocationRepository;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +30,7 @@ public class FakeLocationPersistenceRepository implements LocationRepository {
 
     // If ID is 0 or null, let database generate
     if (location.id().value() == 0L) {
-      locationEntity.setId(null);
+      locationEntity.setId(0L);
     }
 
     LocationEntity savedEntity = locationPersistenceRepository.save(locationEntity);

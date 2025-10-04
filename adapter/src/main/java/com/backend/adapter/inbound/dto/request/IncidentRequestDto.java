@@ -1,17 +1,17 @@
 package com.backend.adapter.inbound.dto.request;
 
-import com.backend.domain.media.Media;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
 import lombok.Builder;
 import lombok.NonNull;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Request DTO for creating a new incident.
  *
  * @param title       short title of the incident
  * @param description detailed description of the incident
- * @param media       media files attached to the incident
+ * @param files       media files attached to the incident
  * @param lat         latitude of the incident location
  * @param lon         longitude of the incident location
  */
@@ -33,7 +33,7 @@ public record IncidentRequestDto(
     @Schema(
         description = "Collection of related media files (images, videos, etc.) to attach to the incident"
     )
-    @NonNull Set<Media> media,
+    @NonNull Set<MultipartFile> files,
 
     @Schema(
         description = "Latitude coordinate of the incident location in decimal degrees",

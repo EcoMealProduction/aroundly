@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS clients (
     range_km    INT
     );
 
-ALTER TABLE clients OWNER TO root;
+ALTER TABLE clients OWNER TO appuser;
 
 CREATE SEQUENCE client_id_seq;
-ALTER SEQUENCE client_id_seq OWNER TO root;
+ALTER SEQUENCE client_id_seq OWNER TO appuser;

@@ -4,22 +4,21 @@ import com.backend.adapter.inbound.dto.response.incident.IncidentDetailedRespons
 import com.backend.adapter.inbound.mapper.IncidentMapper;
 import com.backend.domain.happening.Incident;
 import com.backend.domain.location.Location;
-import com.backend.port.outbound.LocationRepository;
-import com.backend.services.authentication.SecurityCurrentActorExtractor;
+import com.backend.port.outbound.repo.LocationRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
  * Assembles incident-related DTOs by enriching them
  * with location and actor details.
  */
-@Service
+@Component
 @AllArgsConstructor
 public class IncidentDtoAssembler {
 
   private final IncidentMapper mapper;
   private final LocationRepository locationRepository;
-  //private final SecurityCurrentActorExtractor actorExtractor;
 
   /**
    * Converts a domain {@link Incident} into a {@link IncidentDetailedResponseDto},
@@ -35,13 +34,11 @@ public class IncidentDtoAssembler {
     double lat = location.latitude();
     double lon = location.longitude();
     String address = location.address();
-    String actorUsername = "actorExtractor.extractUsername().orElse(null)";
 
     return dto.toBuilder()
         .lat(lat)
         .lon(lon)
         .address(address)
-        .actorUsername(actorUsername)
         .build();
   }
 }

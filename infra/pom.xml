@@ -31,20 +31,12 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.security.version>3.5.3</spring.security.version>
-        <spring.security.test.version>6.5.0</spring.security.test.version>
-        <keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
+
         <spring.version>3.4.5</spring.version>
         <openapi.version>2.3.0</openapi.version>
         <jackson.version>2.19.0</jackson.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <version>${spring.security.test.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

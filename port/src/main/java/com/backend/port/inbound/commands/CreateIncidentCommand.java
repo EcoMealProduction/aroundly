@@ -1,6 +1,5 @@
 package com.backend.port.inbound.commands;
 
-import com.backend.domain.media.Media;
 import java.util.Set;
 
 /**
@@ -9,8 +8,12 @@ import java.util.Set;
  * @param title       the title of the incident
  * @param description the description of the incident
  * @param media       the set of media associated with the incident
+ * @param lat         the latitude where the incident occurred
+ * @param lon         the longitude where the incident occurred
  */
-public record CreateIncidentCommand(String title, String description, Set<Media> media,
-                                    double lat, double lon) {
-
-}
+public record CreateIncidentCommand(
+    String title,
+    String description,
+    Set<UploadMediaCommand> media,
+    double lat,
+    double lon) { }

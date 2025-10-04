@@ -10,12 +10,15 @@ import org.mapstruct.Mapping;
         })
 public interface IncidentEntityMapper {
 
+    @Mapping(target = "timePosted", ignore = true)
+    @Mapping(target = "range", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "happening", ignore = true)
     @Mapping(source = "engagementStats.confirms", target = "confirms")
     @Mapping(source = "engagementStats.denies", target = "denies")
     IncidentEntity toIncidentEntity(Incident incident);
 
-//    @Mapping(source = "engagementStats.confirms", target = "confirms")
-//    @Mapping(source = "engagementStats.denies", target = "denies")
+    @Mapping(target = "expiresAt", ignore = true)
+    @Mapping(target = "engagementStats", ignore = true)
     Incident toIncident(IncidentEntity incidentEntity);
-
 }

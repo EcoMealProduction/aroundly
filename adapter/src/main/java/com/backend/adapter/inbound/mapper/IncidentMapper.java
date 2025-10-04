@@ -3,6 +3,7 @@ package com.backend.adapter.inbound.mapper;
 import com.backend.adapter.inbound.dto.request.IncidentRequestDto;
 import com.backend.adapter.inbound.dto.response.incident.IncidentDetailedResponseDto;
 import com.backend.adapter.inbound.dto.response.incident.IncidentPreviewResponseDto;
+import com.backend.adapter.inbound.mapper.assembler.UploadMediaMapperAssembler;
 import com.backend.domain.happening.Incident;
 import com.backend.port.inbound.commands.CreateIncidentCommand;
 import org.mapstruct.Mapper;
@@ -12,7 +13,7 @@ import org.mapstruct.Mapping;
  * MapStruct mapper for converting between domain {@link Incident}
  * entities and various DTOs.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UploadMediaMapperAssembler.class})
 public interface IncidentMapper {
 
   /**
@@ -21,6 +22,9 @@ public interface IncidentMapper {
    * @param incidentRequestDto the request DTO with incident data
    * @return command object to create an incident
    */
+
+  @Mapping(
+      target = "media", source = "files")
   CreateIncidentCommand toCreateIncidentCommand(IncidentRequestDto incidentRequestDto);
 
   /**

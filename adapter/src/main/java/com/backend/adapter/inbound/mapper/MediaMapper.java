@@ -31,7 +31,7 @@ public interface MediaMapper {
    * @param media the client-provided media reference DTO
    * @return the mapped domain object
    */
-  @Mapping(target = "kind", ignore = true)
+  @Mapping(target = "size", ignore = true)
   @Mapping(target = "contentType", ignore = true)
   Media toDomain(MediaDto media);
 }

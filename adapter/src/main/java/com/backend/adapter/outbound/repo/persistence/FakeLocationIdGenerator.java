@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Component;
 
 import com.backend.domain.location.LocationId;
-import com.backend.port.outbound.LocationIdGenerator;
+import com.backend.port.outbound.repo.LocationIdGenerator;
 
 /**
  * In-memory implementation that hands out sequential {@link LocationId}s.
