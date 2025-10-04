@@ -13,6 +13,7 @@ import com.backend.adapter.inbound.rest.exception.incident.IncidentAlreadyConfir
 import com.backend.adapter.inbound.rest.exception.incident.IncidentNotExpiredException;
 import com.backend.adapter.inbound.rest.exception.incident.IncidentNotFoundException;
 import com.backend.adapter.inbound.rest.exception.incident.InvalidCoordinatesException;
+import com.backend.adapter.outbound.factory.MediaPreviewFactory;
 import com.backend.domain.happening.Happening;
 import com.backend.domain.happening.Incident;
 import com.backend.port.inbound.IncidentUseCase;
@@ -54,17 +55,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class IncidentController {
 
   private final IncidentUseCase incidentUseCase;
+  private final MediaPreviewFactory mediaPreviewFactory;
   private final IncidentDtoAssembler assembler;
   private final IncidentMapper incidentMapper;
   private final LocationMapper locationMapper;
 
   public IncidentController(
       IncidentUseCase incidentUseCase,
+      MediaPreviewFactory mediaPreviewFactory,
       IncidentDtoAssembler assembler,
       IncidentMapper incidentMapper,
       LocationMapper locationMapper) {
 
     this.incidentUseCase = incidentUseCase;
+    this.mediaPreviewFactory = mediaPreviewFactory;
     this.incidentMapper = incidentMapper;
     this.assembler = assembler;
     this.locationMapper = locationMapper;
@@ -260,10 +264,18 @@ public class IncidentController {
 
     try {
       RadiusCommand radiusCommand = locationMapper.toRadiusCommand(radiusRequestDto);
-      List<Incident> results = incidentUseCase.findAllInGivenRange(radiusCommand);
-      List<IncidentPreviewResponseDto> responseDtos = results.stream()
-          .map(incidentMapper::toIncidentPreviewResponseDto)
+      List<Incident> incidents = incidentUseCase.findAllInGivenRange(radiusCommand);
+      List<IncidentPreviewResponseDto> responseDtos = incidents.stream()
+          .map(incident -> {
+            IncidentPreviewResponseDto dto = incidentMapper.toIncidentPreviewResponseDto(incident);
+            return dto.toBuilder()
+                .media(mediaPreviewFactory.build(incident.media()))
+                .build();
+          })
           .toList();
+//      List<IncidentPreviewResponseDto> responseDtos = results.stream()
+//          .map(incidentMapper::toIncidentPreviewResponseDto)
+//          .toList();
 
       return ResponseEntity.ok(responseDtos);
     } catch (InvalidCoordinatesException e) {

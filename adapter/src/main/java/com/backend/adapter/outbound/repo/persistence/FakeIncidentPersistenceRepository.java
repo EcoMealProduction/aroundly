@@ -107,6 +107,7 @@ public class FakeIncidentPersistenceRepository implements IncidentRepository {
     @Override
     public List<Incident> findAllInGivenRange(double lat0, double lon0, double radiusMeters) {
         final double radiusKm = radiusMeters / 1000.0;
+
         return storage.values().stream()
             .filter(h -> h instanceof Incident)
             .map(Incident.class::cast)

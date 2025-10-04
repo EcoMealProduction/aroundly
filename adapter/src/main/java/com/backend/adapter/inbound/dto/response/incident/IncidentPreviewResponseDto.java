@@ -1,5 +1,6 @@
 package com.backend.adapter.inbound.dto.response.incident;
 
+import com.backend.adapter.inbound.dto.media.MediaDto;
 import com.backend.domain.media.Media;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
@@ -23,4 +24,4 @@ public record IncidentPreviewResponseDto(
     @Schema(
         description = "Collection of related media files (images, videos, etc.)"
     )
-    Set<Media> media) { }
+    Set<MediaDto> media) { }

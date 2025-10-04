@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.backend.adapter.inbound.dto.request.IncidentRequestDto;
+import com.backend.adapter.inbound.dto.media.MediaDto;
 import com.backend.adapter.inbound.dto.response.incident.IncidentPreviewResponseDto;
 import com.backend.adapter.inbound.mapper.assembler.UploadMediaMapperAssembler;
 import com.backend.domain.actor.ActorId;
@@ -48,7 +49,7 @@ class IncidentMapperTest {
         mapper.toIncidentPreviewResponseDto(incident);
 
     assertEquals(incident.getTitle(), incidentPreviewResponseDto.title());
-    assertEquals(incident.getMedia(), incidentPreviewResponseDto.media());
+    assertEquals(createMediaDtos(), incidentPreviewResponseDto.media());
   }
 
   private Incident createIncident() {
@@ -72,6 +73,10 @@ class IncidentMapperTest {
 
   private Set<Media> createMedia() {
     return Set.of(new Media(3L, "file", "type"));
+  }
+
+  private Set<MediaDto> createMediaDtos() {
+    return Set.of(new MediaDto("file"));
   }
 
   private Set<MultipartFile> createFiles() {
