@@ -38,16 +38,17 @@ public class SpringSecurity {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/v1/**").authenticated()
+                .requestMatchers("/incidents/create").permitAll()
+                .requestMatchers("/api/v1/**").permitAll()
                 .requestMatchers("/healthz").permitAll()
                 .anyRequest().authenticated()
             )
-            .logout(logout -> logout.logoutSuccessUrl("/auth/login"))
-            .oauth2ResourceServer(oauth2 -> oauth2
-                    .jwt(jwt -> jwt.
-                        jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter())
-                    )
-            );
+            .logout(logout -> logout.logoutSuccessUrl("/auth/login"));
+//            .oauth2ResourceServer(oauth2 -> oauth2
+//                    .jwt(jwt -> jwt.
+//                        jwtAuthenticationConverter(jwtAuthConverterConfig.jwtAuthConverter())
+//                    )
+//            );
         return httpSecurity.build();
     }
 }

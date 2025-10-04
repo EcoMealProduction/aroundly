@@ -19,7 +19,7 @@ public class IncidentDtoAssembler {
 
   private final IncidentMapper mapper;
   private final LocationRepository locationRepository;
-  private final SecurityCurrentActorExtractor actorExtractor;
+  //private final SecurityCurrentActorExtractor actorExtractor;
 
   /**
    * Converts a domain {@link Incident} into a {@link IncidentDetailedResponseDto},
@@ -35,7 +35,7 @@ public class IncidentDtoAssembler {
     double lat = location.latitude();
     double lon = location.longitude();
     String address = location.address();
-    String actorUsername = actorExtractor.extractUsername().orElse(null);
+    String actorUsername = "actorExtractor.extractUsername().orElse(null)";
 
     return dto.toBuilder()
         .lat(lat)
